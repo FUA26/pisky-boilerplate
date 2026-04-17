@@ -1,13 +1,17 @@
 {
   "name": "zilpo",
   "version": "0.0.1",
+  "type": "module",
   "private": true,
   "scripts": {
     "build": "turbo build",
     "dev": "turbo dev",
     "lint": "turbo lint",
+    "lint:fix": "turbo lint --fix",
     "format": "turbo format",
-    "typecheck": "turbo typecheck"
+    "format:check": "turbo format:check",
+    "typecheck": "turbo typecheck",
+    "validate": "turbo lint && turbo typecheck && turbo format:check"
   },
   "devDependencies": {
     "@workspace/eslint-config": "workspace:*",

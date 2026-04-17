@@ -12,12 +12,9 @@ out/
 # Cache
 .cache/
 coverage/
-*.log
 
 # Lock files
 pnpm-lock.yaml
-package-lock.json
-yarn.lock
 
 # Environment
 .env
@@ -30,14 +27,9 @@ yarn.lock
 # IDE
 .vscode/
 .idea/
-*.swp
-*.swo
-*~
 
 # OS
 .DS_Store
-Thumbs.db
 
 # Misc
 .turbo/
-pnpm-workspace.yaml

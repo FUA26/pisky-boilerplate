@@ -1,0 +1,14 @@
+# Build outputs
+dist/
+out/
+build/
+
+# Cache
+.turbo/
+.cache/
+
+# Dependencies
+node_modules/
+
+# Generated files
+*.tsbuildinfo

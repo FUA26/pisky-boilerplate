@@ -5,5 +5,12 @@
   "license": "PROPRIETARY",
   "publishConfig": {
     "access": "public"
+  },
+  "scripts": {
+    "format": "prettier --write \"*.json\" \"**/*.json\"",
+    "format:check": "prettier --check \"*.json\" \"**/*.json\""
+  },
+  "devDependencies": {
+    "prettier": "^3.8.1"
   }
 }
