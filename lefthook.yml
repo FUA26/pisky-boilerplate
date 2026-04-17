@@ -1,0 +1,21 @@
+# Git hooks managed by Lefthook
+# See: https://lefthook.dev/configuration/
+
+pre-commit:
+  parallel: true
+  commands:
+    lint-staged:
+      run: pnpm exec lint-staged
+      stage_fixed: true
+
+pre-push:
+  commands:
+    typecheck:
+      run: pnpm typecheck
+    lint:
+      run: pnpm lint
+
+commit-msg:
+  commands:
+    commitlint:
+      run: pnpm exec commitlint --edit {1}
