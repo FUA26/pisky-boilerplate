@@ -1,5 +1,5 @@
-import { signIn } from "@/lib/auth"
-import { signInSchema } from "@/lib/auth-validation"
+import { signIn } from "@/features/auth/lib/auth"
+import { signInSchema } from "@/features/auth/lib/auth-validation"
 import { NextRequest, NextResponse } from "next/server"
 
 export async function POST(req: NextRequest) {
@@ -16,9 +16,6 @@ export async function POST(req: NextRequest) {
 
     const { email, password } = validatedFields.data
 
-    // Use NextAuth's signIn with credentials
-    // Note: This will be handled by the NextAuth handler
-    // This endpoint is a convenience wrapper for client-side calls
     const result = await signIn("credentials", {
       email,
       password,

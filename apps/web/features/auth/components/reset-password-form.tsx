@@ -1,7 +1,7 @@
 "use client"
 
 import Link from "next/link"
-import { useRouter } from "next/navigation"
+import { useRouter, useSearchParams } from "next/navigation"
 import { useForm } from "react-hook-form"
 import { zodResolver } from "@hookform/resolvers/zod"
 import { toast } from "sonner"
@@ -14,39 +14,67 @@ import {
   FieldLabel,
 } from "@workspace/ui/components/field"
 import { Input } from "@workspace/ui/components/input"
-import { signUpSchema, type SignUpInput } from "@/lib/auth-validation"
+import {
+  resetPasswordSchema,
+  type ResetPasswordInput,
+} from "@/features/auth/lib/auth-validation"
 
-export function SignUpForm() {
+export function ResetPasswordForm() {
   const router = useRouter()
+  const searchParams = useSearchParams()
+  const token = searchParams.get("token")
 
-  const form = useForm<SignUpInput>({
-    resolver: zodResolver(signUpSchema),
+  const form = useForm<ResetPasswordInput>({
+    resolver: zodResolver(resetPasswordSchema),
     defaultValues: {
-      name: "",
-      email: "",
       password: "",
       confirmPassword: "",
     },
   })
 
-  const onSubmit = async (data: SignUpInput) => {
+  const onSubmit = async (data: ResetPasswordInput) => {
+    if (!token) {
+      toast.error("Invalid reset link")
+      return
+    }
+
     try {
-      const result = await fetch("/api/auth/sign-up", {
+      const result = await fetch("/api/auth/reset-password", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(data),
+        body: JSON.stringify({ ...data, token }),
       })
 
       if (result.ok) {
-        toast.success("Account created successfully")
+        toast.success("Password reset successfully")
         router.push("/auth/sign-in")
       } else {
         const error = await result.json()
-        toast.error(error.message || "Failed to create account")
+        toast.error(error.message || "Failed to reset password")
       }
     } catch {
       toast.error("Something went wrong. Please try again.")
     }
+  }
+
+  if (!token) {
+    return (
+      <form className="flex flex-col gap-6">
+        <FieldGroup>
+          <div className="flex flex-col items-center gap-1 text-center">
+            <h1 className="text-2xl font-bold">Invalid reset link</h1>
+            <p className="text-sm text-balance text-muted-foreground">
+              This password reset link is invalid or has expired.
+            </p>
+          </div>
+          <Field>
+            <Button asChild className="w-full">
+              <Link href="/auth/forgot-password">Request a new reset link</Link>
+            </Button>
+          </Field>
+        </FieldGroup>
+      </form>
+    )
   }
 
   return (
@@ -56,42 +84,13 @@ export function SignUpForm() {
     >
       <FieldGroup>
         <div className="flex flex-col items-center gap-1 text-center">
-          <h1 className="text-2xl font-bold">Create an account</h1>
+          <h1 className="text-2xl font-bold">Reset password</h1>
           <p className="text-sm text-balance text-muted-foreground">
-            Enter your information to create a new account
+            Enter your new password below
           </p>
         </div>
         <Field>
-          <FieldLabel htmlFor="name">Name</FieldLabel>
-          <Input
-            id="name"
-            placeholder="John Doe"
-            {...form.register("name")}
-            className="bg-background"
-          />
-          {form.formState.errors.name && (
-            <FieldDescription className="text-destructive">
-              {form.formState.errors.name.message}
-            </FieldDescription>
-          )}
-        </Field>
-        <Field>
-          <FieldLabel htmlFor="email">Email</FieldLabel>
-          <Input
-            id="email"
-            type="email"
-            placeholder="m@example.com"
-            {...form.register("email")}
-            className="bg-background"
-          />
-          {form.formState.errors.email && (
-            <FieldDescription className="text-destructive">
-              {form.formState.errors.email.message}
-            </FieldDescription>
-          )}
-        </Field>
-        <Field>
-          <FieldLabel htmlFor="password">Password</FieldLabel>
+          <FieldLabel htmlFor="password">New Password</FieldLabel>
           <Input
             id="password"
             type="password"
@@ -105,7 +104,9 @@ export function SignUpForm() {
           )}
         </Field>
         <Field>
-          <FieldLabel htmlFor="confirmPassword">Confirm Password</FieldLabel>
+          <FieldLabel htmlFor="confirmPassword">
+            Confirm New Password
+          </FieldLabel>
           <Input
             id="confirmPassword"
             type="password"
@@ -124,13 +125,14 @@ export function SignUpForm() {
             className="w-full"
             disabled={form.formState.isSubmitting}
           >
-            {form.formState.isSubmitting ? "Creating account..." : "Sign up"}
+            {form.formState.isSubmitting
+              ? "Resetting password..."
+              : "Reset password"}
           </Button>
         </Field>
         <FieldDescription className="text-center">
-          Already have an account?{" "}
           <Link href="/auth/sign-in" className="underline underline-offset-4">
-            Sign in
+            Back to sign in
           </Link>
         </FieldDescription>
       </FieldGroup>

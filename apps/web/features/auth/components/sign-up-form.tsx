@@ -1,7 +1,7 @@
 "use client"
 
 import Link from "next/link"
-import { useRouter, useSearchParams } from "next/navigation"
+import { useRouter } from "next/navigation"
 import { useForm } from "react-hook-form"
 import { zodResolver } from "@hookform/resolvers/zod"
 import { toast } from "sonner"
@@ -15,66 +15,41 @@ import {
 } from "@workspace/ui/components/field"
 import { Input } from "@workspace/ui/components/input"
 import {
-  resetPasswordSchema,
-  type ResetPasswordInput,
-} from "@/lib/auth-validation"
+  signUpSchema,
+  type SignUpInput,
+} from "@/features/auth/lib/auth-validation"
 
-export function ResetPasswordForm() {
+export function SignUpForm() {
   const router = useRouter()
-  const searchParams = useSearchParams()
-  const token = searchParams.get("token")
 
-  const form = useForm<ResetPasswordInput>({
-    resolver: zodResolver(resetPasswordSchema),
+  const form = useForm<SignUpInput>({
+    resolver: zodResolver(signUpSchema),
     defaultValues: {
+      name: "",
+      email: "",
       password: "",
       confirmPassword: "",
     },
   })
 
-  const onSubmit = async (data: ResetPasswordInput) => {
-    if (!token) {
-      toast.error("Invalid reset link")
-      return
-    }
-
+  const onSubmit = async (data: SignUpInput) => {
     try {
-      const result = await fetch("/api/auth/reset-password", {
+      const result = await fetch("/api/auth/sign-up", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ ...data, token }),
+        body: JSON.stringify(data),
       })
 
       if (result.ok) {
-        toast.success("Password reset successfully")
+        toast.success("Account created successfully")
         router.push("/auth/sign-in")
       } else {
         const error = await result.json()
-        toast.error(error.message || "Failed to reset password")
+        toast.error(error.message || "Failed to create account")
       }
     } catch {
       toast.error("Something went wrong. Please try again.")
     }
-  }
-
-  if (!token) {
-    return (
-      <form className="flex flex-col gap-6">
-        <FieldGroup>
-          <div className="flex flex-col items-center gap-1 text-center">
-            <h1 className="text-2xl font-bold">Invalid reset link</h1>
-            <p className="text-sm text-balance text-muted-foreground">
-              This password reset link is invalid or has expired.
-            </p>
-          </div>
-          <Field>
-            <Button asChild className="w-full">
-              <Link href="/auth/forgot-password">Request a new reset link</Link>
-            </Button>
-          </Field>
-        </FieldGroup>
-      </form>
-    )
   }
 
   return (
@@ -84,13 +59,42 @@ export function ResetPasswordForm() {
     >
       <FieldGroup>
         <div className="flex flex-col items-center gap-1 text-center">
-          <h1 className="text-2xl font-bold">Reset password</h1>
+          <h1 className="text-2xl font-bold">Create an account</h1>
           <p className="text-sm text-balance text-muted-foreground">
-            Enter your new password below
+            Enter your information to create a new account
           </p>
         </div>
         <Field>
-          <FieldLabel htmlFor="password">New Password</FieldLabel>
+          <FieldLabel htmlFor="name">Name</FieldLabel>
+          <Input
+            id="name"
+            placeholder="John Doe"
+            {...form.register("name")}
+            className="bg-background"
+          />
+          {form.formState.errors.name && (
+            <FieldDescription className="text-destructive">
+              {form.formState.errors.name.message}
+            </FieldDescription>
+          )}
+        </Field>
+        <Field>
+          <FieldLabel htmlFor="email">Email</FieldLabel>
+          <Input
+            id="email"
+            type="email"
+            placeholder="m@example.com"
+            {...form.register("email")}
+            className="bg-background"
+          />
+          {form.formState.errors.email && (
+            <FieldDescription className="text-destructive">
+              {form.formState.errors.email.message}
+            </FieldDescription>
+          )}
+        </Field>
+        <Field>
+          <FieldLabel htmlFor="password">Password</FieldLabel>
           <Input
             id="password"
             type="password"
@@ -104,9 +108,7 @@ export function ResetPasswordForm() {
           )}
         </Field>
         <Field>
-          <FieldLabel htmlFor="confirmPassword">
-            Confirm New Password
-          </FieldLabel>
+          <FieldLabel htmlFor="confirmPassword">Confirm Password</FieldLabel>
           <Input
             id="confirmPassword"
             type="password"
@@ -125,14 +127,13 @@ export function ResetPasswordForm() {
             className="w-full"
             disabled={form.formState.isSubmitting}
           >
-            {form.formState.isSubmitting
-              ? "Resetting password..."
-              : "Reset password"}
+            {form.formState.isSubmitting ? "Creating account..." : "Sign up"}
           </Button>
         </Field>
         <FieldDescription className="text-center">
+          Already have an account?{" "}
           <Link href="/auth/sign-in" className="underline underline-offset-4">
-            Back to sign in
+            Sign in
           </Link>
         </FieldDescription>
       </FieldGroup>

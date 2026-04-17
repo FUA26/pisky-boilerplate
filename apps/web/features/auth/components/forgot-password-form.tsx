@@ -1,7 +1,6 @@
 "use client"
 
 import Link from "next/link"
-import { useRouter } from "next/navigation"
 import { useForm } from "react-hook-form"
 import { zodResolver } from "@hookform/resolvers/zod"
 import { toast } from "sonner"
@@ -14,34 +13,33 @@ import {
   FieldLabel,
 } from "@workspace/ui/components/field"
 import { Input } from "@workspace/ui/components/input"
-import { signInSchema, type SignInInput } from "@/lib/auth-validation"
+import {
+  forgotPasswordSchema,
+  type ForgotPasswordInput,
+} from "@/features/auth/lib/auth-validation"
 
-export function SignInForm() {
-  const router = useRouter()
-
-  const form = useForm<SignInInput>({
-    resolver: zodResolver(signInSchema),
+export function ForgotPasswordForm() {
+  const form = useForm<ForgotPasswordInput>({
+    resolver: zodResolver(forgotPasswordSchema),
     defaultValues: {
       email: "",
-      password: "",
     },
   })
 
-  const onSubmit = async (data: SignInInput) => {
+  const onSubmit = async (data: ForgotPasswordInput) => {
     try {
-      const result = await fetch("/api/auth/callback/credentials", {
+      const result = await fetch("/api/auth/forgot-password", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(data),
       })
 
       if (result.ok) {
-        toast.success("Signed in successfully")
-        router.push("/")
-        router.refresh()
+        toast.success("Password reset email sent")
+        form.reset()
       } else {
         const error = await result.json()
-        toast.error(error.message || "Failed to sign in")
+        toast.error(error.message || "Failed to send reset email")
       }
     } catch {
       toast.error("Something went wrong. Please try again.")
@@ -55,9 +53,10 @@ export function SignInForm() {
     >
       <FieldGroup>
         <div className="flex flex-col items-center gap-1 text-center">
-          <h1 className="text-2xl font-bold">Welcome back</h1>
+          <h1 className="text-2xl font-bold">Forgot password?</h1>
           <p className="text-sm text-balance text-muted-foreground">
-            Enter your email below to sign in to your account
+            Enter your email address and we&apos;ll send you a link to reset
+            your password
           </p>
         </div>
         <Field>
@@ -76,40 +75,19 @@ export function SignInForm() {
           )}
         </Field>
         <Field>
-          <div className="flex items-center">
-            <FieldLabel htmlFor="password">Password</FieldLabel>
-            <Link
-              href="/auth/forgot-password"
-              className="ml-auto text-sm underline-offset-4 hover:underline"
-            >
-              Forgot your password?
-            </Link>
-          </div>
-          <Input
-            id="password"
-            type="password"
-            {...form.register("password")}
-            className="bg-background"
-          />
-          {form.formState.errors.password && (
-            <FieldDescription className="text-destructive">
-              {form.formState.errors.password.message}
-            </FieldDescription>
-          )}
-        </Field>
-        <Field>
           <Button
             type="submit"
             className="w-full"
             disabled={form.formState.isSubmitting}
           >
-            {form.formState.isSubmitting ? "Signing in..." : "Sign in"}
+            {form.formState.isSubmitting
+              ? "Sending email..."
+              : "Send reset link"}
           </Button>
         </Field>
         <FieldDescription className="text-center">
-          Don&apos;t have an account?{" "}
-          <Link href="/auth/sign-up" className="underline underline-offset-4">
-            Sign up
+          <Link href="/auth/sign-in" className="underline underline-offset-4">
+            Back to sign in
           </Link>
         </FieldDescription>
       </FieldGroup>

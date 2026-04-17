@@ -4,7 +4,11 @@
     "baseUrl": ".",
     "paths": {
       "@/*": ["./*"],
-      "@workspace/ui/*": ["../../packages/ui/src/*"]
+      "@workspace/ui/*": ["../../packages/ui/src/*"],
+      "@/features/*": ["./features/*"],
+      "@/features/auth/*": ["./features/auth/*"],
+      "@/features/dashboard/*": ["./features/dashboard/*"],
+      "@/features/shared/*": ["./features/shared/*"]
     },
     "plugins": [
       {
