@@ -18,17 +18,15 @@ type TabValue = (typeof tabs)[number]["value"]
 
 export function CodeWalkthrough() {
   return (
-    <section className="border-t py-24">
-      <div className="container px-6">
-        <h2 className="mb-4 text-2xl font-semibold sm:text-3xl">
-          See How It Works
-        </h2>
-        <p className="mb-12 text-muted-foreground">
+    <section className="border-t bg-muted/20 py-16 sm:py-20 md:py-24 lg:py-28">
+      <div className="container px-4 sm:px-6">
+        <h2 className="heading-section mb-4">See How It Works</h2>
+        <p className="text-body mb-10 text-muted-foreground sm:mb-12">
           Explore the architecture patterns that make Zilpo enterprise-ready.
         </p>
 
         <Tabs defaultValue="feature-structure" className="w-full">
-          <TabsList className="w-full justify-start sm:w-auto">
+          <TabsList className="no-scrollbar w-full justify-start overflow-x-auto overflow-y-hidden sm:w-auto sm:flex-wrap">
             {tabs.map((tab) => (
               <TabsTrigger key={tab.value} value={tab.value}>
                 {tab.label}
@@ -44,15 +42,13 @@ export function CodeWalkthrough() {
 
             return (
               <TabsContent key={tab.value} value={tab.value}>
-                <div className="grid gap-8 lg:grid-cols-2">
+                <div className="grid gap-6 sm:gap-8 lg:grid-cols-2">
                   <div>
                     <TerminalBlock>{example.code}</TerminalBlock>
                   </div>
                   <div className="flex flex-col justify-center">
-                    <h3 className="mb-3 text-xl font-semibold">
-                      {example.title}
-                    </h3>
-                    <p className="text-muted-foreground">
+                    <h3 className="heading-card mb-3">{example.title}</h3>
+                    <p className="text-body text-muted-foreground">
                       {example.description}
                     </p>
                     {example.learnMoreHref && (
