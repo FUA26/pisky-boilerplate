@@ -8,7 +8,7 @@ export default function ComponentsLayout({
   return (
     <div className="flex min-h-dvh">
       <ShowcaseSidebar />
-      <main className="ml-64 flex-1">{children}</main>
+      <main className="flex-1 lg:ml-64">{children}</main>
     </div>
   )
 }
