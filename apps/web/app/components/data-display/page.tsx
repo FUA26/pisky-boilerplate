@@ -9,7 +9,7 @@ import { Separator } from "@workspace/ui/components/separator"
 
 export default function DataDisplayPage() {
   return (
-    <div className="container px-8 py-12">
+    <div className="container px-4 py-12 pt-20 lg:px-8 lg:pt-12">
       <div className="max-w-4xl space-y-16">
         {/* Card Section */}
         <section id="card" className="scroll-mt-8 space-y-8">

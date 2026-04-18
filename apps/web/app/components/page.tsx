@@ -4,7 +4,7 @@ import { cn } from "@workspace/ui/lib/utils"
 
 export default function ComponentsPage() {
   return (
-    <div className="container px-8 py-12">
+    <div className="container px-4 py-12 pt-20 lg:px-8 lg:pt-12">
       <div className="max-w-4xl space-y-8">
         <div>
           <h1 className="text-3xl font-bold tracking-tight text-foreground">
