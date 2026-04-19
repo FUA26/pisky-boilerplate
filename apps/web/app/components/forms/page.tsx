@@ -180,6 +180,97 @@ import { Input } from "@workspace/ui/components/input"
               />
             </div>
           </section>
+
+          <Separator />
+
+          <section id="field" className="scroll-mt-8 space-y-8">
+            <div>
+              <h2 className="text-3xl font-bold tracking-tight text-foreground">
+                Field
+              </h2>
+              <p className="mt-2 text-muted-foreground">
+                A form field wrapper with label and description.
+              </p>
+            </div>
+
+            <div className="space-y-4">
+              <PreviewCodeTabs
+                preview={
+                  <div className="space-y-2">
+                    <Label>Email address</Label>
+                    <Input
+                      id="email"
+                      type="email"
+                      placeholder="your@email.com"
+                    />
+                    <p className="text-sm text-muted-foreground">
+                      We'll never share your email with anyone else.
+                    </p>
+                  </div>
+                }
+                code={`import { Label } from "@workspace/ui/components/label"
+import { Input } from "@workspace/ui/components/input"
+
+<div className="space-y-2">
+  <Label>Email address</Label>
+  <Input id="email" type="email" placeholder="your@email.com" />
+  <p className="text-sm text-muted-foreground">
+    We'll never share your email with anyone else.
+  </p>
+</div>`}
+              />
+            </div>
+          </section>
+
+          <Separator />
+
+          <section id="form" className="scroll-mt-8 space-y-8">
+            <div>
+              <h2 className="text-3xl font-bold tracking-tight text-foreground">
+                Form
+              </h2>
+              <p className="mt-2 text-muted-foreground">
+                Reactive form integration with validation.
+              </p>
+            </div>
+
+            <div className="space-y-4">
+              <PreviewCodeTabs
+                preview={
+                  <form className="space-y-4">
+                    <div className="space-y-2">
+                      <Label htmlFor="name">Name</Label>
+                      <Input id="name" placeholder="John Doe" />
+                    </div>
+                    <div className="space-y-2">
+                      <Label htmlFor="email">Email</Label>
+                      <Input
+                        id="email"
+                        type="email"
+                        placeholder="your@email.com"
+                      />
+                    </div>
+                    <Button type="submit">Submit</Button>
+                  </form>
+                }
+                code={`import { Label } from "@workspace/ui/components/label"
+import { Input } from "@workspace/ui/components/input"
+import { Button } from "@workspace/ui/components/button"
+
+<form className="space-y-4">
+  <div className="space-y-2">
+    <Label htmlFor="name">Name</Label>
+    <Input id="name" placeholder="John Doe" />
+  </div>
+  <div className="space-y-2">
+    <Label htmlFor="email">Email</Label>
+    <Input id="email" type="email" placeholder="your@email.com" />
+  </div>
+  <Button type="submit">Submit</Button>
+</form>`}
+              />
+            </div>
+          </section>
         </section>
       </div>
     </div>

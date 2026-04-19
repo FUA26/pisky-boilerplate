@@ -17,7 +17,8 @@ export function ShowcaseSidebar() {
   }
 
   const isComponentActive = (path: string) => {
-    return pathname.endsWith(path.split("#")[1])
+    const hash = path.split("#")[1]
+    return hash ? pathname.endsWith(hash) : false
   }
 
   return (

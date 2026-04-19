@@ -200,6 +200,55 @@ import { MoreHorizontal } from "lucide-react"
             />
           </div>
         </section>
+
+        <section id="sidebar" className="scroll-mt-8 space-y-8">
+          <div>
+            <h1 className="text-3xl font-bold tracking-tight text-foreground">
+              Sidebar
+            </h1>
+            <p className="mt-2 text-muted-foreground">
+              Collapsible sidebar navigation.
+            </p>
+          </div>
+
+          <div className="space-y-4">
+            <h2 className="text-xl font-semibold text-foreground">Default</h2>
+            <PreviewCodeTabs
+              preview={
+                <div className="flex h-[300px] w-[250px] flex-col gap-4 rounded-lg border p-4">
+                  <div className="flex items-center gap-2">
+                    <div className="size-8 rounded-full bg-muted" />
+                    <span className="font-medium">App Name</span>
+                  </div>
+                  <div className="flex-1 space-y-1">
+                    <div className="rounded-md bg-muted px-3 py-2 text-sm">
+                      Dashboard
+                    </div>
+                    <div className="rounded-md bg-muted/50 px-3 py-2 text-sm text-muted-foreground">
+                      Settings
+                    </div>
+                    <div className="rounded-md bg-muted/50 px-3 py-2 text-sm text-muted-foreground">
+                      Profile
+                    </div>
+                  </div>
+                </div>
+              }
+              code={`import { cn } from "@workspace/ui/lib/utils"
+
+<div className="flex h-[300px] w-[250px] flex-col gap-4 rounded-lg border p-4">
+  <div className="flex items-center gap-2">
+    <div className="size-8 rounded-full bg-muted" />
+    <span className="font-medium">App Name</span>
+  </div>
+  <div className="flex-1 space-y-1">
+    <div className="rounded-md bg-muted px-3 py-2 text-sm">Dashboard</div>
+    <div className="rounded-md bg-muted/50 px-3 py-2 text-sm text-muted-foreground">Settings</div>
+    <div className="rounded-md bg-muted/50 px-3 py-2 text-sm text-muted-foreground">Profile</div>
+  </div>
+</div>`}
+            />
+          </div>
+        </section>
       </div>
     </div>
   )
