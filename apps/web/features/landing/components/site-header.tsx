@@ -1,0 +1,193 @@
+"use client"
+
+import Link from "next/link"
+import { useTheme } from "next-themes"
+import { Button } from "@workspace/ui/components/button"
+import { Menu, Moon, Sun, X } from "lucide-react"
+import { useState, useEffect } from "react"
+
+export function SiteHeader() {
+  const { theme, setTheme } = useTheme()
+  const [isMenuOpen, setIsMenuOpen] = useState(false)
+  const [mounted, setMounted] = useState(false)
+
+  useEffect(() => {
+    setMounted(true)
+  }, [])
+
+  return (
+    <header className="sticky top-0 z-50 w-full border-b border-border/40 bg-background/80 backdrop-blur-xl supports-[backdrop-filter]:bg-background/60">
+      <div className="container flex h-16 items-center justify-between">
+        {/* Logo */}
+        <Link href="/" className="group flex items-center gap-2">
+          <div className="relative flex h-8 w-8 items-center justify-center rounded-lg bg-primary text-primary-foreground transition-transform group-hover:scale-105">
+            <svg
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke="currentColor"
+              strokeWidth="2.5"
+              strokeLinecap="round"
+              strokeLinejoin="round"
+              className="h-4 w-4"
+            >
+              <path d="m12 19-7-7 7-7" />
+              <path d="m19 19-7-7 7-7" />
+            </svg>
+          </div>
+          <span className="font-heading text-lg font-semibold tracking-tight">
+            zilpo
+          </span>
+        </Link>
+
+        {/* Desktop Navigation */}
+        <nav className="hidden md:flex md:items-center md:gap-1">
+          <NavLink href="#features">Features</NavLink>
+          <NavLink href="#docs">Docs</NavLink>
+          <NavLink href="https://github.com" target="_blank" rel="noreferrer">
+            GitHub
+          </NavLink>
+        </nav>
+
+        {/* Actions */}
+        <div className="flex items-center gap-2">
+          {/* Theme Toggle */}
+          {mounted && (
+            <button
+              onClick={() => setTheme(theme === "dark" ? "light" : "dark")}
+              className="group relative inline-flex h-9 w-9 items-center justify-center rounded-lg transition-colors hover:bg-accent focus-visible:ring-1 focus-visible:ring-ring focus-visible:outline-none"
+              aria-label="Toggle theme"
+            >
+              <Sun className="h-4 w-4 scale-100 rotate-0 transition-all dark:scale-0 dark:-rotate-90" />
+              <Moon className="absolute h-4 w-4 scale-0 rotate-90 transition-all dark:scale-100 dark:rotate-0" />
+            </button>
+          )}
+
+          {/* CTA Button - Desktop */}
+          <div className="hidden md:flex md:items-center md:gap-2">
+            <Button variant="ghost" size="sm" asChild>
+              <Link href="/auth/sign-in">Sign in</Link>
+            </Button>
+            <Button size="sm" className="gap-1.5" asChild>
+              <Link href="/auth/sign-up">
+                Start Building
+                <svg
+                  className="h-3.5 w-3.5 transition-transform group-hover:translate-x-0.5"
+                  viewBox="0 0 24 24"
+                  fill="none"
+                  stroke="currentColor"
+                  strokeWidth="2.5"
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                >
+                  <path d="M5 12h14" />
+                  <path d="m12 5 7 7-7 7" />
+                </svg>
+              </Link>
+            </Button>
+          </div>
+
+          {/* Mobile Menu Toggle */}
+          <button
+            onClick={() => setIsMenuOpen(!isMenuOpen)}
+            className="group relative inline-flex h-9 w-9 items-center justify-center rounded-lg transition-colors hover:bg-accent focus-visible:ring-1 focus-visible:ring-ring focus-visible:outline-none md:hidden"
+            aria-label="Toggle menu"
+          >
+            {isMenuOpen ? (
+              <X className="h-5 w-5 transition-all" />
+            ) : (
+              <Menu className="h-5 w-5 transition-all" />
+            )}
+          </button>
+        </div>
+      </div>
+
+      {/* Mobile Menu */}
+      {isMenuOpen && (
+        <div className="border-t border-border/40 bg-background/95 backdrop-blur-xl md:hidden">
+          <nav className="container flex flex-col gap-1 py-4">
+            <MobileNavLink
+              href="#features"
+              onClick={() => setIsMenuOpen(false)}
+            >
+              Features
+            </MobileNavLink>
+            <MobileNavLink href="#docs" onClick={() => setIsMenuOpen(false)}>
+              Docs
+            </MobileNavLink>
+            <MobileNavLink
+              href="https://github.com"
+              target="_blank"
+              rel="noreferrer"
+              onClick={() => setIsMenuOpen(false)}
+            >
+              GitHub
+            </MobileNavLink>
+            <div className="my-2 h-px bg-border/40" />
+            <MobileNavLink
+              href="/auth/sign-in"
+              onClick={() => setIsMenuOpen(false)}
+            >
+              Sign in
+            </MobileNavLink>
+            <Button
+              size="sm"
+              className="mt-2 justify-center gap-1.5"
+              asChild
+              onClick={() => setIsMenuOpen(false)}
+            >
+              <Link href="/auth/sign-up">
+                Start Building
+                <svg
+                  className="h-3.5 w-3.5"
+                  viewBox="0 0 24 24"
+                  fill="none"
+                  stroke="currentColor"
+                  strokeWidth="2.5"
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                >
+                  <path d="M5 12h14" />
+                  <path d="m12 5 7 7-7 7" />
+                </svg>
+              </Link>
+            </Button>
+          </nav>
+        </div>
+      )}
+    </header>
+  )
+}
+
+function NavLink({
+  href,
+  children,
+  ...props
+}: React.ComponentProps<typeof Link>) {
+  return (
+    <Link
+      href={href}
+      className="relative rounded-lg px-3 py-1.5 text-sm font-medium text-muted-foreground transition-colors hover:bg-accent/50 hover:text-foreground focus-visible:ring-1 focus-visible:ring-ring focus-visible:outline-none"
+      {...props}
+    >
+      {children}
+    </Link>
+  )
+}
+
+function MobileNavLink({
+  href,
+  children,
+  onClick,
+  ...props
+}: React.ComponentProps<typeof Link> & { onClick?: () => void }) {
+  return (
+    <Link
+      href={href}
+      onClick={onClick}
+      className="rounded-lg px-3 py-2 text-base font-medium text-muted-foreground transition-colors hover:bg-accent/50 hover:text-foreground focus-visible:ring-1 focus-visible:ring-ring focus-visible:outline-none"
+      {...props}
+    >
+      {children}
+    </Link>
+  )
+}

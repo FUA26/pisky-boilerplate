@@ -1,0 +1,4 @@
+{"type":"server-started","port":61125,"host":"0.0.0.0","url_host":"172.16.25.161","url":"http://172.16.25.161:61125","screen_dir":"/home/acn/main/zilpo/.superpowers/brainstorm/1625073-1776466172/content","state_dir":"/home/acn/main/zilpo/.superpowers/brainstorm/1625073-1776466172/state"}
+{"type":"screen-added","file":"/home/acn/main/zilpo/.superpowers/brainstorm/1625073-1776466172/content/hero-layout.html"}
+{"type":"screen-added","file":"/home/acn/main/zilpo/.superpowers/brainstorm/1625073-1776466172/content/waiting.html"}
+{"type":"server-stopped","reason":"idle timeout"}

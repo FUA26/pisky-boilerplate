@@ -9,6 +9,7 @@ import {
   SidebarContent,
   SidebarHeader,
   SidebarRail,
+  SidebarSeparator,
 } from "@workspace/ui/components/sidebar"
 import {
   ShieldIcon,
@@ -203,6 +204,7 @@ export function BackofficeSidebar({
       <SidebarHeader>
         <WorkspaceSwitcher workspaces={data.workspaces} />
       </SidebarHeader>
+      <SidebarSeparator />
       <SidebarContent>
         <NavMain items={data.navMain} />
       </SidebarContent>
