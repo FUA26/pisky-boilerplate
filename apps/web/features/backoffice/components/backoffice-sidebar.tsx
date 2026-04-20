@@ -200,11 +200,15 @@ export function BackofficeSidebar({
   ...props
 }: React.ComponentProps<typeof Sidebar>) {
   return (
-    <Sidebar collapsible="icon" {...props}>
-      <SidebarHeader>
+    <Sidebar
+      collapsible="icon"
+      className="border-r bg-sidebar text-sidebar-foreground"
+      {...props}
+    >
+      <SidebarHeader className="border-b border-sidebar-border">
         <WorkspaceSwitcher workspaces={data.workspaces} />
       </SidebarHeader>
-      <SidebarSeparator />
+      <SidebarSeparator className="bg-sidebar-border" />
       <SidebarContent>
         <NavMain items={data.navMain} />
       </SidebarContent>
