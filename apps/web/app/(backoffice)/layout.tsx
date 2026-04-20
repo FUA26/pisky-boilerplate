@@ -1,6 +1,11 @@
 import { BackofficeSidebar } from "@/features/backoffice/components/backoffice-sidebar"
 import { HeaderNavUser } from "@/features/backoffice/components/header-nav-user"
 import {
+  HeaderSearch,
+  HeaderSearchMobile,
+} from "@/features/backoffice/components/header-search"
+import { HeaderNotifications } from "@/features/backoffice/components/header-notifications"
+import {
   Breadcrumb,
   BreadcrumbItem,
   BreadcrumbLink,
@@ -43,7 +48,12 @@ export default function BackofficeLayout({
               </BreadcrumbList>
             </Breadcrumb>
           </div>
-          <HeaderNavUser />
+          <div className="flex items-center gap-2 px-4">
+            <HeaderSearch />
+            <HeaderSearchMobile />
+            <HeaderNotifications />
+            <HeaderNavUser />
+          </div>
         </header>
         <div className="flex flex-1 flex-col gap-4 p-4 pt-0">{children}</div>
       </SidebarInset>
