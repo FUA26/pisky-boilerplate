@@ -1,17 +1,43 @@
-import { Geist, Geist_Mono, Inter } from "next/font/google"
+import { Geist_Mono, Inter, Manrope } from "next/font/google"
 
 import "@workspace/ui/globals.css"
 import { ThemeProvider } from "@/features/shared/components/theme-provider"
 import { Toaster } from "@workspace/ui/components/sonner"
 import { TooltipProvider } from "@workspace/ui/components/tooltip"
-import { cn } from "@workspace/ui/lib/utils"
 
-const inter = Inter({ subsets: ["latin"], variable: "--font-sans" })
+const inter = Inter({
+  subsets: ["latin"],
+  variable: "--font-sans",
+  display: "swap",
+})
+
+const manrope = Manrope({
+  subsets: ["latin"],
+  variable: "--font-heading",
+  weight: ["500", "600", "700", "800"],
+  display: "swap",
+})
 
 const fontMono = Geist_Mono({
   subsets: ["latin"],
   variable: "--font-mono",
+  display: "swap",
 })
+
+export const metadata = {
+  title: "Zilpo - Next.js SaaS Starter Template",
+  description:
+    "Ship faster with opinionated patterns. A modern Next.js 16 + React 16 SaaS starter template built with shadcn/ui.",
+  keywords: ["Next.js", "SaaS", "starter", "template", "shadcn/ui"],
+  authors: [{ name: "Zilpo" }],
+  openGraph: {
+    title: "Zilpo - Next.js SaaS Starter Template",
+    description:
+      "Ship faster with opinionated patterns. A modern Next.js 16 + React 16 SaaS starter template built with shadcn/ui.",
+    type: "website",
+    url: "https://zilpo.dev",
+  },
+}
 
 export default function RootLayout({
   children,
@@ -22,18 +48,13 @@ export default function RootLayout({
     <html
       lang="en"
       suppressHydrationWarning
-      className={cn(
-        "antialiased",
-        fontMono.variable,
-        "font-sans",
-        inter.variable
-      )}
+      className={`antialiased ${fontMono.variable} ${manrope.variable} font-sans ${inter.variable}`}
     >
       <body>
         <ThemeProvider>
           <TooltipProvider>{children}</TooltipProvider>
+          <Toaster />
         </ThemeProvider>
-        <Toaster />
       </body>
     </html>
   )
