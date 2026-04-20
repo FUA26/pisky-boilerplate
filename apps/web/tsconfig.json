@@ -7,8 +7,7 @@
       "@workspace/ui/*": ["../../packages/ui/src/*"],
       "@/features/*": ["./features/*"],
       "@/features/auth/*": ["./features/auth/*"],
-      "@/features/dashboard/*": ["./features/dashboard/*"],
-      "@/features/shared/*": ["./features/shared/*"]
+      "@/features/dashboard/*": ["./features/dashboard/*"]
     },
     "plugins": [
       {

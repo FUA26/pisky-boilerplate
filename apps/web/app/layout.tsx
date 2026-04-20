@@ -1,7 +1,7 @@
 import { Geist_Mono, Inter, Manrope } from "next/font/google"
 
 import "@workspace/ui/globals.css"
-import { ThemeProvider } from "@/features/shared/components/theme-provider"
+import { ThemeProvider } from "@/components/theme-provider"
 import { Toaster } from "@workspace/ui/components/sonner"
 import { TooltipProvider } from "@workspace/ui/components/tooltip"
 
