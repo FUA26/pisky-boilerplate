@@ -111,25 +111,13 @@ export function NavMain({
                   }
                 >
                   <CollapsibleTrigger asChild>
-                    <button
-                      type="button"
-                      aria-expanded={isItemActive}
-                      aria-label={`${isItemActive ? "Collapse" : "Expand"} ${item.title} menu`}
-                      className={cn(
-                        "group/link relative flex h-9 w-full items-center gap-3 rounded-lg px-2.5 text-sm font-medium transition-all duration-200 ease-out",
-                        "group-data-[collapsible=icon]:size-7 group-data-[collapsible=icon]:justify-center group-data-[collapsible=icon]:gap-0 group-data-[collapsible=icon]:p-0",
-                        "focus-visible:ring-2 focus-visible:ring-sidebar-ring/70 focus-visible:outline-none",
-                        "hover:scale-[1.01] hover:shadow-sm",
-                        "group-data-[collapsible=icon]:hover:scale-110",
-                        isItemActive
-                          ? "active-enter cursor-pointer bg-primary text-primary-foreground shadow-sm group-data-[collapsible=icon]:bg-primary"
-                          : "cursor-pointer text-sidebar-foreground/80 group-data-[collapsible=icon]:bg-transparent hover:bg-sidebar-accent hover:text-sidebar-foreground"
-                      )}
+                    <SidebarMenuButton
+                      tooltip={item.title}
+                      isActive={isItemActive}
                     >
                       <span
                         className={cn(
                           "inline-flex size-4 shrink-0 items-center justify-center transition-all duration-200 ease-out [&_svg]:size-4",
-                          "group-hover/link:scale-110",
                           isItemActive
                             ? "text-primary-foreground"
                             : "text-sidebar-primary"
@@ -137,20 +125,20 @@ export function NavMain({
                       >
                         {item.icon}
                       </span>
-                      <span className="flex h-full min-w-0 flex-1 items-center truncate text-left text-sm leading-none group-data-[collapsible=icon]:hidden">
+                      <span className="flex h-full min-w-0 flex-1 items-center truncate text-left text-sm leading-none">
                         {item.title}
                       </span>
                       <span
                         className={cn(
-                          "inline-flex size-4 shrink-0 items-center justify-center transition-all duration-300 ease-out group-data-[collapsible=icon]:hidden [&_svg]:size-4",
-                          "text-muted-foreground group-hover/link:group-hover/collapsible:text-foreground",
+                          "inline-flex size-4 shrink-0 items-center justify-center transition-all duration-300 ease-out [&_svg]:size-4",
+                          "text-muted-foreground",
                           isItemActive && "text-primary-foreground/80",
                           "group-data-[state=open]/collapsible:rotate-90"
                         )}
                       >
                         <ChevronRightIcon />
                       </span>
-                    </button>
+                    </SidebarMenuButton>
                   </CollapsibleTrigger>
                   <CollapsibleContent>
                     <SidebarMenuSub className="mt-1 px-2">
