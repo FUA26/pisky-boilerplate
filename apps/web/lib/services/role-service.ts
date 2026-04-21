@@ -1,4 +1,5 @@
 import { prisma } from "@/lib/prisma"
+import { invalidatePermissionCache } from "@/lib/rbac/permissions"
 
 export interface CreateRoleInput {
   name: string
@@ -46,14 +47,14 @@ export const roleService = {
       include: { permissions: true },
     })
 
-    // Invalidate all users with this role
+    // Invalidate permission caches for all users with this role
     const users = await prisma.user.findMany({
       where: { roleId: id },
       select: { id: true },
     })
 
     for (const user of users) {
-      await prisma.permissionCache.delete({ where: { userId: user.id } })
+      await invalidatePermissionCache(user.id)
     }
 
     return role
