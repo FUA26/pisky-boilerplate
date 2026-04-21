@@ -79,14 +79,14 @@
   --chart-4: oklch(0.532 0.157 131.589);
   --chart-5: oklch(0.453 0.124 130.933);
   --radius: 0.625rem;
-  /* Sidebar is now pure white */
-  --sidebar: oklch(1 0 0);
+  /* Sidebar with subtle brand teal tint */
+  --sidebar: oklch(0.998 0.002 165);
   --sidebar-foreground: oklch(0.145 0 0);
   --sidebar-primary: oklch(0.596 0.145 163.225);
   --sidebar-primary-foreground: oklch(0.979 0.021 166.113);
-  --sidebar-accent: oklch(0.97 0 0);
+  --sidebar-accent: oklch(0.95 0.015 165);
   --sidebar-accent-foreground: oklch(0.205 0 0);
-  --sidebar-border: oklch(0.922 0 0);
+  --sidebar-border: oklch(0.92 0.003 165);
   --sidebar-ring: oklch(0.708 0 0);
   /* Header is pure white */
   --header: oklch(1 0 0);
@@ -118,14 +118,14 @@
   --chart-3: oklch(0.648 0.2 131.684);
   --chart-4: oklch(0.532 0.157 131.589);
   --chart-5: oklch(0.453 0.124 130.933);
-  /* Sidebar is now darker (card color) */
-  --sidebar: oklch(0.145 0 0);
+  /* Sidebar with subtle brand teal tint */
+  --sidebar: oklch(0.148 0.003 165);
   --sidebar-foreground: oklch(0.985 0 0);
   --sidebar-primary: oklch(0.696 0.17 162.48);
   --sidebar-primary-foreground: oklch(0.262 0.051 172.552);
-  --sidebar-accent: oklch(0.269 0 0);
+  --sidebar-accent: oklch(0.22 0.01 165);
   --sidebar-accent-foreground: oklch(0.985 0 0);
-  --sidebar-border: oklch(1 0 0 / 10%);
+  --sidebar-border: oklch(1 0 0 / 12%);
   --sidebar-ring: oklch(0.556 0 0);
   /* Header is darker gray */
   --header: oklch(0.145 0 0);

@@ -81,12 +81,12 @@ export function NavMain({
                           "inline-flex size-4 shrink-0 items-center justify-center transition-all duration-200 ease-out [&_svg]:size-4",
                           isItemActive
                             ? "text-primary-foreground"
-                            : "text-sidebar-primary"
+                            : "text-sidebar-primary group-hover/menu-button:scale-110 group-hover/menu-button:text-teal-600 dark:group-hover/menu-button:text-teal-400"
                         )}
                       >
                         {item.icon}
                       </span>
-                      <span className="flex h-full min-w-0 flex-1 items-center truncate text-left text-sm leading-none">
+                      <span className="flex h-full min-w-0 flex-1 items-center truncate text-left text-sm leading-none transition-colors group-hover/menu-button:text-teal-700 dark:group-hover/menu-button:text-teal-300">
                         {item.title}
                       </span>
                     </a>
@@ -120,12 +120,12 @@ export function NavMain({
                           "inline-flex size-4 shrink-0 items-center justify-center transition-all duration-200 ease-out [&_svg]:size-4",
                           isItemActive
                             ? "text-primary-foreground"
-                            : "text-sidebar-primary"
+                            : "text-sidebar-primary group-hover/menu-button:scale-110 group-hover/menu-button:text-teal-600 dark:group-hover/menu-button:text-teal-400"
                         )}
                       >
                         {item.icon}
                       </span>
-                      <span className="flex h-full min-w-0 flex-1 items-center truncate text-left text-sm leading-none">
+                      <span className="flex h-full min-w-0 flex-1 items-center truncate text-left text-sm leading-none transition-colors group-hover/menu-button:text-teal-700 dark:group-hover/menu-button:text-teal-300">
                         {item.title}
                       </span>
                       <span
@@ -133,7 +133,8 @@ export function NavMain({
                           "inline-flex size-4 shrink-0 items-center justify-center transition-all duration-300 ease-out [&_svg]:size-4",
                           "text-muted-foreground",
                           isItemActive && "text-primary-foreground/80",
-                          "group-data-[state=open]/collapsible:rotate-90"
+                          "group-data-[state=open]/collapsible:rotate-90",
+                          "group-hover/menu-button:text-teal-600 dark:group-hover/menu-button:text-teal-400"
                         )}
                       >
                         <ChevronRightIcon />
@@ -166,7 +167,7 @@ export function NavMain({
                                   subItemActive ? "page" : undefined
                                 }
                               >
-                                <span className="transition-transform duration-200 group-hover/sublink:scale-105">
+                                <span className="transition-transform duration-200 group-hover/sublink:scale-105 group-hover/sublink:text-teal-700 dark:group-hover/sublink:text-teal-300">
                                   {subItem.title}
                                 </span>
                               </a>
