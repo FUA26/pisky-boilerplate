@@ -17,6 +17,7 @@ import {
 import { ChevronRightIcon } from "lucide-react"
 import { usePathname } from "next/navigation"
 import { cn } from "@workspace/ui/lib/utils"
+import * as React from "react"
 
 function matchesPath(pathname: string, url: string) {
   return pathname === url || pathname.startsWith(`${url}/`)
@@ -41,12 +42,12 @@ export function NavMain({
 
   return (
     <SidebarGroup className="group-data-[collapsible=icon]:p-0">
-      <SidebarGroupLabel className="text-xs font-medium text-[oklch(0.55_0.008_165)] group-data-[collapsible=icon]/sidebar-wrapper:hidden">
+      <SidebarGroupLabel className="text-xs font-medium text-muted-foreground group-data-[collapsible=icon]/sidebar-wrapper:hidden">
         Navigation
       </SidebarGroupLabel>
       <SidebarGroupContent>
         <SidebarMenu className="gap-2">
-          {items.map((item) => {
+          {items.map((item, index) => {
             const hasSubItems = Boolean(item.items?.length)
             const isLeafActive = matchesPath(pathname, item.url)
             const isSubItemActive = item.items?.some((subItem) =>
@@ -58,28 +59,41 @@ export function NavMain({
 
             if (!hasSubItems) {
               return (
-                <SidebarMenuItem key={item.title}>
+                <SidebarMenuItem
+                  key={item.title}
+                  className="menu-item-enter"
+                  style={
+                    {
+                      "--animation-delay": `${index * 50}ms`,
+                    } as React.CSSProperties
+                  }
+                >
                   <a
                     href={item.url}
+                    aria-current={isItemActive ? "page" : undefined}
                     className={cn(
-                      "flex h-8 items-center gap-3 rounded-lg text-sm font-medium transition-all duration-200",
+                      "group/link relative flex h-9 items-center gap-3 rounded-lg text-sm font-medium transition-all duration-200 ease-out",
+                      "group-data-[collapsible=icon]:size-7 group-data-[collapsible=icon]:justify-center group-data-[collapsible=icon]:p-0",
                       "focus-visible:ring-2 focus-visible:ring-sidebar-ring/70 focus-visible:outline-none",
+                      "hover:scale-[1.01] hover:shadow-sm",
+                      "group-data-[collapsible=icon]:hover:scale-110",
                       isItemActive
-                        ? "cursor-pointer bg-primary px-2 text-primary-foreground shadow-sm hover:opacity-90"
-                        : "cursor-pointer px-4 text-[oklch(0.50_0.012_165)] hover:bg-[oklch(0.96_0.015_165)] hover:text-[oklch(0.35_0.04_165)] hover:shadow-sm"
+                        ? "active-enter cursor-pointer bg-primary px-2.5 text-primary-foreground shadow-sm group-data-[collapsible=icon]:bg-primary group-data-[collapsible=icon]:px-0"
+                        : "cursor-pointer px-2.5 text-sidebar-foreground/80 group-data-[collapsible=icon]:bg-transparent group-data-[collapsible=icon]:px-0 hover:bg-sidebar-accent hover:text-sidebar-foreground"
                     )}
                   >
                     <span
                       className={cn(
-                        "inline-flex size-4 shrink-0 items-center justify-center transition-colors [&_svg]:size-4",
+                        "inline-flex size-4 shrink-0 items-center justify-center transition-all duration-200 ease-out [&_svg]:size-4",
+                        "group-hover/link:scale-110",
                         isItemActive
                           ? "text-primary-foreground"
-                          : "text-[oklch(0.58_0.025_165)]"
+                          : "text-sidebar-primary"
                       )}
                     >
                       {item.icon}
                     </span>
-                    <span className="flex h-full min-w-0 flex-1 items-center truncate text-left text-[15px] leading-none group-data-[collapsible=icon]:hidden">
+                    <span className="flex h-full min-w-0 flex-1 items-center truncate text-left text-sm leading-none group-data-[collapsible=icon]:hidden">
                       {item.title}
                     </span>
                   </a>
@@ -94,34 +108,48 @@ export function NavMain({
                 defaultOpen={isItemActive}
                 className="group/collapsible"
               >
-                <SidebarMenuItem>
+                <SidebarMenuItem
+                  className="menu-item-enter"
+                  style={
+                    {
+                      "--animation-delay": `${index * 50}ms`,
+                    } as React.CSSProperties
+                  }
+                >
                   <CollapsibleTrigger asChild>
                     <button
+                      type="button"
+                      aria-expanded={isItemActive}
+                      aria-label={`${isItemActive ? "Collapse" : "Expand"} ${item.title} menu`}
                       className={cn(
-                        "flex h-8 w-full items-center gap-3 rounded-lg px-2 text-sm font-medium transition-all duration-200",
+                        "group/link relative flex h-9 w-full items-center gap-3 rounded-lg px-2.5 text-sm font-medium transition-all duration-200 ease-out",
+                        "group-data-[collapsible=icon]:size-7 group-data-[collapsible=icon]:justify-center group-data-[collapsible=icon]:gap-0 group-data-[collapsible=icon]:p-0",
                         "focus-visible:ring-2 focus-visible:ring-sidebar-ring/70 focus-visible:outline-none",
+                        "hover:scale-[1.01] hover:shadow-sm",
+                        "group-data-[collapsible=icon]:hover:scale-110",
                         isItemActive
-                          ? "cursor-pointer bg-primary text-primary-foreground shadow-sm hover:opacity-90"
-                          : "cursor-pointer text-[oklch(0.50_0.012_165)] hover:bg-[oklch(0.96_0.015_165)] hover:text-[oklch(0.35_0.04_165)] hover:shadow-sm"
+                          ? "active-enter cursor-pointer bg-primary text-primary-foreground shadow-sm group-data-[collapsible=icon]:bg-primary"
+                          : "cursor-pointer text-sidebar-foreground/80 group-data-[collapsible=icon]:bg-transparent hover:bg-sidebar-accent hover:text-sidebar-foreground"
                       )}
                     >
                       <span
                         className={cn(
-                          "inline-flex size-4 shrink-0 items-center justify-center transition-colors [&_svg]:size-4",
+                          "inline-flex size-4 shrink-0 items-center justify-center transition-all duration-200 ease-out [&_svg]:size-4",
+                          "group-hover/link:scale-110",
                           isItemActive
                             ? "text-primary-foreground"
-                            : "text-[oklch(0.58_0.025_165)]"
+                            : "text-sidebar-primary"
                         )}
                       >
                         {item.icon}
                       </span>
-                      <span className="flex h-full min-w-0 flex-1 items-center truncate text-left text-[15px] leading-none group-data-[collapsible=icon]/sidebar-wrapper:hidden">
+                      <span className="flex h-full min-w-0 flex-1 items-center truncate text-left text-sm leading-none group-data-[collapsible=icon]:hidden">
                         {item.title}
                       </span>
                       <span
                         className={cn(
-                          "inline-flex size-4 shrink-0 items-center justify-center transition-transform duration-200 group-data-[collapsible=icon]:hidden [&_svg]:size-4",
-                          "text-[oklch(0.55_0.015_165)] group-hover/collapsible:text-[oklch(0.45_0.025_165)]",
+                          "inline-flex size-4 shrink-0 items-center justify-center transition-all duration-300 ease-out group-data-[collapsible=icon]:hidden [&_svg]:size-4",
+                          "text-muted-foreground group-hover/link:group-hover/collapsible:text-foreground",
                           isItemActive && "text-primary-foreground/80",
                           "group-data-[state=open]/collapsible:rotate-90"
                         )}
@@ -132,22 +160,34 @@ export function NavMain({
                   </CollapsibleTrigger>
                   <CollapsibleContent>
                     <SidebarMenuSub className="mt-1 px-2">
-                      {item.items?.map((subItem) => {
+                      {item.items?.map((subItem, subIndex) => {
                         const subItemActive = matchesPath(pathname, subItem.url)
 
                         return (
-                          <SidebarMenuSubItem key={subItem.title}>
+                          <SidebarMenuSubItem
+                            key={subItem.title}
+                            className="sub-item-enter"
+                            style={
+                              {
+                                "--animation-delay": `${subIndex * 40}ms`,
+                              } as React.CSSProperties
+                            }
+                          >
                             <a
                               href={subItem.url}
+                              aria-current={subItemActive ? "page" : undefined}
                               className={cn(
-                                "flex h-9 items-center rounded-lg px-3 text-sm font-medium transition-colors",
+                                "group/sublink relative flex h-9 items-center rounded-lg px-3 text-sm font-medium transition-all duration-200 ease-out",
                                 "focus-visible:ring-2 focus-visible:ring-sidebar-ring/70 focus-visible:outline-none",
+                                "hover:translate-x-0.5 hover:scale-[1.01]",
                                 subItemActive
-                                  ? "cursor-pointer bg-primary text-primary-foreground shadow-sm hover:opacity-90"
-                                  : "cursor-pointer text-[oklch(0.52_0.015_165)] hover:bg-[oklch(0.95_0.012_165)] hover:text-[oklch(0.38_0.035_165)]"
+                                  ? "active-enter cursor-pointer bg-primary text-primary-foreground shadow-sm"
+                                  : "cursor-pointer text-sidebar-foreground/70 hover:bg-sidebar-accent hover:text-sidebar-foreground"
                               )}
                             >
-                              <span>{subItem.title}</span>
+                              <span className="transition-transform duration-200 group-hover/sublink:scale-105">
+                                {subItem.title}
+                              </span>
                             </a>
                           </SidebarMenuSubItem>
                         )

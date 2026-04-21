@@ -95,10 +95,10 @@ export function BackofficeSidebar({
   return (
     <Sidebar
       collapsible="icon"
-      className="border-r border-[oklch(0.92_0.002_165)] bg-[oklch(0.998_0.001_165)] text-sidebar-foreground shadow-sm md:shadow-none"
+      className="border-r border-sidebar-border bg-sidebar text-sidebar-foreground shadow-sm md:shadow-none"
       {...props}
     >
-      <SidebarHeader className="h-16 border-b border-[oklch(0.92_0.002_165)] bg-[oklch(0.998_0.001_165)] px-3 group-data-[collapsible=icon]:!h-12 group-data-[collapsible=icon]:items-center group-data-[collapsible=icon]:justify-center group-data-[collapsible=icon]:px-0">
+      <SidebarHeader className="h-16 border-b border-sidebar-border bg-sidebar px-3 group-data-[collapsible=icon]:!h-12 group-data-[collapsible=icon]:items-center group-data-[collapsible=icon]:justify-center group-data-[collapsible=icon]:px-0">
         <TeamSwitcher />
       </SidebarHeader>
       <SidebarContent className="px-3 py-2 group-data-[collapsible=icon]:px-2">

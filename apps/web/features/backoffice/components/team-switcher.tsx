@@ -26,22 +26,27 @@ const teams = [
     name: "Zilpo Dev",
     logo: <Building2Icon className="size-4" />,
     plan: "Development",
+    color: "text-amber-500 dark:text-amber-400",
   },
   {
     name: "Zilpo Staging",
     logo: <StoreIcon className="size-4" />,
     plan: "Staging",
+    color: "text-indigo-500 dark:text-indigo-400",
   },
   {
     name: "Zilpo Production",
     logo: <LayoutDashboardIcon className="size-4" />,
     plan: "Production",
+    color: "text-emerald-500 dark:text-emerald-400",
   },
-]
+] as const
+
+type Team = (typeof teams)[number]
 
 export function TeamSwitcher() {
   const { isMobile, state } = useSidebar()
-  const [activeTeam, setActiveTeam] = React.useState(teams[0])
+  const [activeTeam, setActiveTeam] = React.useState<Team>(teams[0])
   const isCollapsed = state === "collapsed"
 
   if (!activeTeam) {
@@ -53,7 +58,7 @@ export function TeamSwitcher() {
       <DropdownMenuTrigger asChild>
         <button
           className={cn(
-            "flex w-full cursor-pointer items-center gap-2 overflow-hidden rounded-lg p-2 text-left transition-all duration-200 hover:bg-sidebar-accent hover:text-sidebar-accent-foreground data-[state=open]:bg-sidebar-accent data-[state=open]:text-sidebar-accent-foreground",
+            "flex w-full cursor-pointer items-center gap-2 overflow-hidden rounded-lg p-2 text-left transition-all duration-200 hover:bg-sidebar-accent hover:text-sidebar-accent-foreground focus-visible:ring-2 focus-visible:ring-sidebar-ring/70 focus-visible:outline-none data-[state=open]:bg-sidebar-accent data-[state=open]:text-sidebar-accent-foreground",
             isCollapsed &&
               "justify-center gap-0 p-1.5 hover:scale-105 active:scale-95"
           )}
@@ -65,11 +70,11 @@ export function TeamSwitcher() {
             <>
               <div className="grid flex-1 text-left text-sm leading-tight">
                 <span className="truncate font-medium">{activeTeam.name}</span>
-                <span className="truncate text-xs text-sidebar-foreground/70">
+                <span className="truncate text-xs text-muted-foreground">
                   {activeTeam.plan}
                 </span>
               </div>
-              <ChevronsUpDownIcon className="ml-auto size-4 shrink-0 opacity-50" />
+              <ChevronsUpDownIcon className="ml-auto size-4 shrink-0 text-muted-foreground opacity-50 transition-opacity group-hover/button:opacity-100" />
             </>
           )}
         </button>
@@ -80,35 +85,43 @@ export function TeamSwitcher() {
         side={isMobile ? "bottom" : "right"}
         sideOffset={4}
       >
-        <DropdownMenuLabel className="text-xs text-sidebar-foreground/60">
+        <DropdownMenuLabel className="text-xs text-muted-foreground">
           Environments
         </DropdownMenuLabel>
         {teams.map((team, index) => (
           <DropdownMenuItem
             key={team.name}
             onClick={() => setActiveTeam(team)}
-            className="gap-2 p-2"
+            className="gap-2 p-2 focus-visible:bg-accent"
           >
-            <div className="flex size-6 shrink-0 items-center justify-center rounded-sm border bg-sidebar-accent/50">
+            <div
+              className={cn(
+                "flex size-6 shrink-0 items-center justify-center rounded-md border border-border bg-accent/50",
+                team.color
+              )}
+            >
               {team.logo}
             </div>
             <div className="flex flex-col">
               <span className="text-sm font-medium">{team.name}</span>
-              <span className="text-xs text-sidebar-foreground/60">
-                {team.plan}
-              </span>
+              <span className="text-xs text-muted-foreground">{team.plan}</span>
             </div>
-            <DropdownMenuShortcut className="ml-auto">
-              ⌘{index + 1}
-            </DropdownMenuShortcut>
+            {activeTeam.name === team.name && (
+              <span className="ml-auto size-2 rounded-full bg-primary" />
+            )}
+            {activeTeam.name !== team.name && (
+              <DropdownMenuShortcut className="ml-auto text-muted-foreground/50">
+                ⌘{index + 1}
+              </DropdownMenuShortcut>
+            )}
           </DropdownMenuItem>
         ))}
         <DropdownMenuSeparator />
-        <DropdownMenuItem className="gap-2 p-2">
-          <div className="flex size-6 shrink-0 items-center justify-center rounded-sm border">
-            <PlusIcon className="size-4" />
+        <DropdownMenuItem className="gap-2 p-2 focus-visible:bg-accent">
+          <div className="flex size-6 shrink-0 items-center justify-center rounded-md border border-border">
+            <PlusIcon className="size-4 text-muted-foreground" />
           </div>
-          <div className="font-medium text-sidebar-foreground/70">
+          <div className="font-medium text-muted-foreground">
             Add environment
           </div>
         </DropdownMenuItem>
