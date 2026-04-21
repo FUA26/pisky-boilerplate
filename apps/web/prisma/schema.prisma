@@ -26,7 +26,7 @@ model User {
   accounts             Account[]
   permissionCache      PermissionCache?
   sessions             Session[]
-  role                 Role             @relation(fields: [roleId], references: [id])
+  role                 Role             @relation(fields: [roleId], references: [id], onDelete: Restrict)
   uploadedFiles        File[]           @relation("UserUploads")
 }
 
@@ -88,8 +88,8 @@ model Permission {
 }
 
 model RolePermission {
-  roleId       String     @default(cuid())
-  permissionId String     @default(cuid())
+  roleId       String
+  permissionId String
   permission   Permission @relation(fields: [permissionId], references: [id], onDelete: Cascade)
   role         Role       @relation(fields: [roleId], references: [id], onDelete: Cascade)
 
