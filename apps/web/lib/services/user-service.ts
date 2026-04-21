@@ -1,6 +1,6 @@
 import { prisma } from "@/lib/prisma"
 import { hashPassword } from "@/lib/auth/password"
-import { getDefaultRole } from "./role-service"
+import { getDefaultRole } from "@/lib/rbac/roles"
 import { invalidatePermissionCache } from "@/lib/rbac/permissions"
 
 export interface CreateUserInput {
@@ -61,6 +61,21 @@ export const userService = {
   },
 
   async createUser(data: CreateUserInput) {
+    // Check for existing email
+    const existingUser = await prisma.user.findUnique({
+      where: { email: data.email },
+    })
+    if (existingUser) {
+      throw new Error("User with this email already exists")
+    }
+
+    // Validate password
+    const { validatePassword } = await import("@/lib/auth/password")
+    const validation = validatePassword(data.password)
+    if (!validation.valid) {
+      throw new Error(validation.errors.join(", "))
+    }
+
     const defaultRole = data.roleId
       ? await prisma.role.findUnique({ where: { id: data.roleId } })
       : await getDefaultRole()
