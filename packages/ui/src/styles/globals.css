@@ -429,3 +429,24 @@
 .active-enter {
   animation: active-expand 0.3s cubic-bezier(0.16, 1, 0.3, 1) both;
 }
+
+/* Sidebar active state styling - teal background with white text */
+[data-active="true"] {
+  background-color: oklch(0.596 0.145 163.225);
+  color: oklch(0.979 0.021 166.113);
+}
+
+.dark [data-active="true"] {
+  background-color: oklch(0.696 0.17 162.48);
+  color: oklch(0.262 0.051 172.552);
+}
+
+[data-active="true"] .group-hover\/menu-button\:text-teal-600,
+[data-active="true"] .group-hover\/menu-button\:text-teal-700 {
+  color: oklch(0.979 0.021 166.113) !important;
+}
+
+.dark [data-active="true"] .group-hover\/menu-button\:text-teal-400,
+.dark [data-active="true"] .group-hover\/menu-button\:text-teal-300 {
+  color: oklch(0.262 0.051 172.552) !important;
+}

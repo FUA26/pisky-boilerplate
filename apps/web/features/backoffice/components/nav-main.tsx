@@ -75,18 +75,34 @@ export function NavMain({
                     isActive={isItemActive}
                     asChild
                   >
-                    <a href={item.url}>
+                    <a
+                      href={item.url}
+                      className={cn(
+                        "relative flex h-9 items-center gap-3 rounded-lg text-sm font-medium transition-all duration-200 ease-out",
+                        "focus-visible:ring-2 focus-visible:ring-sidebar-ring/70 focus-visible:outline-none",
+                        isItemActive
+                          ? "bg-teal-600 text-white shadow-sm"
+                          : "text-sidebar-foreground/80 hover:bg-sidebar-accent hover:text-sidebar-foreground"
+                      )}
+                    >
                       <span
                         className={cn(
                           "inline-flex size-4 shrink-0 items-center justify-center transition-all duration-200 ease-out [&_svg]:size-4",
                           isItemActive
-                            ? "text-primary-foreground"
-                            : "text-sidebar-primary group-hover/menu-button:scale-110 group-hover/menu-button:text-teal-600 dark:group-hover/menu-button:text-teal-400"
+                            ? "text-white"
+                            : "text-sidebar-primary group-hover/link:scale-110 group-hover/link:text-teal-600 dark:group-hover/link:text-teal-400"
                         )}
                       >
                         {item.icon}
                       </span>
-                      <span className="flex h-full min-w-0 flex-1 items-center truncate text-left text-sm leading-none transition-colors group-hover/menu-button:text-teal-700 dark:group-hover/menu-button:text-teal-300">
+                      <span
+                        className={cn(
+                          "flex h-full min-w-0 flex-1 items-center truncate text-left text-sm leading-none",
+                          isItemActive
+                            ? "text-white"
+                            : "group-hover/link:text-teal-700 dark:group-hover/link:text-teal-300"
+                        )}
+                      >
                         {item.title}
                       </span>
                     </a>
@@ -119,22 +135,30 @@ export function NavMain({
                         className={cn(
                           "inline-flex size-4 shrink-0 items-center justify-center transition-all duration-200 ease-out [&_svg]:size-4",
                           isItemActive
-                            ? "text-primary-foreground"
+                            ? "text-white"
                             : "text-sidebar-primary group-hover/menu-button:scale-110 group-hover/menu-button:text-teal-600 dark:group-hover/menu-button:text-teal-400"
                         )}
                       >
                         {item.icon}
                       </span>
-                      <span className="flex h-full min-w-0 flex-1 items-center truncate text-left text-sm leading-none transition-colors group-hover/menu-button:text-teal-700 dark:group-hover/menu-button:text-teal-300">
+                      <span
+                        className={cn(
+                          "flex h-full min-w-0 flex-1 items-center truncate text-left text-sm leading-none",
+                          isItemActive
+                            ? "text-white"
+                            : "group-hover/menu-button:text-teal-700 dark:group-hover/menu-button:text-teal-300"
+                        )}
+                      >
                         {item.title}
                       </span>
                       <span
                         className={cn(
                           "inline-flex size-4 shrink-0 items-center justify-center transition-all duration-300 ease-out [&_svg]:size-4",
                           "text-muted-foreground",
-                          isItemActive && "text-primary-foreground/80",
-                          "group-data-[state=open]/collapsible:rotate-90",
-                          "group-hover/menu-button:text-teal-600 dark:group-hover/menu-button:text-teal-400"
+                          isItemActive
+                            ? "text-white/80"
+                            : "group-hover/menu-button:text-teal-600 dark:group-hover/menu-button:text-teal-400",
+                          "group-data-[state=open]/collapsible:rotate-90"
                         )}
                       >
                         <ChevronRightIcon />
@@ -166,8 +190,22 @@ export function NavMain({
                                 aria-current={
                                   subItemActive ? "page" : undefined
                                 }
+                                className={cn(
+                                  "relative flex h-9 items-center rounded-lg px-3 text-sm font-medium transition-all duration-200 ease-out",
+                                  "focus-visible:ring-2 focus-visible:ring-sidebar-ring/70 focus-visible:outline-none",
+                                  subItemActive
+                                    ? "bg-teal-600 text-white shadow-sm"
+                                    : "text-sidebar-foreground/70 hover:bg-sidebar-accent hover:text-sidebar-foreground"
+                                )}
                               >
-                                <span className="transition-transform duration-200 group-hover/sublink:scale-105 group-hover/sublink:text-teal-700 dark:group-hover/sublink:text-teal-300">
+                                <span
+                                  className={cn(
+                                    "transition-transform duration-200",
+                                    subItemActive
+                                      ? "text-white"
+                                      : "group-hover/sublink:scale-105 group-hover/sublink:text-teal-700 dark:group-hover/sublink:text-teal-300"
+                                  )}
+                                >
                                   {subItem.title}
                                 </span>
                               </a>
