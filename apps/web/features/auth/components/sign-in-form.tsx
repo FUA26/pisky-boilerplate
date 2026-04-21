@@ -2,6 +2,7 @@
 
 import Link from "next/link"
 import { useRouter } from "next/navigation"
+import { signIn } from "next-auth/react"
 import { useForm } from "react-hook-form"
 import { zodResolver } from "@hookform/resolvers/zod"
 import { toast } from "sonner"
@@ -32,19 +33,18 @@ export function SignInForm() {
 
   const onSubmit = async (data: SignInInput) => {
     try {
-      const result = await fetch("/api/auth/callback/credentials", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(data),
+      const result = await signIn("credentials", {
+        email: data.email,
+        password: data.password,
+        redirect: false,
       })
 
-      if (result.ok) {
-        toast.success("Signed in successfully")
-        router.push("/")
-        router.refresh()
+      if (result?.error) {
+        toast.error("Invalid email or password")
       } else {
-        const error = await result.json()
-        toast.error(error.message || "Failed to sign in")
+        toast.success("Signed in successfully")
+        router.push("/dashboard")
+        router.refresh()
       }
     } catch {
       toast.error("Something went wrong. Please try again.")
@@ -71,6 +71,7 @@ export function SignInForm() {
             placeholder="m@example.com"
             {...form.register("email")}
             className="bg-background"
+            disabled={form.formState.isSubmitting}
           />
           {form.formState.errors.email && (
             <FieldDescription className="text-destructive">
@@ -93,6 +94,7 @@ export function SignInForm() {
             type="password"
             {...form.register("password")}
             className="bg-background"
+            disabled={form.formState.isSubmitting}
           />
           {form.formState.errors.password && (
             <FieldDescription className="text-destructive">
