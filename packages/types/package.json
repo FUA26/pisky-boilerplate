@@ -9,5 +9,8 @@
     "./rbac": "./src/rbac/index.ts",
     "./auth": "./src/auth/index.ts",
     "./api": "./src/api/index.ts"
+  },
+  "peerDependencies": {
+    "next-auth": "beta"
   }
 }

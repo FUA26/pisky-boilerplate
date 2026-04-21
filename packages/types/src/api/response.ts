@@ -3,7 +3,7 @@ export interface ApiResponse<T = unknown> {
   message?: string
 }
 
-export interface ApiError {
+export interface ApiErrorResponse {
   error: string
   message?: string
   statusCode: number
