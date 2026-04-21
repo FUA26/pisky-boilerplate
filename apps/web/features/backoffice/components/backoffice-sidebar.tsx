@@ -3,62 +3,28 @@
 import * as React from "react"
 
 import { NavMain } from "@/features/backoffice/components/nav-main"
-import { WorkspaceSwitcher } from "@/features/backoffice/components/workspace-switcher"
+import { TeamSwitcher } from "@/features/backoffice/components/team-switcher"
 import {
   Sidebar,
   SidebarContent,
   SidebarHeader,
   SidebarRail,
-  SidebarSeparator,
 } from "@workspace/ui/components/sidebar"
 import {
-  ShieldIcon,
   UsersIcon,
   BarChartIcon,
   SettingsIcon,
-  FileTextIcon,
-  ShoppingCartIcon,
   PackageIcon,
-  TagIcon,
-  HeadphonesIcon,
-  MegaphoneIcon,
-  LayoutGridIcon,
-  DatabaseIcon,
+  ShoppingCartIcon,
 } from "lucide-react"
 
 const data = {
-  workspaces: [
-    {
-      name: "Backoffice",
-      logo: <ShieldIcon />,
-      plan: "Admin",
-    },
-    {
-      name: "Main Site",
-      logo: <LayoutGridIcon />,
-      plan: "Public",
-    },
-  ],
   navMain: [
     {
-      title: "Overview",
+      title: "Dashboard",
       url: "/backoffice",
       icon: <BarChartIcon />,
       isActive: true,
-      items: [
-        {
-          title: "Dashboard",
-          url: "/backoffice",
-        },
-        {
-          title: "Analytics",
-          url: "/backoffice/analytics",
-        },
-        {
-          title: "Reports",
-          url: "/backoffice/reports",
-        },
-      ],
     },
     {
       title: "Users",
@@ -66,15 +32,11 @@ const data = {
       icon: <UsersIcon />,
       items: [
         {
-          title: "All Users",
-          url: "/backoffice/users",
-        },
-        {
-          title: "Roles & Permissions",
+          title: "Roles",
           url: "/backoffice/users/roles",
         },
         {
-          title: "Activity Log",
+          title: "Activity",
           url: "/backoffice/users/activity",
         },
       ],
@@ -84,10 +46,6 @@ const data = {
       url: "/backoffice/products",
       icon: <PackageIcon />,
       items: [
-        {
-          title: "Catalog",
-          url: "/backoffice/products",
-        },
         {
           title: "Inventory",
           url: "/backoffice/products/inventory",
@@ -104,69 +62,12 @@ const data = {
       icon: <ShoppingCartIcon />,
       items: [
         {
-          title: "All Orders",
-          url: "/backoffice/orders",
-        },
-        {
           title: "Pending",
           url: "/backoffice/orders/pending",
         },
         {
           title: "Fulfilled",
           url: "/backoffice/orders/fulfilled",
-        },
-      ],
-    },
-    {
-      title: "Content",
-      url: "/backoffice/content",
-      icon: <FileTextIcon />,
-      items: [
-        {
-          title: "Pages",
-          url: "/backoffice/content/pages",
-        },
-        {
-          title: "Blog",
-          url: "/backoffice/content/blog",
-        },
-        {
-          title: "Media Library",
-          url: "/backoffice/content/media",
-        },
-      ],
-    },
-    {
-      title: "Marketing",
-      url: "/backoffice/marketing",
-      icon: <MegaphoneIcon />,
-      items: [
-        {
-          title: "Campaigns",
-          url: "/backoffice/marketing/campaigns",
-        },
-        {
-          title: "SEO",
-          url: "/backoffice/marketing/seo",
-        },
-        {
-          title: "Social Media",
-          url: "/backoffice/marketing/social",
-        },
-      ],
-    },
-    {
-      title: "Support",
-      url: "/backoffice/support",
-      icon: <HeadphonesIcon />,
-      items: [
-        {
-          title: "Tickets",
-          url: "/backoffice/support/tickets",
-        },
-        {
-          title: "Knowledge Base",
-          url: "/backoffice/support/kb",
         },
       ],
     },
@@ -183,14 +84,6 @@ const data = {
           title: "Billing",
           url: "/backoffice/settings/billing",
         },
-        {
-          title: "Integrations",
-          url: "/backoffice/settings/integrations",
-        },
-        {
-          title: "API",
-          url: "/backoffice/settings/api",
-        },
       ],
     },
   ],
@@ -202,14 +95,13 @@ export function BackofficeSidebar({
   return (
     <Sidebar
       collapsible="icon"
-      className="border-r bg-sidebar text-sidebar-foreground"
+      className="border-r border-sidebar-border/80 bg-sidebar text-sidebar-foreground shadow-sm md:shadow-none"
       {...props}
     >
-      <SidebarHeader className="border-b border-sidebar-border">
-        <WorkspaceSwitcher workspaces={data.workspaces} />
+      <SidebarHeader className="h-16 border-b border-sidebar-border/80 bg-sidebar px-3 group-data-[collapsible=icon]:!h-12 group-data-[collapsible=icon]:items-center group-data-[collapsible=icon]:justify-center group-data-[collapsible=icon]:px-0">
+        <TeamSwitcher />
       </SidebarHeader>
-      <SidebarSeparator className="bg-sidebar-border" />
-      <SidebarContent>
+      <SidebarContent className="px-3 py-2 group-data-[collapsible=icon]:px-2">
         <NavMain items={data.navMain} />
       </SidebarContent>
       <SidebarRail />
