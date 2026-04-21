@@ -34,7 +34,7 @@ export const getPermissions = cache(
       },
     })
 
-    if (!user) {
+    if (!user || !user.role) {
       return []
     }
 
@@ -71,8 +71,9 @@ export async function hasPermission(
 }
 
 export async function invalidatePermissionCache(userId: string): Promise<void> {
-  await prisma.permissionCache.update({
+  await prisma.permissionCache.upsert({
     where: { userId },
-    data: { updatedAt: new Date(0) }, // Force refresh
+    update: { updatedAt: new Date(0) }, // Force refresh
+    create: { userId, permissions: [] },
   })
 }
