@@ -155,22 +155,17 @@ export function NavMain({
                               } as React.CSSProperties
                             }
                           >
-                            <a
-                              href={subItem.url}
-                              aria-current={subItemActive ? "page" : undefined}
-                              className={cn(
-                                "group/sublink relative flex h-9 items-center rounded-lg px-3 text-sm font-medium transition-all duration-200 ease-out",
-                                "focus-visible:ring-2 focus-visible:ring-sidebar-ring/70 focus-visible:outline-none",
-                                "hover:translate-x-0.5 hover:scale-[1.01]",
-                                subItemActive
-                                  ? "active-enter cursor-pointer bg-primary text-primary-foreground shadow-sm"
-                                  : "cursor-pointer text-sidebar-foreground/70 hover:bg-sidebar-accent hover:text-sidebar-foreground"
-                              )}
+                            <SidebarMenuSubButton
+                              tooltip={`${item.title} → ${subItem.title}`}
+                              isActive={subItemActive}
+                              asChild
                             >
-                              <span className="transition-transform duration-200 group-hover/sublink:scale-105">
-                                {subItem.title}
-                              </span>
-                            </a>
+                              <a href={subItem.url}>
+                                <span className="transition-transform duration-200 group-hover/sublink:scale-105">
+                                  {subItem.title}
+                                </span>
+                              </a>
+                            </SidebarMenuSubButton>
                           </SidebarMenuSubItem>
                         )
                       })}
