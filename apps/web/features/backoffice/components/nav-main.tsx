@@ -41,7 +41,7 @@ export function NavMain({
 
   return (
     <SidebarGroup className="group-data-[collapsible=icon]:p-0">
-      <SidebarGroupLabel className="text-xs font-medium text-muted-foreground group-data-[collapsible=icon]/sidebar-wrapper:hidden">
+      <SidebarGroupLabel className="text-xs font-medium text-[oklch(0.55_0.008_165)] group-data-[collapsible=icon]/sidebar-wrapper:hidden">
         Navigation
       </SidebarGroupLabel>
       <SidebarGroupContent>
@@ -66,7 +66,7 @@ export function NavMain({
                       "focus-visible:ring-2 focus-visible:ring-sidebar-ring/70 focus-visible:outline-none",
                       isItemActive
                         ? "cursor-pointer bg-primary px-2 text-primary-foreground shadow-sm hover:opacity-90"
-                        : "cursor-pointer px-4 text-muted-foreground hover:bg-sidebar-accent hover:text-foreground hover:shadow-sm"
+                        : "cursor-pointer px-4 text-[oklch(0.50_0.012_165)] hover:bg-[oklch(0.96_0.015_165)] hover:text-[oklch(0.35_0.04_165)] hover:shadow-sm"
                     )}
                   >
                     <span
@@ -74,7 +74,7 @@ export function NavMain({
                         "inline-flex size-4 shrink-0 items-center justify-center transition-colors [&_svg]:size-4",
                         isItemActive
                           ? "text-primary-foreground"
-                          : "text-muted-foreground/70"
+                          : "text-[oklch(0.58_0.025_165)]"
                       )}
                     >
                       {item.icon}
@@ -102,7 +102,7 @@ export function NavMain({
                         "focus-visible:ring-2 focus-visible:ring-sidebar-ring/70 focus-visible:outline-none",
                         isItemActive
                           ? "cursor-pointer bg-primary text-primary-foreground shadow-sm hover:opacity-90"
-                          : "cursor-pointer text-muted-foreground hover:bg-sidebar-accent hover:text-foreground hover:shadow-sm"
+                          : "cursor-pointer text-[oklch(0.50_0.012_165)] hover:bg-[oklch(0.96_0.015_165)] hover:text-[oklch(0.35_0.04_165)] hover:shadow-sm"
                       )}
                     >
                       <span
@@ -110,7 +110,7 @@ export function NavMain({
                           "inline-flex size-4 shrink-0 items-center justify-center transition-colors [&_svg]:size-4",
                           isItemActive
                             ? "text-primary-foreground"
-                            : "text-muted-foreground/70"
+                            : "text-[oklch(0.58_0.025_165)]"
                         )}
                       >
                         {item.icon}
@@ -121,7 +121,7 @@ export function NavMain({
                       <span
                         className={cn(
                           "inline-flex size-4 shrink-0 items-center justify-center transition-transform duration-200 group-data-[collapsible=icon]:hidden [&_svg]:size-4",
-                          "text-muted-foreground/40 group-hover/collapsible:text-muted-foreground/60",
+                          "text-[oklch(0.55_0.015_165)] group-hover/collapsible:text-[oklch(0.45_0.025_165)]",
                           isItemActive && "text-primary-foreground/80",
                           "group-data-[state=open]/collapsible:rotate-90"
                         )}
@@ -144,7 +144,7 @@ export function NavMain({
                                 "focus-visible:ring-2 focus-visible:ring-sidebar-ring/70 focus-visible:outline-none",
                                 subItemActive
                                   ? "cursor-pointer bg-primary text-primary-foreground shadow-sm hover:opacity-90"
-                                  : "cursor-pointer text-muted-foreground hover:bg-sidebar-accent/50 hover:text-foreground"
+                                  : "cursor-pointer text-[oklch(0.52_0.015_165)] hover:bg-[oklch(0.95_0.012_165)] hover:text-[oklch(0.38_0.035_165)]"
                               )}
                             >
                               <span>{subItem.title}</span>
