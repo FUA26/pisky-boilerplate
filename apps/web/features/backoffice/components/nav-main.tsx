@@ -70,35 +70,27 @@ export function NavMain({
                     } as React.CSSProperties
                   }
                 >
-                  <a
-                    href={item.url}
-                    aria-current={isItemActive ? "page" : undefined}
-                    className={cn(
-                      "group/link relative flex h-9 items-center gap-3 rounded-lg text-sm font-medium transition-all duration-200 ease-out",
-                      "group-data-[collapsible=icon]:size-7 group-data-[collapsible=icon]:justify-center group-data-[collapsible=icon]:p-0",
-                      "focus-visible:ring-2 focus-visible:ring-sidebar-ring/70 focus-visible:outline-none",
-                      "hover:scale-[1.01] hover:shadow-sm",
-                      "group-data-[collapsible=icon]:hover:scale-110",
-                      isItemActive
-                        ? "active-enter cursor-pointer bg-primary px-2.5 text-primary-foreground shadow-sm group-data-[collapsible=icon]:bg-primary group-data-[collapsible=icon]:px-0"
-                        : "cursor-pointer px-2.5 text-sidebar-foreground/80 group-data-[collapsible=icon]:bg-transparent group-data-[collapsible=icon]:px-0 hover:bg-sidebar-accent hover:text-sidebar-foreground"
-                    )}
+                  <SidebarMenuButton
+                    tooltip={item.title}
+                    isActive={isItemActive}
+                    asChild
                   >
-                    <span
-                      className={cn(
-                        "inline-flex size-4 shrink-0 items-center justify-center transition-all duration-200 ease-out [&_svg]:size-4",
-                        "group-hover/link:scale-110",
-                        isItemActive
-                          ? "text-primary-foreground"
-                          : "text-sidebar-primary"
-                      )}
-                    >
-                      {item.icon}
-                    </span>
-                    <span className="flex h-full min-w-0 flex-1 items-center truncate text-left text-sm leading-none group-data-[collapsible=icon]:hidden">
-                      {item.title}
-                    </span>
-                  </a>
+                    <a href={item.url}>
+                      <span
+                        className={cn(
+                          "inline-flex size-4 shrink-0 items-center justify-center transition-all duration-200 ease-out [&_svg]:size-4",
+                          isItemActive
+                            ? "text-primary-foreground"
+                            : "text-sidebar-primary"
+                        )}
+                      >
+                        {item.icon}
+                      </span>
+                      <span className="flex h-full min-w-0 flex-1 items-center truncate text-left text-sm leading-none">
+                        {item.title}
+                      </span>
+                    </a>
+                  </SidebarMenuButton>
                 </SidebarMenuItem>
               )
             }
