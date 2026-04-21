@@ -160,7 +160,12 @@ export function NavMain({
                               isActive={subItemActive}
                               asChild
                             >
-                              <a href={subItem.url}>
+                              <a
+                                href={subItem.url}
+                                aria-current={
+                                  subItemActive ? "page" : undefined
+                                }
+                              >
                                 <span className="transition-transform duration-200 group-hover/sublink:scale-105">
                                   {subItem.title}
                                 </span>
