@@ -41,7 +41,7 @@ export function NavMain({
 
   return (
     <SidebarGroup className="group-data-[collapsible=icon]:p-0">
-      <SidebarGroupLabel className="text-xs font-medium text-sidebar-foreground/70 group-data-[collapsible=icon]/sidebar-wrapper:hidden">
+      <SidebarGroupLabel className="text-xs font-medium text-muted-foreground group-data-[collapsible=icon]/sidebar-wrapper:hidden">
         Navigation
       </SidebarGroupLabel>
       <SidebarGroupContent>
@@ -66,7 +66,7 @@ export function NavMain({
                       "focus-visible:ring-2 focus-visible:ring-sidebar-ring/70 focus-visible:outline-none",
                       isItemActive
                         ? "cursor-pointer bg-primary px-2 text-primary-foreground shadow-sm hover:opacity-90"
-                        : "cursor-pointer px-4 text-sidebar-foreground hover:bg-sidebar-accent hover:text-sidebar-accent-foreground hover:shadow-sm"
+                        : "cursor-pointer px-4 text-muted-foreground hover:bg-sidebar-accent hover:text-foreground hover:shadow-sm"
                     )}
                   >
                     <span
@@ -74,7 +74,7 @@ export function NavMain({
                         "inline-flex size-4 shrink-0 items-center justify-center transition-colors [&_svg]:size-4",
                         isItemActive
                           ? "text-primary-foreground"
-                          : "text-sidebar-foreground/90"
+                          : "text-muted-foreground/70"
                       )}
                     >
                       {item.icon}
@@ -102,7 +102,7 @@ export function NavMain({
                         "focus-visible:ring-2 focus-visible:ring-sidebar-ring/70 focus-visible:outline-none",
                         isItemActive
                           ? "cursor-pointer bg-primary text-primary-foreground shadow-sm hover:opacity-90"
-                          : "cursor-pointer text-sidebar-foreground hover:bg-sidebar-accent hover:text-sidebar-accent-foreground hover:shadow-sm"
+                          : "cursor-pointer text-muted-foreground hover:bg-sidebar-accent hover:text-foreground hover:shadow-sm"
                       )}
                     >
                       <span
@@ -110,7 +110,7 @@ export function NavMain({
                           "inline-flex size-4 shrink-0 items-center justify-center transition-colors [&_svg]:size-4",
                           isItemActive
                             ? "text-primary-foreground"
-                            : "text-sidebar-foreground/90"
+                            : "text-muted-foreground/70"
                         )}
                       >
                         {item.icon}
@@ -121,7 +121,7 @@ export function NavMain({
                       <span
                         className={cn(
                           "inline-flex size-4 shrink-0 items-center justify-center transition-transform duration-200 group-data-[collapsible=icon]:hidden [&_svg]:size-4",
-                          "text-sidebar-foreground/40 group-hover/collapsible:text-sidebar-foreground/60",
+                          "text-muted-foreground/40 group-hover/collapsible:text-muted-foreground/60",
                           isItemActive && "text-primary-foreground/80",
                           "group-data-[state=open]/collapsible:rotate-90"
                         )}
@@ -144,7 +144,7 @@ export function NavMain({
                                 "focus-visible:ring-2 focus-visible:ring-sidebar-ring/70 focus-visible:outline-none",
                                 subItemActive
                                   ? "cursor-pointer bg-primary text-primary-foreground shadow-sm hover:opacity-90"
-                                  : "cursor-pointer text-sidebar-foreground hover:bg-sidebar-accent/50 hover:text-sidebar-accent-foreground"
+                                  : "cursor-pointer text-muted-foreground hover:bg-sidebar-accent/50 hover:text-foreground"
                               )}
                             >
                               <span>{subItem.title}</span>
