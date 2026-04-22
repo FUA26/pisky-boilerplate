@@ -25,11 +25,15 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
         }
 
         const user = await prisma.user.findUnique({
-          where: { email: credentials.email },
+          where: { email: credentials.email as string },
           include: {
             role: {
               include: {
-                permissions: true,
+                permissions: {
+                  include: {
+                    permission: true,
+                  },
+                },
               },
             },
           },
@@ -48,9 +52,9 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
           return null
         }
 
-        const permissions = user.role.permissions.map(
-          (p) => p.name as Permission
-        )
+        const permissions = user.role.permissions
+          .map((rp) => rp.permission?.name as Permission)
+          .filter((p): p is Permission => p !== undefined)
 
         return {
           id: user.id,
