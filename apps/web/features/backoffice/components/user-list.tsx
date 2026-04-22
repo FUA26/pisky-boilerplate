@@ -49,6 +49,7 @@ import {
   UserPlusIcon,
 } from "lucide-react"
 import { UserDialog } from "./admin/user-dialog"
+import { UserDetailDialog } from "./admin/user-detail-dialog"
 
 // Types
 interface User {
@@ -91,6 +92,13 @@ export function UserList() {
   const [bulkDeleteDialog, setBulkDeleteDialog] = React.useState(false)
   const [createDialogOpen, setCreateDialogOpen] = React.useState(false)
   const [editDialog, setEditDialog] = React.useState<{
+    open: boolean
+    userId: string
+  }>({
+    open: false,
+    userId: "",
+  })
+  const [detailDialog, setDetailDialog] = React.useState<{
     open: boolean
     userId: string
   }>({
@@ -367,7 +375,11 @@ export function UserList() {
                       <DropdownMenuContent align="end">
                         <DropdownMenuLabel>Actions</DropdownMenuLabel>
                         <DropdownMenuSeparator />
-                        <DropdownMenuItem>
+                        <DropdownMenuItem
+                          onClick={() =>
+                            setDetailDialog({ open: true, userId: user.id })
+                          }
+                        >
                           <EyeIcon className="size-4" />
                           View Details
                         </DropdownMenuItem>
@@ -505,6 +517,13 @@ export function UserList() {
         mode="edit"
         userId={editDialog.userId}
         onSuccess={fetchUsers}
+      />
+      <UserDetailDialog
+        open={detailDialog.open}
+        onOpenChange={(open) =>
+          setDetailDialog({ open, userId: open ? detailDialog.userId : "" })
+        }
+        userId={detailDialog.userId}
       />
     </>
   )

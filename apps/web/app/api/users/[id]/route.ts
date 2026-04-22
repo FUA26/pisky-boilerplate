@@ -1,6 +1,7 @@
 import { auth } from "@/lib/auth/config"
 import { requirePermission } from "@/lib/rbac/permissions"
 import { userService } from "@/lib/services/user-service"
+import { updateUserSchema } from "@/lib/validations/user"
 import { NextResponse } from "next/server"
 
 export async function GET(
@@ -22,7 +23,7 @@ export async function GET(
       return NextResponse.json({ error: "User not found" }, { status: 404 })
     }
 
-    return NextResponse.json(user)
+    return NextResponse.json({ user })
   } catch (error) {
     return NextResponse.json(
       {
@@ -48,9 +49,21 @@ export async function PATCH(
     const { id } = await params
     const body = await req.json()
 
-    const user = await userService.updateUser(id, body)
-    return NextResponse.json(user)
+    const validatedData = updateUserSchema.parse(body)
+    const user = await userService.updateUser(id, validatedData)
+
+    return NextResponse.json({ user })
   } catch (error) {
+    if ((error as any)?.name === "ZodError") {
+      return NextResponse.json(
+        {
+          error: "Validation Error",
+          details: (error as any).errors,
+        },
+        { status: 400 }
+      )
+    }
+
     return NextResponse.json(
       {
         error: error instanceof Error ? error.message : "Failed to update user",
