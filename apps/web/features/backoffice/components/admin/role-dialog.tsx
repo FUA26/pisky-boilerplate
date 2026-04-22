@@ -21,7 +21,13 @@ interface RoleDialogProps {
   onSuccess?: () => void
 }
 
-export function RoleDialog({ open, onOpenChange, mode, roleId, onSuccess }: RoleDialogProps) {
+export function RoleDialog({
+  open,
+  onOpenChange,
+  mode,
+  roleId,
+  onSuccess,
+}: RoleDialogProps) {
   const [isLoading, setIsLoading] = useState(false)
   const [roles, setRoles] = useState<Array<{ id: string; name: string }>>([])
   const [initialData, setInitialData] = useState<{
@@ -61,12 +67,13 @@ export function RoleDialog({ open, onOpenChange, mode, roleId, onSuccess }: Role
       const data = await res.json()
 
       // Transform permissions to array of strings
-      const permissions = data.role.permissions?.map((p: any) => {
-        if (typeof p === "string") return p
-        if (p.name) return p.name
-        if (p.permission?.name) return p.permission.name
-        return p
-      }) || []
+      const permissions =
+        data.role.permissions?.map((p: any) => {
+          if (typeof p === "string") return p
+          if (p.name) return p.name
+          if (p.permission?.name) return p.permission.name
+          return p
+        }) || []
 
       setInitialData({
         name: data.role.name,
@@ -124,7 +131,9 @@ export function RoleDialog({ open, onOpenChange, mode, roleId, onSuccess }: Role
       onOpenChange(false)
     } catch (error) {
       console.error("Failed to save role:", error)
-      toast.error(error instanceof Error ? error.message : "Failed to save role")
+      toast.error(
+        error instanceof Error ? error.message : "Failed to save role"
+      )
     } finally {
       setIsLoading(false)
     }
@@ -132,10 +141,14 @@ export function RoleDialog({ open, onOpenChange, mode, roleId, onSuccess }: Role
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
-      <DialogContent className="sm:max-w-[700px] max-h-[90vh] overflow-y-auto">
+      <DialogContent className="max-h-[90vh] overflow-y-auto sm:max-w-[700px]">
         <DialogHeader>
           <DialogTitle>
-            {mode === "create" ? "Create New Role" : mode === "clone" ? "Clone Role" : "Edit Role"}
+            {mode === "create"
+              ? "Create New Role"
+              : mode === "clone"
+                ? "Clone Role"
+                : "Edit Role"}
           </DialogTitle>
           <DialogDescription>
             {mode === "create"
@@ -155,7 +168,9 @@ export function RoleDialog({ open, onOpenChange, mode, roleId, onSuccess }: Role
             roles={roles}
           />
         ) : (
-          <div className="py-8 text-center text-sm text-muted-foreground">Loading...</div>
+          <div className="py-8 text-center text-sm text-muted-foreground">
+            Loading...
+          </div>
         )}
       </DialogContent>
     </Dialog>
