@@ -10,7 +10,7 @@ import {
 
 export default function BackofficeDashboardPage() {
   return (
-    <div className="flex flex-1 flex-col gap-8">
+    <div className="flex flex-1 flex-col gap-6">
       {/* Welcome Section */}
       <div>
         <h1 className="text-3xl font-bold tracking-tight">Dashboard</h1>

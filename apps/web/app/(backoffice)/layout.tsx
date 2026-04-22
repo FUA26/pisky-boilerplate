@@ -130,7 +130,9 @@ export default function BackofficeLayout({
             <HeaderNavUser />
           </div>
         </header>
-        <div className="flex flex-1 flex-col gap-4 p-4 pt-0">{children}</div>
+        <main className="flex flex-1 flex-col gap-6 p-4 pt-0 sm:gap-6 sm:p-6 lg:px-8">
+          <div className="max-w-8xl mx-auto w-full">{children}</div>
+        </main>
       </SidebarInset>
     </SidebarProvider>
   )
