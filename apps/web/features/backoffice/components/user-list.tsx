@@ -48,6 +48,7 @@ import {
   EyeIcon,
   UserPlusIcon,
 } from "lucide-react"
+import { UserDialog } from "./admin/user-dialog"
 
 // Types
 interface User {
@@ -88,6 +89,14 @@ export function UserList() {
     user: User | null
   }>({ open: false, user: null })
   const [bulkDeleteDialog, setBulkDeleteDialog] = React.useState(false)
+  const [createDialogOpen, setCreateDialogOpen] = React.useState(false)
+  const [editDialog, setEditDialog] = React.useState<{
+    open: boolean
+    userId: string
+  }>({
+    open: false,
+    userId: "",
+  })
 
   const fetchUsers = React.useCallback(async () => {
     setIsLoading(true)
@@ -220,7 +229,7 @@ export function UserList() {
               className="w-64 pl-9"
             />
           </div>
-          <Button size="sm">
+          <Button size="sm" onClick={() => setCreateDialogOpen(true)}>
             <PlusIcon className="size-4" />
             Add User
           </Button>
@@ -303,7 +312,10 @@ export function UserList() {
                       </p>
                     </div>
                     {!search && (
-                      <Button size="sm">
+                      <Button
+                        size="sm"
+                        onClick={() => setCreateDialogOpen(true)}
+                      >
                         <PlusIcon className="size-4" />
                         Create User
                       </Button>
@@ -359,7 +371,11 @@ export function UserList() {
                           <EyeIcon className="size-4" />
                           View Details
                         </DropdownMenuItem>
-                        <DropdownMenuItem>
+                        <DropdownMenuItem
+                          onClick={() =>
+                            setEditDialog({ open: true, userId: user.id })
+                          }
+                        >
                           <PencilIcon className="size-4" />
                           Edit User
                         </DropdownMenuItem>
@@ -473,6 +489,23 @@ export function UserList() {
           </AlertDialogFooter>
         </AlertDialogContent>
       </AlertDialog>
+
+      {/* User Create/Edit Dialogs */}
+      <UserDialog
+        open={createDialogOpen}
+        onOpenChange={setCreateDialogOpen}
+        mode="create"
+        onSuccess={fetchUsers}
+      />
+      <UserDialog
+        open={editDialog.open}
+        onOpenChange={(open) =>
+          setEditDialog({ open, userId: open ? editDialog.userId : "" })
+        }
+        mode="edit"
+        userId={editDialog.userId}
+        onSuccess={fetchUsers}
+      />
     </>
   )
 }
