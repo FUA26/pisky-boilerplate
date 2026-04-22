@@ -22,7 +22,21 @@ import { cn } from "@workspace/ui/lib/utils"
 import * as React from "react"
 
 function matchesPath(pathname: string, url: string) {
-  return pathname === url || pathname.startsWith(`${url}/`)
+  // Exact match
+  if (pathname === url) return true
+  // For root URL "/", only exact match (every path starts with "/")
+  if (url === "/") return false
+  // Otherwise check if pathname starts with url/
+  return pathname.startsWith(`${url}/`)
+}
+
+// Check if any sub-item matches the current path (exact match or prefix)
+function hasActiveSubItem(
+  pathname: string,
+  items?: { title: string; url: string; isActive?: boolean }[]
+) {
+  if (!items?.length) return false
+  return items.some((subItem) => matchesPath(pathname, subItem.url))
 }
 
 export function NavMain({
@@ -30,7 +44,7 @@ export function NavMain({
 }: {
   items: {
     title: string
-    url: string
+    url?: string
     icon?: React.ReactNode
     isActive?: boolean
     items?: {
@@ -51,12 +65,14 @@ export function NavMain({
         <SidebarMenu className="gap-2">
           {items.map((item, index) => {
             const hasSubItems = Boolean(item.items?.length)
-            const isLeafActive = matchesPath(pathname, item.url)
-            const isSubItemActive = item.items?.some((subItem) =>
-              matchesPath(pathname, subItem.url)
-            )
+            const isLeafActive = item.url
+              ? matchesPath(pathname, item.url)
+              : false
+            const isSubItemActive = hasActiveSubItem(pathname, item.items)
+            // Parent is only active if we're exactly on its URL, not when on sub-item pages
+            // The submenu will expand when on sub-item pages via defaultOpen, but parent won't highlight
             const isItemActive = Boolean(
-              item.isActive || isLeafActive || isSubItemActive
+              item.isActive || (isLeafActive && !isSubItemActive)
             )
 
             if (!hasSubItems) {
@@ -115,7 +131,7 @@ export function NavMain({
               <Collapsible
                 key={item.title}
                 asChild
-                defaultOpen={isItemActive}
+                defaultOpen={isItemActive || isSubItemActive}
                 className="group/collapsible"
               >
                 <SidebarMenuItem

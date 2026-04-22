@@ -1,3 +1,5 @@
+"use client"
+
 import { BackofficeSidebar } from "@/features/backoffice/components/backoffice-sidebar"
 import { HeaderNavUser } from "@/features/backoffice/components/header-nav-user"
 import {
@@ -19,12 +21,95 @@ import {
   SidebarProvider,
   SidebarTrigger,
 } from "@workspace/ui/components/sidebar"
+import { BreadcrumbConsumer } from "@/lib/breadcrumb-context"
+import { usePathname } from "next/navigation"
+import { Fragment } from "react"
+
+// Breadcrumb configuration for each route
+// Sections define top-level menu items (no parent link shown)
+const breadcrumbConfig: Record<
+  string,
+  { label: string; parent?: string; isSection?: boolean }
+> = {
+  "/": { label: "Dashboard", isSection: true },
+  "/users": { label: "Users", isSection: true },
+  "/users/roles": { label: "Roles", parent: "/users" },
+  "/users/permissions": { label: "Permissions", parent: "/users" },
+  "/settings": { label: "Settings", isSection: true },
+}
+
+// Generate breadcrumb items from pathname
+function generateBreadcrumb(pathname: string) {
+  const items: Array<{ label: string; href?: string; isCurrent: boolean }> = []
+
+  // Build breadcrumb chain by walking up from current page
+  let currentPath = pathname
+  const pathChain: Array<{ path: string; isSection: boolean }> = []
+
+  while (currentPath) {
+    const config = breadcrumbConfig[currentPath]
+    if (config) {
+      pathChain.unshift({ path: currentPath, isSection: !!config.isSection })
+      // Stop at section level (don't include Dashboard as prefix)
+      if (config.isSection) {
+        break
+      }
+      currentPath = config.parent || ""
+    } else {
+      break
+    }
+  }
+
+  // Convert path chain to breadcrumb items
+  pathChain.forEach((item, index) => {
+    const config = breadcrumbConfig[item.path]
+    const isLast = index === pathChain.length - 1
+
+    if (config) {
+      items.push({
+        label: config.label,
+        href: isLast ? undefined : item.path,
+        isCurrent: isLast,
+      })
+    }
+  })
+
+  // Fallback for root/dashboard
+  if (items.length === 0 && pathname === "/") {
+    items.push({ label: "Dashboard", isCurrent: true })
+  }
+
+  return items
+}
 
 export default function BackofficeLayout({
   children,
+  breadcrumb,
 }: {
   children: React.ReactNode
+  breadcrumb?: React.ReactNode
 }) {
+  const pathname = usePathname()
+
+  const dynamicBreadcrumb = (
+    <Breadcrumb>
+      <BreadcrumbList>
+        {generateBreadcrumb(pathname).map((item, index) => (
+          <Fragment key={index}>
+            {index > 0 && <BreadcrumbSeparator />}
+            <BreadcrumbItem>
+              {item.href ? (
+                <BreadcrumbLink href={item.href}>{item.label}</BreadcrumbLink>
+              ) : (
+                <BreadcrumbPage>{item.label}</BreadcrumbPage>
+              )}
+            </BreadcrumbItem>
+          </Fragment>
+        ))}
+      </BreadcrumbList>
+    </Breadcrumb>
+  )
+
   return (
     <SidebarProvider>
       <BackofficeSidebar />
@@ -36,17 +121,7 @@ export default function BackofficeLayout({
               orientation="vertical"
               className="mr-2 data-vertical:h-4 data-vertical:self-auto"
             />
-            <Breadcrumb>
-              <BreadcrumbList>
-                <BreadcrumbItem>
-                  <BreadcrumbLink href="/backoffice">Backoffice</BreadcrumbLink>
-                </BreadcrumbItem>
-                <BreadcrumbSeparator />
-                <BreadcrumbItem>
-                  <BreadcrumbPage>Dashboard</BreadcrumbPage>
-                </BreadcrumbItem>
-              </BreadcrumbList>
-            </Breadcrumb>
+            <BreadcrumbConsumer fallback={dynamicBreadcrumb} />
           </div>
           <div className="flex items-center gap-2 px-4">
             <HeaderSearch />

@@ -13,76 +13,43 @@ import {
 import {
   UsersIcon,
   BarChartIcon,
+  ShieldCheckIcon,
   SettingsIcon,
-  PackageIcon,
-  ShoppingCartIcon,
 } from "lucide-react"
 
 const data = {
   navMain: [
     {
       title: "Dashboard",
-      url: "/backoffice",
+      url: "/",
       icon: <BarChartIcon />,
-      isActive: true,
     },
     {
-      title: "Users",
-      url: "/backoffice/users",
+      title: "User Management",
       icon: <UsersIcon />,
       items: [
         {
+          title: "Users",
+          url: "/users",
+        },
+        {
           title: "Roles",
-          url: "/backoffice/users/roles",
+          url: "/users/roles",
         },
         {
-          title: "Activity",
-          url: "/backoffice/users/activity",
+          title: "Permissions",
+          url: "/users/permissions",
+          icon: <ShieldCheckIcon />,
         },
       ],
     },
     {
-      title: "Products",
-      url: "/backoffice/products",
-      icon: <PackageIcon />,
-      items: [
-        {
-          title: "Inventory",
-          url: "/backoffice/products/inventory",
-        },
-        {
-          title: "Categories",
-          url: "/backoffice/products/categories",
-        },
-      ],
-    },
-    {
-      title: "Orders",
-      url: "/backoffice/orders",
-      icon: <ShoppingCartIcon />,
-      items: [
-        {
-          title: "Pending",
-          url: "/backoffice/orders/pending",
-        },
-        {
-          title: "Fulfilled",
-          url: "/backoffice/orders/fulfilled",
-        },
-      ],
-    },
-    {
-      title: "Settings",
-      url: "/backoffice/settings",
+      title: "Configuration",
       icon: <SettingsIcon />,
       items: [
         {
-          title: "General",
-          url: "/backoffice/settings/general",
-        },
-        {
-          title: "Billing",
-          url: "/backoffice/settings/billing",
+          title: "Settings",
+          url: "/settings",
         },
       ],
     },
