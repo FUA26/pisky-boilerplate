@@ -117,7 +117,7 @@ export function UserForm({
           <SelectTrigger>
             <SelectValue placeholder="Select a role" />
           </SelectTrigger>
-          <SelectContent>
+          <SelectContent portal={false}>
             {roles.map((role) => (
               <SelectItem key={role.id} value={role.id}>
                 {role.name}

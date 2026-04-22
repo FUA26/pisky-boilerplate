@@ -213,7 +213,7 @@ export function PermissionDialog({
                   <SelectTrigger>
                     <SelectValue placeholder="Select a category" />
                   </SelectTrigger>
-                  <SelectContent>
+                  <SelectContent portal={false}>
                     {allCategories.map((cat) => (
                       <SelectItem key={cat} value={cat}>
                         {cat}
