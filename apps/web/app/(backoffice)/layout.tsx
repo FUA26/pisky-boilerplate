@@ -32,14 +32,11 @@ const breadcrumbConfig: Record<
   { label: string; parent?: string; isSection?: boolean }
 > = {
   "/": { label: "Dashboard", isSection: true },
-  "/users": { label: "Users", isSection: true },
-  "/users/roles": { label: "Roles", parent: "/users" },
-  "/users/permissions": { label: "Permissions", parent: "/users" },
+  "/manage": { label: "Manage", isSection: true },
+  "/manage/users": { label: "Users", parent: "/manage" },
+  "/manage/roles": { label: "Roles", parent: "/manage" },
+  "/manage/permissions": { label: "Permissions", parent: "/manage" },
   "/settings": { label: "Settings", isSection: true },
-  "/roles": { label: "Roles", isSection: true },
-  "/roles/[id]": { label: "Role Details", parent: "/roles" },
-  "/permissions": { label: "Permissions", isSection: true },
-  "/permissions/[id]": { label: "Permission Details", parent: "/permissions" },
 }
 
 // Generate breadcrumb items from pathname

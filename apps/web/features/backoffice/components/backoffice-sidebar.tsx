@@ -27,17 +27,17 @@ const data = {
     },
     {
       title: "Users",
-      url: "/users",
+      url: "/manage/users",
       icon: <UsersIcon />,
     },
     {
       title: "Roles",
-      url: "/roles",
+      url: "/manage/roles",
       icon: <ShieldCheckIcon />,
     },
     {
       title: "Permissions",
-      url: "/permissions",
+      url: "/manage/permissions",
       icon: <KeyIcon />,
     },
     {
