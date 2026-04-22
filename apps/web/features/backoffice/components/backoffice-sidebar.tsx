@@ -15,6 +15,7 @@ import {
   BarChartIcon,
   ShieldCheckIcon,
   SettingsIcon,
+  KeyIcon,
 } from "lucide-react"
 
 const data = {
@@ -25,23 +26,19 @@ const data = {
       icon: <BarChartIcon />,
     },
     {
-      title: "User Management",
+      title: "Users",
+      url: "/users",
       icon: <UsersIcon />,
-      items: [
-        {
-          title: "Users",
-          url: "/users",
-        },
-        {
-          title: "Roles",
-          url: "/users/roles",
-        },
-        {
-          title: "Permissions",
-          url: "/users/permissions",
-          icon: <ShieldCheckIcon />,
-        },
-      ],
+    },
+    {
+      title: "Roles",
+      url: "/roles",
+      icon: <ShieldCheckIcon />,
+    },
+    {
+      title: "Permissions",
+      url: "/permissions",
+      icon: <KeyIcon />,
     },
     {
       title: "Configuration",
