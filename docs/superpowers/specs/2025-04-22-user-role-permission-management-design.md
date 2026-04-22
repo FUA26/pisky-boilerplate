@@ -74,25 +74,33 @@ apps/web/
 
 ### 2. Permission Naming Convention
 
-Keep zilpo-admin's existing pattern (not naiera's `ADMIN_*` pattern):
+Use **naiera-admin's pattern** (`ADMIN_*` prefix for consistency):
 
-| Resource    | Read              | Create              | Update              | Delete              |
-| ----------- | ----------------- | ------------------- | ------------------- | ------------------- |
-| Users       | `USER_READ`       | `USER_CREATE`       | `USER_UPDATE`       | `USER_DELETE`       |
-| Roles       | `ROLE_READ`       | `ROLE_CREATE`       | `ROLE_UPDATE`       | `ROLE_DELETE`       |
-| Permissions | `PERMISSION_READ` | `PERMISSION_CREATE` | `PERMISSION_UPDATE` | `PERMISSION_DELETE` |
+| Resource    | Read                       | Create                     | Update                     | Delete                     |
+| ----------- | -------------------------- | -------------------------- | -------------------------- | -------------------------- |
+| Users       | `ADMIN_USERS_MANAGE`       | `ADMIN_USERS_MANAGE`       | `ADMIN_USERS_MANAGE`       | `ADMIN_USERS_MANAGE`       |
+| Roles       | `ADMIN_ROLES_MANAGE`       | `ADMIN_ROLES_MANAGE`       | `ADMIN_ROLES_MANAGE`       | `ADMIN_ROLES_MANAGE`       |
+| Permissions | `ADMIN_PERMISSIONS_MANAGE` | `ADMIN_PERMISSIONS_MANAGE` | `ADMIN_PERMISSIONS_MANAGE` | `ADMIN_PERMISSIONS_MANAGE` |
+
+**Note:** naiera-admin uses coarse-grained permissions (one per resource) rather than CRUD-grained. We'll adopt this simpler approach.
 
 ### 3. Icon Library
 
-Use **lucide-react** (zilpo-admin's existing choice) instead of naiera's `@hugeicons/react`.
+Keep **lucide-react** (zilpo-admin's existing choice) for consistency.
+
+- Already installed and used throughout the app
+- Familiar to the team, matches existing patterns
 
 ### 4. Table Implementation
 
-**Decision:** Keep native HTML table with shadcn components for simplicity and consistency.
+**Use TanStack Table** from naiera-admin for advanced features:
 
-- TanStack Table from naiera-admin is more complex but adds dependency
-- Native table with good UX is sufficient for this use case
-- Can add TanStack later if needed for very large datasets
+- Better performance for large datasets
+- Built-in sorting, filtering, pagination
+- Virtual scrolling support
+- Consistent with naiera-admin's proven patterns
+
+Install: `@tanstack/react-table`
 
 ---
 
@@ -132,10 +140,7 @@ Use **lucide-react** (zilpo-admin's existing choice) instead of naiera's `@hugei
 
 #### Permissions Required
 
-- View page: `USER_READ`
-- Create user: `USER_CREATE`
-- Edit user: `USER_UPDATE`
-- Delete user: `USER_DELETE`
+- All actions: `ADMIN_USERS_MANAGE`
 
 ---
 
@@ -199,11 +204,7 @@ roleService = {
 
 #### Permissions Required
 
-- View page: `ROLE_READ`
-- Create role: `ROLE_CREATE`
-- Edit role: `ROLE_UPDATE`
-- Clone role: `ROLE_CREATE`
-- Delete role: `ROLE_DELETE`
+- All actions: `ADMIN_ROLES_MANAGE`
 
 ---
 
@@ -266,10 +267,7 @@ permissionService = {
 
 #### Permissions Required
 
-- View page: `PERMISSION_READ`
-- Create permission: `PERMISSION_CREATE`
-- Edit permission: `PERMISSION_UPDATE`
-- Delete permission: `PERMISSION_DELETE`
+- All actions: `ADMIN_PERMISSIONS_MANAGE`
 
 ---
 
@@ -386,9 +384,11 @@ All dialogs follow the same pattern:
 
 ## Dependencies
 
-**External:**
+**External Packages to Install:**
 
-- None (using existing packages)
+```bash
+pnpm add @tanstack/react-table
+```
 
 **Internal:**
 
