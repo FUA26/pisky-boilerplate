@@ -1,4 +1,4 @@
-// apps/web/features/backoffice/components/admin/role-form.tsx
+// apps/web/features/admin/components/role-form.tsx
 "use client"
 
 import { Button } from "@workspace/ui/components/button"

@@ -1,4 +1,4 @@
-// apps/web/features/backoffice/components/admin/role-delete-dialog.tsx
+// apps/web/features/admin/components/role-delete-dialog.tsx
 "use client"
 
 import {

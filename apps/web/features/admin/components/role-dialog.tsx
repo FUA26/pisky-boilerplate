@@ -1,4 +1,4 @@
-// apps/web/features/backoffice/components/admin/role-dialog.tsx
+// apps/web/features/admin/components/role-dialog.tsx
 "use client"
 
 import {

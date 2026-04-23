@@ -6,16 +6,19 @@ import {
   CardHeader,
   CardTitle,
 } from "@workspace/ui/components/card"
-import { RoleDeleteDialog } from "@/features/backoffice/components/admin/role-delete-dialog"
-import { RoleDialog } from "@/features/backoffice/components/admin/role-dialog"
-import { RolesTable } from "@/features/backoffice/components/admin/roles-table"
+import { RoleDeleteDialog } from "@/features/admin/components/role-delete-dialog"
+import { RoleDialog } from "@/features/admin/components/role-dialog"
+import { RolesDataTable } from "@/features/admin/components/roles-data-table"
 import { useEffect, useState } from "react"
 import { toast } from "sonner"
 
 interface Role {
   id: string
   name: string
+  description: string | null
   permissions: string[]
+  createdAt: string
+  updatedAt: string
   _count: { users: number }
 }
 
@@ -123,26 +126,6 @@ export default function RolesPage() {
     fetchRoles()
   }, [])
 
-  const handleCreateOpen = () => {
-    setCreateDialogOpen(true)
-  }
-
-  const handleEdit = (roleId: string) => {
-    setEditDialog({ open: true, roleId })
-  }
-
-  const handleClone = (roleId: string) => {
-    setCloneDialog({ open: true, roleId })
-  }
-
-  const handleDelete = (
-    roleId: string,
-    roleName: string,
-    userCount: number
-  ) => {
-    setDeleteDialog({ open: true, roleId, roleName, userCount })
-  }
-
   const handleRefresh = () => {
     fetchRoles()
   }
@@ -153,7 +136,7 @@ export default function RolesPage() {
         <div>
           <h1 className="text-3xl font-bold">Role Management</h1>
           <p className="text-muted-foreground">
-            Manage roles and their permissions
+            Create and manage roles with permissions
           </p>
         </div>
         <div className="grid gap-4 md:grid-cols-3">
@@ -183,14 +166,7 @@ export default function RolesPage() {
 
       <RolesStats stats={stats} />
 
-      <RolesTable
-        data={roles}
-        onRefresh={handleRefresh}
-        onEdit={handleEdit}
-        onClone={handleClone}
-        onDelete={handleDelete}
-        onCreate={handleCreateOpen}
-      />
+      <RolesDataTable roles={roles} onRefresh={handleRefresh} />
 
       <RoleDialog
         open={createDialogOpen}

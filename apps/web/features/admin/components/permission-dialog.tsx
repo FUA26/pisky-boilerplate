@@ -1,4 +1,4 @@
-// apps/web/features/backoffice/components/admin/permission-dialog.tsx
+// apps/web/features/admin/components/permission-dialog.tsx
 "use client"
 
 import { Button } from "@workspace/ui/components/button"
@@ -35,6 +35,7 @@ interface PermissionDialogProps {
   open: boolean
   onOpenChange: (open: boolean) => void
   permission?: PermissionRecord | null
+  categories: string[]
   onSave: (data: {
     name: string
     category: string
@@ -56,6 +57,7 @@ export function PermissionDialog({
   open,
   onOpenChange,
   permission,
+  categories,
   onSave,
 }: PermissionDialogProps) {
   const [name, setName] = useState("")
@@ -64,13 +66,6 @@ export function PermissionDialog({
   const [description, setDescription] = useState("")
   const [isCustomCategory, setIsCustomCategory] = useState(false)
   const [saving, setSaving] = useState(false)
-  const [existingCategories, setExistingCategories] = useState<string[]>([])
-
-  useEffect(() => {
-    if (open) {
-      loadCategories()
-    }
-  }, [open])
 
   useEffect(() => {
     if (permission) {
@@ -92,23 +87,8 @@ export function PermissionDialog({
     }
   }, [permission])
 
-  const loadCategories = async () => {
-    try {
-      const response = await fetch("/api/permissions")
-      if (!response.ok) return
-
-      const data = await response.json()
-      const categories = Array.from(
-        new Set(data.permissions.map((p: PermissionRecord) => p.category))
-      ) as string[]
-      setExistingCategories(categories)
-    } catch (error) {
-      console.error("Failed to load categories:", error)
-    }
-  }
-
   const allCategories = Array.from(
-    new Set([...DEFAULT_CATEGORIES, ...existingCategories])
+    new Set([...DEFAULT_CATEGORIES, ...categories])
   ).sort()
 
   const handleSubmit = async (e: React.FormEvent) => {
@@ -213,7 +193,7 @@ export function PermissionDialog({
                   <SelectTrigger>
                     <SelectValue placeholder="Select a category" />
                   </SelectTrigger>
-                  <SelectContent portal={false}>
+                  <SelectContent>
                     {allCategories.map((cat) => (
                       <SelectItem key={cat} value={cat}>
                         {cat}

@@ -7,7 +7,7 @@ import {
   CardHeader,
   CardTitle,
 } from "@workspace/ui/components/card"
-import { PermissionsTable } from "@/features/backoffice/components/admin/permissions-table"
+import { PermissionsTable } from "@/features/admin/components/permissions-table"
 import { useEffect, useState } from "react"
 import { toast } from "sonner"
 

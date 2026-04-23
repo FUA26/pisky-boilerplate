@@ -1,4 +1,4 @@
-// apps/web/features/backoffice/components/admin/user-dialog.tsx
+// apps/web/features/user/components/user-dialog.tsx
 "use client"
 
 import {
@@ -10,6 +10,7 @@ import {
 } from "@workspace/ui/components/dialog"
 import { useEffect, useState } from "react"
 import { toast } from "sonner"
+import { UserPlusIcon, PencilIcon } from "lucide-react"
 import { UserForm } from "./user-form"
 
 interface UserDialogProps {
@@ -125,13 +126,24 @@ export function UserDialog({
     <Dialog open={open} onOpenChange={onOpenChange}>
       <DialogContent className="sm:max-w-[500px]">
         <DialogHeader>
-          <DialogTitle>
-            {mode === "create" ? "Create New User" : "Edit User"}
-          </DialogTitle>
-          <DialogDescription>
+          <div className="flex items-center gap-3">
+            <div className="flex size-10 items-center justify-center rounded-xl bg-primary/10">
+              {mode === "create" ? (
+                <UserPlusIcon className="size-5 text-primary" />
+              ) : (
+                <PencilIcon className="size-5 text-primary" />
+              )}
+            </div>
+            <div>
+              <DialogTitle>
+                {mode === "create" ? "Create New User" : "Edit User"}
+              </DialogTitle>
+            </div>
+          </div>
+          <DialogDescription className="pl-13">
             {mode === "create"
-              ? "Add a new user to the system with their role and permissions."
-              : "Update user information and role assignment."}
+              ? "Add a new user to the system. They'll receive the permissions assigned to their role."
+              : "Update user information and role assignment. Changes take effect immediately."}
           </DialogDescription>
         </DialogHeader>
         {initialData !== undefined || mode === "create" ? (
@@ -144,8 +156,8 @@ export function UserDialog({
             roles={roles}
           />
         ) : (
-          <div className="py-8 text-center text-sm text-muted-foreground">
-            Loading...
+          <div className="py-12 text-center text-sm text-muted-foreground">
+            Loading user data...
           </div>
         )}
       </DialogContent>

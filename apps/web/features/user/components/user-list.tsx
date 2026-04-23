@@ -17,7 +17,7 @@ import {
   AvatarFallback,
   AvatarImage,
 } from "@workspace/ui/components/avatar"
-import { Badge, badgeVariants } from "@workspace/ui/components/badge"
+import { Badge } from "@workspace/ui/components/badge"
 import { Button } from "@workspace/ui/components/button"
 import { Checkbox } from "@workspace/ui/components/checkbox"
 import {
@@ -48,8 +48,8 @@ import {
   EyeIcon,
   UserPlusIcon,
 } from "lucide-react"
-import { UserDialog } from "./admin/user-dialog"
-import { UserDetailDialog } from "./admin/user-detail-dialog"
+import { UserDialog } from "./user-dialog"
+import { UserDetailDialog } from "./user-detail-dialog"
 
 // Types
 interface User {
@@ -214,30 +214,34 @@ export function UserList() {
     <>
       {/* Toolbar */}
       <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
-        <div className="flex items-center gap-2">
-          <p className="text-sm text-muted-foreground">
+        <div>
+          <p className="text-sm font-medium text-foreground">
             {totalCount} {totalCount === 1 ? "user" : "users"}
-            {someSelected && (
-              <span className="ml-2 font-medium text-foreground">
-                ({selectedIds.size} selected)
-              </span>
-            )}
           </p>
+          {someSelected && (
+            <p className="text-xs text-muted-foreground">
+              {selectedIds.size} selected
+            </p>
+          )}
         </div>
         <div className="flex items-center gap-2">
           <div className="relative">
             <SearchIcon className="absolute top-1/2 left-3 size-4 -translate-y-1/2 text-muted-foreground" />
             <Input
-              placeholder="Search users..."
+              placeholder="Search by name or email..."
               value={search}
               onChange={(e) => {
                 setSearch(e.target.value)
                 setPage(1)
               }}
-              className="w-64 pl-9"
+              className="w-72 pl-9 transition-colors focus-within:border-primary/50"
             />
           </div>
-          <Button size="sm" onClick={() => setCreateDialogOpen(true)}>
+          <Button
+            size="sm"
+            onClick={() => setCreateDialogOpen(true)}
+            className="gap-2"
+          >
             <PlusIcon className="size-4" />
             Add User
           </Button>
@@ -246,6 +250,7 @@ export function UserList() {
               size="sm"
               variant="destructive"
               onClick={() => setBulkDeleteDialog(true)}
+              className="gap-2"
             >
               <TrashIcon className="size-4" />
               Delete ({selectedIds.size})
@@ -255,10 +260,10 @@ export function UserList() {
       </div>
 
       {/* Table */}
-      <div className="overflow-hidden rounded-lg border">
+      <div className="overflow-hidden rounded-xl border border-border/50 shadow-sm">
         <Table>
-          <TableHeader>
-            <TableRow>
+          <TableHeader className="bg-muted/30">
+            <TableRow className="border-b-border/50 hover:bg-transparent">
               <TableHead className="w-12">
                 <Checkbox
                   checked={allSelected}
@@ -266,11 +271,11 @@ export function UserList() {
                   aria-label="Select all users"
                 />
               </TableHead>
-              <TableHead>User</TableHead>
-              <TableHead>Email</TableHead>
-              <TableHead>Role</TableHead>
-              <TableHead>Created</TableHead>
-              <TableHead className="w-12"></TableHead>
+              <TableHead className="font-semibold">User</TableHead>
+              <TableHead className="font-semibold">Email</TableHead>
+              <TableHead className="font-semibold">Role</TableHead>
+              <TableHead className="font-semibold">Created</TableHead>
+              <TableHead className="w-24"></TableHead>
             </TableRow>
           </TableHeader>
           <TableBody>
@@ -282,7 +287,7 @@ export function UserList() {
                   </TableCell>
                   <TableCell>
                     <div className="flex items-center gap-3">
-                      <Skeleton className="size-8 rounded-full" />
+                      <Skeleton className="size-9 rounded-full" />
                       <Skeleton className="h-4 w-24" />
                     </div>
                   </TableCell>
@@ -290,39 +295,36 @@ export function UserList() {
                     <Skeleton className="h-4 w-32" />
                   </TableCell>
                   <TableCell>
-                    <Skeleton className="h-5 w-16 rounded-full" />
+                    <Skeleton className="h-6 w-20 rounded-md" />
                   </TableCell>
                   <TableCell>
                     <Skeleton className="h-4 w-24" />
                   </TableCell>
                   <TableCell>
-                    <Skeleton className="h-8 w-8" />
+                    <Skeleton className="h-9 w-20 rounded-md" />
                   </TableCell>
                 </TableRow>
               ))
             ) : users.length === 0 ? (
               <TableRow>
-                <TableCell colSpan={6} className="h-64">
+                <TableCell colSpan={6} className="h-80">
                   <div className="flex flex-col items-center justify-center gap-4 text-center">
-                    <div className="flex size-16 items-center justify-center rounded-full bg-muted">
-                      <UserPlusIcon className="size-8 text-muted-foreground" />
-                    </div>
-                    <div>
-                      <p className="font-medium">
-                        {search
-                          ? "No users found matching your search"
-                          : "No users yet"}
+                    <UserPlusIcon className="size-12 text-muted-foreground/40" />
+                    <div className="space-y-1">
+                      <p className="text-lg font-semibold">
+                        {search ? "No users found" : "No users yet"}
                       </p>
-                      <p className="mt-1 text-sm text-muted-foreground">
+                      <p className="mx-auto max-w-xs text-sm text-muted-foreground">
                         {search
-                          ? "Try adjusting your search terms"
-                          : "Get started by creating your first user account"}
+                          ? "Try adjusting your search terms."
+                          : "Create your first user account to get started."}
                       </p>
                     </div>
                     {!search && (
                       <Button
                         size="sm"
                         onClick={() => setCreateDialogOpen(true)}
+                        className="gap-2"
                       >
                         <PlusIcon className="size-4" />
                         Create User
@@ -333,7 +335,10 @@ export function UserList() {
               </TableRow>
             ) : (
               users.map((user) => (
-                <TableRow key={user.id}>
+                <TableRow
+                  key={user.id}
+                  className="group border-border/50 transition-colors hover:bg-muted/30"
+                >
                   <TableCell>
                     <Checkbox
                       checked={selectedIds.has(user.id)}
@@ -343,13 +348,13 @@ export function UserList() {
                   </TableCell>
                   <TableCell>
                     <div className="flex items-center gap-3">
-                      <Avatar size="sm">
+                      <Avatar className="size-9 ring-2 ring-background/50">
                         <AvatarImage src={user.image || undefined} />
-                        <AvatarFallback>
+                        <AvatarFallback className="bg-primary/10 text-xs font-medium text-primary">
                           {getInitials(user.name)}
                         </AvatarFallback>
                       </Avatar>
-                      <span className="font-medium">
+                      <span className="font-medium text-foreground">
                         {user.name || "Unknown"}
                       </span>
                     </div>
@@ -358,49 +363,67 @@ export function UserList() {
                     {user.email}
                   </TableCell>
                   <TableCell>
-                    <Badge variant="outline" className="text-xs">
+                    <Badge
+                      variant="outline"
+                      className="cursor-help border-primary/20 bg-primary/5 text-xs font-medium text-foreground transition-colors hover:bg-primary/10"
+                      title={`Role: ${user.role?.name || "User"}. Roles determine permissions.`}
+                    >
                       {user.role?.name || "User"}
                     </Badge>
                   </TableCell>
-                  <TableCell className="text-muted-foreground">
-                    {new Date(user.createdAt).toLocaleDateString()}
+                  <TableCell className="text-sm text-muted-foreground">
+                    {new Date(user.createdAt).toLocaleDateString(undefined, {
+                      month: "short",
+                      day: "numeric",
+                      year: "numeric",
+                    })}
                   </TableCell>
                   <TableCell>
-                    <DropdownMenu>
-                      <DropdownMenuTrigger asChild>
-                        <Button size="icon-sm" variant="ghost">
-                          <MoreVerticalIcon className="size-4" />
-                        </Button>
-                      </DropdownMenuTrigger>
-                      <DropdownMenuContent align="end">
-                        <DropdownMenuLabel>Actions</DropdownMenuLabel>
-                        <DropdownMenuSeparator />
-                        <DropdownMenuItem
-                          onClick={() =>
-                            setDetailDialog({ open: true, userId: user.id })
-                          }
-                        >
-                          <EyeIcon className="size-4" />
-                          View Details
-                        </DropdownMenuItem>
-                        <DropdownMenuItem
-                          onClick={() =>
-                            setEditDialog({ open: true, userId: user.id })
-                          }
-                        >
-                          <PencilIcon className="size-4" />
-                          Edit User
-                        </DropdownMenuItem>
-                        <DropdownMenuSeparator />
-                        <DropdownMenuItem
-                          variant="destructive"
-                          onClick={() => setDeleteDialog({ open: true, user })}
-                        >
-                          <TrashIcon className="size-4" />
-                          Delete User
-                        </DropdownMenuItem>
-                      </DropdownMenuContent>
-                    </DropdownMenu>
+                    <div className="flex items-center justify-end">
+                      <DropdownMenu>
+                        <DropdownMenuTrigger asChild>
+                          <Button
+                            size="icon-sm"
+                            variant="ghost"
+                            className="h-8 w-8"
+                          >
+                            <MoreVerticalIcon className="size-4" />
+                          </Button>
+                        </DropdownMenuTrigger>
+                        <DropdownMenuContent align="end" className="w-48">
+                          <DropdownMenuLabel className="text-xs text-muted-foreground">
+                            Actions for {user.name || user.email}
+                          </DropdownMenuLabel>
+                          <DropdownMenuSeparator />
+                          <DropdownMenuItem
+                            onClick={() =>
+                              setDetailDialog({ open: true, userId: user.id })
+                            }
+                          >
+                            <EyeIcon className="mr-2 size-4" />
+                            View Details
+                          </DropdownMenuItem>
+                          <DropdownMenuItem
+                            onClick={() =>
+                              setEditDialog({ open: true, userId: user.id })
+                            }
+                          >
+                            <PencilIcon className="mr-2 size-4" />
+                            Edit User
+                          </DropdownMenuItem>
+                          <DropdownMenuSeparator />
+                          <DropdownMenuItem
+                            variant="destructive"
+                            onClick={() =>
+                              setDeleteDialog({ open: true, user })
+                            }
+                          >
+                            <TrashIcon className="mr-2 size-4" />
+                            Delete User
+                          </DropdownMenuItem>
+                        </DropdownMenuContent>
+                      </DropdownMenu>
+                    </div>
                   </TableCell>
                 </TableRow>
               ))
@@ -411,17 +434,26 @@ export function UserList() {
 
       {/* Pagination */}
       {totalPages > 1 && (
-        <div className="flex items-center justify-between">
+        <div className="flex items-center justify-between pt-2">
           <p className="text-sm text-muted-foreground">
-            Showing {(page - 1) * pageSize + 1} to{" "}
-            {Math.min(page * pageSize, totalCount)} of {totalCount} users
+            Showing{" "}
+            <span className="font-medium text-foreground">
+              {(page - 1) * pageSize + 1}
+            </span>{" "}
+            to{" "}
+            <span className="font-medium text-foreground">
+              {Math.min(page * pageSize, totalCount)}
+            </span>{" "}
+            of <span className="font-medium text-foreground">{totalCount}</span>{" "}
+            users
           </p>
-          <div className="flex gap-2">
+          <div className="flex items-center gap-2">
             <Button
               size="sm"
               variant="outline"
               onClick={() => setPage((p) => Math.max(1, p - 1))}
               disabled={page === 1}
+              className="min-w-[80px]"
             >
               Previous
             </Button>
@@ -441,6 +473,9 @@ export function UserList() {
                     size="sm"
                     variant={page === pageNum ? "default" : "outline"}
                     onClick={() => setPage(pageNum)}
+                    className={
+                      page === pageNum ? "min-w-[36px]" : "min-w-[36px]"
+                    }
                   >
                     {pageNum}
                   </Button>
@@ -452,6 +487,7 @@ export function UserList() {
               variant="outline"
               onClick={() => setPage((p) => Math.min(totalPages, p + 1))}
               disabled={page === totalPages}
+              className="min-w-[80px]"
             >
               Next
             </Button>
@@ -466,18 +502,24 @@ export function UserList() {
       >
         <AlertDialogContent>
           <AlertDialogHeader>
-            <AlertDialogTitle>Delete User</AlertDialogTitle>
-            <AlertDialogDescription>
+            <AlertDialogTitle>Delete user account</AlertDialogTitle>
+            <AlertDialogDescription className="text-muted-foreground">
               Are you sure you want to delete{" "}
-              <strong>
+              <strong className="text-foreground">
                 {deleteDialog.user?.name || deleteDialog.user?.email}
               </strong>
-              ? This action cannot be undone.
+              ? Their data will be permanently removed and this action cannot be
+              undone.
             </AlertDialogDescription>
           </AlertDialogHeader>
           <AlertDialogFooter>
             <AlertDialogCancel>Cancel</AlertDialogCancel>
-            <AlertDialogAction onClick={handleDelete}>Delete</AlertDialogAction>
+            <AlertDialogAction
+              onClick={handleDelete}
+              className="text-destructive-foreground bg-destructive hover:bg-destructive/90"
+            >
+              Delete user
+            </AlertDialogAction>
           </AlertDialogFooter>
         </AlertDialogContent>
       </AlertDialog>
@@ -486,17 +528,24 @@ export function UserList() {
       <AlertDialog open={bulkDeleteDialog} onOpenChange={setBulkDeleteDialog}>
         <AlertDialogContent>
           <AlertDialogHeader>
-            <AlertDialogTitle>Delete Users</AlertDialogTitle>
-            <AlertDialogDescription>
+            <AlertDialogTitle>
+              Delete {selectedIds.size} user{selectedIds.size > 1 ? "s" : ""}
+            </AlertDialogTitle>
+            <AlertDialogDescription className="text-muted-foreground">
               Are you sure you want to delete{" "}
-              <strong>{selectedIds.size}</strong> user
-              {selectedIds.size > 1 ? "s" : ""}? This action cannot be undone.
+              <strong className="text-foreground">{selectedIds.size}</strong>{" "}
+              user
+              {selectedIds.size > 1 ? "s" : ""}? All their data will be
+              permanently removed and this action cannot be undone.
             </AlertDialogDescription>
           </AlertDialogHeader>
           <AlertDialogFooter>
             <AlertDialogCancel>Cancel</AlertDialogCancel>
-            <AlertDialogAction onClick={handleBulkDelete}>
-              Delete
+            <AlertDialogAction
+              onClick={handleBulkDelete}
+              className="text-destructive-foreground bg-destructive hover:bg-destructive/90"
+            >
+              Delete {selectedIds.size} user{selectedIds.size > 1 ? "s" : ""}
             </AlertDialogAction>
           </AlertDialogFooter>
         </AlertDialogContent>

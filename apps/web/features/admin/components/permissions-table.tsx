@@ -1,4 +1,4 @@
-// apps/web/features/backoffice/components/admin/permissions-table.tsx
+// apps/web/features/admin/components/permissions-table.tsx
 "use client"
 
 import {
@@ -47,11 +47,13 @@ import type { ColumnDef, SortingState } from "@tanstack/react-table"
 import {
   getCoreRowModel,
   getSortedRowModel,
+  flexRender,
   useReactTable,
 } from "@tanstack/react-table"
-import { Loader2, useState } from "react"
+import { useMemo, useState } from "react"
 import { toast } from "sonner"
 import { PermissionDialog } from "./permission-dialog"
+import { Loader2 } from "lucide-react"
 
 interface PermissionRecord {
   id: string
@@ -86,15 +88,19 @@ export function PermissionsTable({
   const [sorting, setSorting] = useState<SortingState>([])
   const [isDeleting, setIsDeleting] = useState(false)
 
-  const filteredData = data.filter((permission) => {
-    const matchesCategory =
-      categoryFilter === "all" || permission.category === categoryFilter
-    const matchesSearch =
-      !searchQuery ||
-      permission.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
-      permission.description?.toLowerCase().includes(searchQuery.toLowerCase())
-    return matchesCategory && matchesSearch
-  })
+  const filteredData = useMemo(() => {
+    const query = searchQuery.toLowerCase()
+
+    return data.filter((permission) => {
+      const matchesCategory =
+        categoryFilter === "all" || permission.category === categoryFilter
+      const matchesSearch =
+        !query ||
+        permission.name.toLowerCase().includes(query) ||
+        permission.description?.toLowerCase().includes(query)
+      return matchesCategory && matchesSearch
+    })
+  }, [data, categoryFilter, searchQuery])
 
   const handleSavePermission = async (data: {
     name: string
@@ -154,128 +160,136 @@ export function PermissionsTable({
     }
   }
 
-  const columns: ColumnDef<PermissionRecord>[] = [
-    {
-      accessorKey: "name",
-      header: ({ column }) => (
-        <Button
-          variant="ghost"
-          onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
-          className="h-auto p-0 font-semibold"
-        >
-          Name
-          <ArrowUpDown className="ml-2 h-4 w-4" />
-        </Button>
-      ),
-      cell: ({ row }) => (
-        <code className="rounded bg-muted px-2 py-1 font-mono text-sm">
-          {row.getValue("name")}
-        </code>
-      ),
-    },
-    {
-      accessorKey: "category",
-      header: ({ column }) => (
-        <Button
-          variant="ghost"
-          onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
-          className="h-auto p-0 font-semibold"
-        >
-          Category
-          <ArrowUpDown className="ml-2 h-4 w-4" />
-        </Button>
-      ),
-      cell: ({ row }) => (
-        <Badge variant="outline">{row.getValue("category")}</Badge>
-      ),
-    },
-    {
-      accessorKey: "description",
-      header: "Description",
-      cell: ({ row }) => (
-        <span className="text-sm text-muted-foreground">
-          {row.getValue("description") || "-"}
-        </span>
-      ),
-    },
-    {
-      accessorKey: "usage",
-      header: ({ column }) => (
-        <Button
-          variant="ghost"
-          onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
-          className="h-auto p-0 font-semibold"
-        >
-          Usage
-          <ArrowUpDown className="ml-2 h-4 w-4" />
-        </Button>
-      ),
-      cell: ({ row }) => {
-        const usageCount = row.original._count?.rolePermissions || 0
-        return (
-          <div className="text-center">
-            <Badge
-              variant={usageCount > 0 ? "default" : "secondary"}
-              className="font-mono"
-            >
-              {usageCount}
-            </Badge>
-          </div>
-        )
+  const columns: ColumnDef<PermissionRecord>[] = useMemo(
+    () => [
+      {
+        accessorKey: "name",
+        header: ({ column }) => (
+          <Button
+            variant="ghost"
+            onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
+            className="h-auto p-0 font-semibold"
+          >
+            Name
+            <ArrowUpDown className="ml-2 h-4 w-4" />
+          </Button>
+        ),
+        cell: ({ row }) => (
+          <code className="rounded bg-muted px-2 py-1 font-mono text-sm">
+            {row.getValue("name")}
+          </code>
+        ),
       },
-    },
-    {
-      id: "actions",
-      header: "Actions",
-      cell: ({ row }) => {
-        const permission = row.original
-        const usageCount = permission._count?.rolePermissions || 0
-
-        return (
-          <DropdownMenu>
-            <DropdownMenuTrigger asChild>
-              <Button variant="ghost" size="icon" aria-label="Actions">
-                <MoreVertical className="h-4 w-4" />
-              </Button>
-            </DropdownMenuTrigger>
-            <DropdownMenuContent align="end">
-              <DropdownMenuItem
-                onClick={() => {
-                  setEditingPermission(permission)
-                  setDialogOpen(true)
-                }}
-              >
-                <Edit className="mr-2 h-4 w-4" />
-                Edit
-              </DropdownMenuItem>
-              <DropdownMenuItem
-                variant="destructive"
-                onClick={() => {
-                  setPermissionToDelete(permission)
-                  setDeleteDialogOpen(true)
-                }}
-                disabled={usageCount > 0}
-              >
-                <Trash2 className="mr-2 h-4 w-4" />
-                Delete
-              </DropdownMenuItem>
-            </DropdownMenuContent>
-          </DropdownMenu>
-        )
+      {
+        accessorKey: "category",
+        header: ({ column }) => (
+          <Button
+            variant="ghost"
+            onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
+            className="h-auto p-0 font-semibold"
+          >
+            Category
+            <ArrowUpDown className="ml-2 h-4 w-4" />
+          </Button>
+        ),
+        cell: ({ row }) => (
+          <Badge variant="outline">{row.getValue("category")}</Badge>
+        ),
       },
-    },
-  ]
+      {
+        accessorKey: "description",
+        header: "Description",
+        cell: ({ row }) => (
+          <span className="text-sm text-muted-foreground">
+            {row.getValue("description") || "-"}
+          </span>
+        ),
+      },
+      {
+        accessorKey: "usage",
+        header: ({ column }) => (
+          <Button
+            variant="ghost"
+            onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
+            className="h-auto p-0 font-semibold"
+          >
+            Usage
+            <ArrowUpDown className="ml-2 h-4 w-4" />
+          </Button>
+        ),
+        cell: ({ row }) => {
+          const usageCount = row.original._count?.rolePermissions || 0
+          return (
+            <div className="text-center">
+              <Badge
+                variant={usageCount > 0 ? "default" : "secondary"}
+                className="font-mono"
+              >
+                {usageCount}
+              </Badge>
+            </div>
+          )
+        },
+      },
+      {
+        id: "actions",
+        header: "Actions",
+        cell: ({ row }) => {
+          const permission = row.original
+          const usageCount = permission._count?.rolePermissions || 0
 
-  const table = useReactTable({
-    data: filteredData,
-    columns,
-    onSortingChange: setSorting,
-    getCoreRowModel: getCoreRowModel(),
-    getSortedRowModel: getSortedRowModel(),
-    state: {
-      sorting,
-    },
-  })
+          return (
+            <DropdownMenu>
+              <DropdownMenuTrigger asChild>
+                <Button variant="ghost" size="icon" aria-label="Actions">
+                  <MoreVertical className="h-4 w-4" />
+                </Button>
+              </DropdownMenuTrigger>
+              <DropdownMenuContent align="end">
+                <DropdownMenuItem
+                  onClick={() => {
+                    setEditingPermission(permission)
+                    setDialogOpen(true)
+                  }}
+                >
+                  <Edit className="mr-2 h-4 w-4" />
+                  Edit
+                </DropdownMenuItem>
+                <DropdownMenuItem
+                  variant="destructive"
+                  onClick={() => {
+                    setPermissionToDelete(permission)
+                    setDeleteDialogOpen(true)
+                  }}
+                  disabled={usageCount > 0}
+                >
+                  <Trash2 className="mr-2 h-4 w-4" />
+                  Delete
+                </DropdownMenuItem>
+              </DropdownMenuContent>
+            </DropdownMenu>
+          )
+        },
+      },
+    ],
+    []
+  )
+
+  const table = useReactTable(
+    useMemo(
+      () => ({
+        data: filteredData,
+        columns,
+        onSortingChange: setSorting,
+        getCoreRowModel: getCoreRowModel(),
+        getSortedRowModel: getSortedRowModel(),
+        state: {
+          sorting,
+        },
+      }),
+      [columns, filteredData, sorting]
+    )
+  )
 
   return (
     <>
@@ -318,9 +332,10 @@ export function PermissionsTable({
                     <TableHead key={header.id}>
                       {header.isPlaceholder
                         ? null
-                        : header.column.columnDef.header
-                          ? (header.column.columnDef.header as any)
-                          : null}
+                        : flexRender(
+                            header.column.columnDef.header,
+                            header.getContext()
+                          )}
                     </TableHead>
                   ))}
                 </TableRow>
@@ -332,11 +347,10 @@ export function PermissionsTable({
                   <TableRow key={row.id}>
                     {row.getVisibleCells().map((cell) => (
                       <TableCell key={cell.id}>
-                        {cell.column.columnDef.cell
-                          ? (cell.column.columnDef.cell as any)({
-                              ...cell.getContext(),
-                            })
-                          : null}
+                        {flexRender(
+                          cell.column.columnDef.cell,
+                          cell.getContext()
+                        )}
                       </TableCell>
                     ))}
                   </TableRow>
@@ -360,12 +374,14 @@ export function PermissionsTable({
         open={createDialogOpen}
         onOpenChange={setCreateDialogOpen}
         permission={null}
+        categories={categories}
         onSave={handleSavePermission}
       />
       <PermissionDialog
         open={dialogOpen}
         onOpenChange={setDialogOpen}
         permission={editingPermission}
+        categories={categories}
         onSave={handleSavePermission}
       />
 

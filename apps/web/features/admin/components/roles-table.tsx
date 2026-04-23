@@ -1,4 +1,4 @@
-// apps/web/features/backoffice/components/admin/roles-table.tsx
+// apps/web/features/admin/components/roles-table.tsx
 "use client"
 
 import { Badge } from "@workspace/ui/components/badge"

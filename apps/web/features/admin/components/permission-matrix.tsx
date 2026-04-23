@@ -1,4 +1,4 @@
-// apps/web/features/backoffice/components/admin/permission-matrix.tsx
+// apps/web/features/admin/components/permission-matrix.tsx
 "use client"
 
 import { Button } from "@workspace/ui/components/button"

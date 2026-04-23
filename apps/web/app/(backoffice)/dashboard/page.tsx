@@ -1,6 +1,6 @@
-import { StatCard } from "@/features/backoffice/components/stat-card"
-import { ActivityChart } from "@/features/backoffice/components/activity-chart"
-import { RecentActivity } from "@/features/backoffice/components/recent-activity"
+import { StatCard } from "@/features/dashboard/components/stat-card"
+import { ActivityChart } from "@/features/dashboard/components/activity-chart"
+import { RecentActivity } from "@/features/dashboard/components/recent-activity"
 import {
   UsersIcon,
   ShoppingCartIcon,

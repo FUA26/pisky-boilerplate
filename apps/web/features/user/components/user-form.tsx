@@ -1,4 +1,4 @@
-// apps/web/features/backoffice/components/admin/user-form.tsx
+// apps/web/features/user/components/user-form.tsx
 "use client"
 
 import { Button } from "@workspace/ui/components/button"
@@ -16,6 +16,13 @@ import { createUserSchema, updateUserSchema } from "@/lib/validations/user"
 import { zodResolver } from "@hookform/resolvers/zod"
 import { useEffect } from "react"
 import { useForm } from "react-hook-form"
+import {
+  UserIcon,
+  MailIcon,
+  LockIcon,
+  ShieldIcon,
+  InfoIcon,
+} from "lucide-react"
 
 interface UserFormProps {
   mode: "create" | "edit"
@@ -57,33 +64,41 @@ export function UserForm({
   }, [initialData, form])
 
   return (
-    <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4">
+    <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-5">
       <div className="space-y-2">
-        <Label htmlFor="name">Name</Label>
+        <Label htmlFor="name" className="flex items-center gap-2">
+          <UserIcon className="size-4 text-muted-foreground" />
+          Full Name
+        </Label>
         <Input
           id="name"
-          placeholder="John Doe"
+          placeholder="e.g. Alex Rivera"
           {...form.register("name")}
           disabled={isLoading}
+          className="transition-colors focus:border-primary/50"
         />
         {form.formState.errors.name && (
-          <p className="text-sm text-destructive">
+          <p className="flex items-center gap-1 text-sm text-destructive">
             {form.formState.errors.name.message}
           </p>
         )}
       </div>
 
       <div className="space-y-2">
-        <Label htmlFor="email">Email</Label>
+        <Label htmlFor="email" className="flex items-center gap-2">
+          <MailIcon className="size-4 text-muted-foreground" />
+          Email Address
+        </Label>
         <Input
           id="email"
           type="email"
-          placeholder="john@example.com"
+          placeholder="e.g. alex@example.com"
           {...form.register("email")}
           disabled={isLoading}
+          className="transition-colors focus:border-primary/50"
         />
         {form.formState.errors.email && (
-          <p className="text-sm text-destructive">
+          <p className="flex items-center gap-1 text-sm text-destructive">
             {form.formState.errors.email.message}
           </p>
         )}
@@ -91,16 +106,27 @@ export function UserForm({
 
       {mode === "create" && (
         <div className="space-y-2">
-          <Label htmlFor="password">Password</Label>
+          <Label htmlFor="password" className="flex items-center gap-2">
+            <LockIcon className="size-4 text-muted-foreground" />
+            Password
+            <span className="font-normal text-muted-foreground">
+              (required)
+            </span>
+          </Label>
           <Input
             id="password"
             type="password"
             placeholder="••••••••"
             {...form.register("password")}
             disabled={isLoading}
+            className="transition-colors focus:border-primary/50"
           />
+          <p className="text-xs text-muted-foreground">
+            Minimum 8 characters. Use a mix of letters, numbers, and symbols for
+            better security.
+          </p>
           {form.formState.errors.password && (
-            <p className="text-sm text-destructive">
+            <p className="flex items-center gap-1 text-sm text-destructive">
               {form.formState.errors.password.message}
             </p>
           )}
@@ -108,45 +134,65 @@ export function UserForm({
       )}
 
       <div className="space-y-2">
-        <Label htmlFor="roleId">Role</Label>
+        <Label htmlFor="roleId" className="flex items-center gap-2">
+          <ShieldIcon className="size-4 text-muted-foreground" />
+          Role
+        </Label>
         <Select
           onValueChange={(value) => form.setValue("roleId", value)}
           value={form.watch("roleId")}
           disabled={isLoading}
         >
-          <SelectTrigger>
+          <SelectTrigger className="transition-colors focus:border-primary/50">
             <SelectValue placeholder="Select a role" />
           </SelectTrigger>
           <SelectContent portal={false}>
-            {roles.map((role) => (
-              <SelectItem key={role.id} value={role.id}>
-                {role.name}
-              </SelectItem>
-            ))}
+            {roles.length === 0 ? (
+              <div className="p-2 text-center text-sm text-muted-foreground">
+                No roles available. Create one first.
+              </div>
+            ) : (
+              roles.map((role) => (
+                <SelectItem key={role.id} value={role.id}>
+                  <div className="flex items-center gap-2">
+                    <span>{role.name}</span>
+                  </div>
+                </SelectItem>
+              ))
+            )}
           </SelectContent>
         </Select>
+        <p className="flex items-center gap-1 text-xs text-muted-foreground">
+          <InfoIcon className="size-3" />
+          The role determines what permissions and access this user will have.
+        </p>
         {form.formState.errors.roleId && (
-          <p className="text-sm text-destructive">
+          <p className="flex items-center gap-1 text-sm text-destructive">
             {form.formState.errors.roleId.message}
           </p>
         )}
       </div>
 
-      <div className="flex justify-end gap-2 pt-4">
+      <div className="flex justify-end gap-3 border-t border-border/50 pt-4">
         <Button
           type="button"
           variant="outline"
           onClick={onCancel}
           disabled={isLoading}
+          className="min-w-[100px]"
         >
           Cancel
         </Button>
-        <Button type="submit" disabled={isLoading}>
+        <Button
+          type="submit"
+          disabled={isLoading}
+          className="min-w-[100px] gap-2"
+        >
           {isLoading
             ? "Saving..."
             : mode === "create"
               ? "Create User"
-              : "Update User"}
+              : "Save Changes"}
         </Button>
       </div>
     </form>
