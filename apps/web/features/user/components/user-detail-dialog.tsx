@@ -24,6 +24,7 @@ import {
   FingerprintIcon,
   ShieldIcon,
 } from "lucide-react"
+import { formatRoleLabel } from "@/lib/rbac/role-labels"
 
 interface User {
   id: string
@@ -128,7 +129,7 @@ export function UserDetailDialog({
                   <Label className="text-xs text-muted-foreground">Role</Label>
                 </div>
                 <Badge className="border-primary/20 bg-primary/5 text-foreground">
-                  {user.role?.name || "User"}
+                  {formatRoleLabel(user.role?.name)}
                 </Badge>
               </div>
 

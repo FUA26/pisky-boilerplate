@@ -36,6 +36,7 @@ import { toast } from "sonner"
 
 import { UserDialog } from "./user-dialog"
 import { UserDetailDialog } from "./user-detail-dialog"
+import { formatRoleLabel } from "@/lib/rbac/role-labels"
 
 // Types
 export interface User {
@@ -71,9 +72,9 @@ interface UsersResponse {
 
 // Role filter options - these should come from API in production
 const roleOptions = [
-  { label: "Admin", value: "Admin" },
-  { label: "Editor", value: "Editor" },
-  { label: "User", value: "User" },
+  { label: "Admin", value: "ADMIN" },
+  { label: "Moderator", value: "MODERATOR" },
+  { label: "User", value: "USER" },
 ]
 
 export function UsersDataTable({
@@ -192,6 +193,9 @@ export function UsersDataTable({
   const columns: ColumnDef<User>[] = [
     {
       id: "select",
+      size: 48,
+      minSize: 48,
+      maxSize: 48,
       header: ({ table }) => (
         <input
           type="checkbox"
@@ -215,6 +219,8 @@ export function UsersDataTable({
     },
     {
       accessorKey: "name",
+      size: 240,
+      minSize: 200,
       header: ({ column }) => (
         <DataTableColumnHeader column={column} label="Name" />
       ),
@@ -233,6 +239,8 @@ export function UsersDataTable({
     },
     {
       accessorKey: "email",
+      size: 320,
+      minSize: 240,
       header: ({ column }) => (
         <DataTableColumnHeader column={column} label="Email" />
       ),
@@ -242,11 +250,13 @@ export function UsersDataTable({
     },
     {
       accessorKey: "role",
+      size: 160,
+      minSize: 140,
       header: ({ column }) => (
         <DataTableColumnHeader column={column} label="Role" />
       ),
       cell: ({ row }) => {
-        const roleName = row.original.role?.name || "User"
+        const roleName = formatRoleLabel(row.original.role?.name)
         return (
           <Badge
             variant="outline"
@@ -257,12 +267,14 @@ export function UsersDataTable({
         )
       },
       filterFn: (row, columnId, filterValue: string[]) => {
-        const roleName = row.original.role?.name || "User"
+        const roleName = row.original.role?.name || "USER"
         return filterValue.includes(roleName)
       },
     },
     {
       accessorKey: "createdAt",
+      size: 180,
+      minSize: 160,
       header: ({ column }) => (
         <DataTableColumnHeader column={column} label="Created" />
       ),
@@ -281,6 +293,9 @@ export function UsersDataTable({
     },
     {
       id: "actions",
+      size: 72,
+      minSize: 72,
+      maxSize: 72,
       header: "Actions",
       cell: ({ row }) => {
         const user = row.original
@@ -374,13 +389,18 @@ export function UsersDataTable({
                 title="Role"
                 options={roleOptions}
                 column={table.getColumn("role")}
+                multiple
               />
-              <Button size="sm" onClick={() => setCreateDialogOpen(true)}>
-                <PlusIcon className="mr-2 size-4" />
-                Add User
-              </Button>
             </div>
             <DataTableViewOptions table={table} />
+            <Button
+              size="sm"
+              className="h-8"
+              onClick={() => setCreateDialogOpen(true)}
+            >
+              <PlusIcon className="mr-2 size-4" />
+              Add User
+            </Button>
           </div>
         )}
         actionBar={(table) => (
@@ -388,6 +408,7 @@ export function UsersDataTable({
             {(selectedUsers, resetSelection) => (
               <Button
                 size="sm"
+                className="h-8"
                 variant="destructive"
                 onClick={() => {
                   const selectedIds = selectedUsers.map((u) => u.id)

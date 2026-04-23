@@ -23,6 +23,7 @@ import {
   ShieldIcon,
   InfoIcon,
 } from "lucide-react"
+import { formatRoleLabel } from "@/lib/rbac/role-labels"
 
 interface UserFormProps {
   mode: "create" | "edit"
@@ -146,7 +147,13 @@ export function UserForm({
           <SelectTrigger className="transition-colors focus:border-primary/50">
             <SelectValue placeholder="Select a role" />
           </SelectTrigger>
-          <SelectContent portal={false}>
+          <SelectContent
+            position="popper"
+            align="start"
+            side="bottom"
+            sideOffset={4}
+            avoidCollisions={false}
+          >
             {roles.length === 0 ? (
               <div className="p-2 text-center text-sm text-muted-foreground">
                 No roles available. Create one first.
@@ -155,7 +162,7 @@ export function UserForm({
               roles.map((role) => (
                 <SelectItem key={role.id} value={role.id}>
                   <div className="flex items-center gap-2">
-                    <span>{role.name}</span>
+                    <span>{formatRoleLabel(role.name)}</span>
                   </div>
                 </SelectItem>
               ))

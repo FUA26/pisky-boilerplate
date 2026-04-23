@@ -50,6 +50,7 @@ import {
 } from "lucide-react"
 import { UserDialog } from "./user-dialog"
 import { UserDetailDialog } from "./user-detail-dialog"
+import { formatRoleLabel } from "@/lib/rbac/role-labels"
 
 // Types
 interface User {
@@ -366,9 +367,9 @@ export function UserList() {
                     <Badge
                       variant="outline"
                       className="cursor-help border-primary/20 bg-primary/5 text-xs font-medium text-foreground transition-colors hover:bg-primary/10"
-                      title={`Role: ${user.role?.name || "User"}. Roles determine permissions.`}
+                      title={`Role: ${formatRoleLabel(user.role?.name)}. Roles determine permissions.`}
                     >
-                      {user.role?.name || "User"}
+                      {formatRoleLabel(user.role?.name)}
                     </Badge>
                   </TableCell>
                   <TableCell className="text-sm text-muted-foreground">
