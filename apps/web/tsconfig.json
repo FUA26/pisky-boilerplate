@@ -4,6 +4,10 @@
     "baseUrl": ".",
     "paths": {
       "@/*": ["./*"],
+      "@workspace/hooks": ["../../packages/hooks/src/index.ts"],
+      "@workspace/hooks/*": ["../../packages/hooks/src/*"],
+      "@workspace/types": ["../../packages/types/src/index.ts"],
+      "@workspace/types/*": ["../../packages/types/src/*"],
       "@workspace/ui/*": ["../../packages/ui/src/*"],
       "@/features/*": ["./features/*"],
       "@/features/auth/*": ["./features/auth/*"]

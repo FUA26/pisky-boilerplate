@@ -18,8 +18,15 @@ import {
 } from "@/lib/validations/role"
 import { zodResolver } from "@hookform/resolvers/zod"
 import { useEffect } from "react"
-import { useForm } from "react-hook-form"
+import { useForm, type Resolver } from "react-hook-form"
 import { PermissionMatrix } from "./permission-matrix"
+
+type RoleFormValues = {
+  name: string
+  description?: string
+  permissions: string[]
+  sourceRoleId?: string
+}
 
 interface RoleFormProps {
   mode: "create" | "edit" | "clone"
@@ -52,8 +59,8 @@ export function RoleForm({
         ? createRoleSchema
         : updateRoleSchema
 
-  const form = useForm<CreateRoleInput | UpdateRoleInput | CloneRoleInput>({
-    resolver: zodResolver(schema),
+  const form = useForm<RoleFormValues>({
+    resolver: zodResolver(schema) as unknown as Resolver<RoleFormValues>,
     defaultValues: initialData || {
       name: "",
       description: "",
@@ -63,14 +70,24 @@ export function RoleForm({
 
   useEffect(() => {
     if (initialData) {
-      form.reset(initialData)
+      form.reset({
+        name: initialData.name ?? "",
+        description: initialData.description,
+        permissions: initialData.permissions ?? [],
+        sourceRoleId: initialData.sourceRoleId,
+      })
     }
   }, [initialData, form])
 
-  const selectedPermissions = (form.watch("permissions") || []) as Permission[]
+  const selectedPermissions = form.watch("permissions") || []
 
   return (
-    <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6">
+    <form
+      onSubmit={form.handleSubmit((values) =>
+        onSubmit(values as CreateRoleInput | UpdateRoleInput | CloneRoleInput)
+      )}
+      className="space-y-6"
+    >
       {mode === "clone" && (
         <div className="space-y-2">
           <Label htmlFor="sourceRoleId">Source Role</Label>
@@ -123,7 +140,7 @@ export function RoleForm({
             <PermissionMatrix
               selectedPermissions={selectedPermissions}
               onChange={(permissions) =>
-                form.setValue("permissions", permissions as string[])
+                form.setValue("permissions", permissions)
               }
               disabled={isLoading}
             />

@@ -1,7 +1,24 @@
 import { auth } from "@/lib/auth/config"
 import { requirePermission } from "@/lib/rbac/permissions"
 import { fileService } from "@/lib/services/file-service"
+import { z } from "zod"
 import { NextResponse } from "next/server"
+
+const uploadFileSchema = z.object({
+  filename: z.string().min(1),
+  mimeType: z.string().min(1),
+  size: z.number().int().nonnegative(),
+  category: z.enum([
+    "AVATAR",
+    "DOCUMENT",
+    "IMAGE",
+    "VIDEO",
+    "AUDIO",
+    "ARCHIVE",
+    "OTHER",
+  ]),
+  isPublic: z.boolean().optional(),
+})
 
 export async function POST(req: Request) {
   try {
@@ -13,7 +30,8 @@ export async function POST(req: Request) {
     await requirePermission(session.user.id, "FILE_UPLOAD")
 
     const body = await req.json()
-    const { filename, mimeType, size, category, isPublic } = body
+    const { filename, mimeType, size, category, isPublic } =
+      uploadFileSchema.parse(body)
 
     const file = await fileService.createUploadRecord({
       userId: session.user.id,

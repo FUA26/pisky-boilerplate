@@ -15,7 +15,7 @@ import type { CreateUserInput, UpdateUserInput } from "@/lib/validations/user"
 import { createUserSchema, updateUserSchema } from "@/lib/validations/user"
 import { zodResolver } from "@hookform/resolvers/zod"
 import { useEffect } from "react"
-import { useForm } from "react-hook-form"
+import { useForm, type Resolver } from "react-hook-form"
 import {
   UserIcon,
   MailIcon,
@@ -24,6 +24,13 @@ import {
   InfoIcon,
 } from "lucide-react"
 import { formatRoleLabel } from "@/lib/rbac/role-labels"
+
+type UserFormValues = {
+  name: string
+  email: string
+  password?: string
+  roleId: string
+}
 
 interface UserFormProps {
   mode: "create" | "edit"
@@ -48,8 +55,8 @@ export function UserForm({
 }: UserFormProps) {
   const schema = mode === "create" ? createUserSchema : updateUserSchema
 
-  const form = useForm<CreateUserInput | UpdateUserInput>({
-    resolver: zodResolver(schema),
+  const form = useForm<UserFormValues>({
+    resolver: zodResolver(schema) as unknown as Resolver<UserFormValues>,
     defaultValues: initialData || {
       name: "",
       email: "",
@@ -60,12 +67,22 @@ export function UserForm({
 
   useEffect(() => {
     if (initialData) {
-      form.reset(initialData)
+      form.reset({
+        name: initialData.name ?? "",
+        email: initialData.email ?? "",
+        roleId: initialData.roleId ?? "",
+        password: "",
+      })
     }
   }, [initialData, form])
 
   return (
-    <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-5">
+    <form
+      onSubmit={form.handleSubmit((values) =>
+        onSubmit(values as CreateUserInput | UpdateUserInput)
+      )}
+      className="space-y-5"
+    >
       <div className="space-y-2">
         <Label htmlFor="name" className="flex items-center gap-2">
           <UserIcon className="size-4 text-muted-foreground" />

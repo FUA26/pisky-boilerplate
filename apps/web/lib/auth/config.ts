@@ -1,11 +1,11 @@
-import NextAuth from "next-auth"
+import NextAuth, { type NextAuthConfig, type NextAuthResult } from "next-auth"
 import Credentials from "next-auth/providers/credentials"
 import { PrismaAdapter } from "@auth/prisma-adapter"
 import { prisma } from "@/lib/prisma"
 import { verifyPassword } from "./password"
 import type { Permission } from "@workspace/types"
 
-export const { handlers, signIn, signOut, auth } = NextAuth({
+const authConfig = {
   adapter: PrismaAdapter(prisma),
   session: { strategy: "jwt" },
   pages: {
@@ -138,4 +138,11 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
       return session
     },
   },
-})
+} satisfies NextAuthConfig
+
+const authResult: NextAuthResult = NextAuth(authConfig)
+
+export const handlers: NextAuthResult["handlers"] = authResult.handlers
+export const signIn: NextAuthResult["signIn"] = authResult.signIn
+export const signOut: NextAuthResult["signOut"] = authResult.signOut
+export const auth: NextAuthResult["auth"] = authResult.auth

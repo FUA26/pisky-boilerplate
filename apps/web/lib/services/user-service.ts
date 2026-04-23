@@ -273,12 +273,20 @@ export const userService = {
       include: {
         role: {
           include: {
-            permissions: true,
+            permissions: {
+              include: {
+                permission: true,
+              },
+            },
           },
         },
       },
     })
 
-    return user?.role.permissions.map((p) => p.name) ?? []
+    return (
+      user?.role.permissions
+        .map((p) => p.permission?.name)
+        .filter((name): name is string => Boolean(name)) ?? []
+    )
   },
 }

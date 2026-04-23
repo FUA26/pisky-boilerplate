@@ -24,6 +24,8 @@
     "@auth/prisma-adapter": "^2.11.2",
     "@hookform/resolvers": "^5.2.2",
     "@tanstack/react-table": "^8.21.3",
+    "@workspace/hooks": "workspace:*",
+    "@workspace/types": "workspace:*",
     "@workspace/ui": "workspace:*",
     "bcryptjs": "^3.0.3",
     "lucide-react": "^1.8.0",

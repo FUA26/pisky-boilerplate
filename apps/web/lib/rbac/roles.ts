@@ -30,11 +30,22 @@ const DEFAULT_PERMISSIONS: Record<RoleName, Permission[]> = {
 }
 
 export async function seedRoles() {
-  const existingRoles = await prisma.role.findMany()
+  const uniquePermissions = [
+    ...new Set(Object.values(DEFAULT_PERMISSIONS).flat()),
+  ]
 
-  if (existingRoles.length > 0) {
-    return existingRoles
-  }
+  await Promise.all(
+    uniquePermissions.map((name) =>
+      prisma.permission.upsert({
+        where: { name },
+        update: {},
+        create: {
+          name,
+          category: name.split("_")[0] ?? "GENERAL",
+        },
+      })
+    )
+  )
 
   const roles = await Promise.all(
     Object.entries(DEFAULT_PERMISSIONS).map(async ([name, permissions]) => {
@@ -44,11 +55,9 @@ export async function seedRoles() {
         create: {
           name,
           permissions: {
-            connectOrCreate: permissions.map((p) => ({
-              where: { name: p },
-              create: {
-                name: p,
-                category: p.split("_")[0],
+            create: permissions.map((permissionName) => ({
+              permission: {
+                connect: { name: permissionName },
               },
             })),
           },

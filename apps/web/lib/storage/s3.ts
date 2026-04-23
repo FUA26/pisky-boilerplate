@@ -4,6 +4,7 @@ import {
   GetObjectCommand,
   HeadBucketCommand,
   CreateBucketCommand,
+  type BucketLocationConstraint,
 } from "@aws-sdk/client-s3"
 import { getSignedUrl } from "@aws-sdk/s3-request-presigner"
 
@@ -37,7 +38,8 @@ export async function ensureBucketExists(
             ? new CreateBucketCommand({
                 Bucket: bucketName,
                 CreateBucketConfiguration: {
-                  LocationConstraint: process.env.AWS_REGION,
+                  LocationConstraint: process.env
+                    .AWS_REGION as BucketLocationConstraint,
                 },
               })
             : new CreateBucketCommand({ Bucket: bucketName })

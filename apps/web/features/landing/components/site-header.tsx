@@ -4,16 +4,22 @@ import Link from "next/link"
 import { useTheme } from "next-themes"
 import { Button } from "@workspace/ui/components/button"
 import { Menu, Moon, Sun, X } from "lucide-react"
-import { useState, useEffect } from "react"
+import {
+  forwardRef,
+  useEffect,
+  useRef,
+  useState,
+  type ComponentPropsWithoutRef,
+} from "react"
 import { siteConfig } from "@/lib/site-config"
 
 export function SiteHeader() {
   const { theme, setTheme } = useTheme()
   const [isMenuOpen, setIsMenuOpen] = useState(false)
   const [mounted, setMounted] = useState(false)
-  const menuToggleRef = useState<HTMLButtonElement | null>(null)[0]
-  const firstFocusableRef = useState<HTMLAnchorElement | null>(null)[0]
-  const lastFocusableRef = useState<HTMLAnchorElement | null>(null)[0]
+  const menuToggleRef = useRef<HTMLButtonElement | null>(null)
+  const firstFocusableRef = useRef<HTMLAnchorElement | null>(null)
+  const lastFocusableRef = useRef<HTMLAnchorElement | null>(null)
 
   useEffect(() => {
     setMounted(true)
@@ -44,7 +50,7 @@ export function SiteHeader() {
     const handleEscape = (e: KeyboardEvent) => {
       if (e.key === "Escape") {
         setIsMenuOpen(false)
-        menuToggleRef?.focus()
+        menuToggleRef.current?.focus()
       }
     }
 
@@ -61,7 +67,7 @@ export function SiteHeader() {
       document.removeEventListener("keydown", handleTab)
       document.removeEventListener("keydown", handleEscape)
     }
-  }, [isMenuOpen, menuToggleRef])
+  }, [isMenuOpen])
 
   return (
     <header className="sticky top-0 z-50 w-full border-b border-border/40 bg-background/80 backdrop-blur-xl supports-[backdrop-filter]:bg-background/60">
@@ -191,14 +197,12 @@ export function SiteHeader() {
             >
               Sign in
             </MobileNavLink>
-            <Button
-              ref={lastFocusableRef as React.RefObject<HTMLButtonElement>}
-              size="sm"
-              className="mt-2 justify-center gap-1.5"
-              asChild
-              onClick={() => setIsMenuOpen(false)}
-            >
-              <Link href={siteConfig.auth.signUp}>
+            <Button size="sm" className="mt-2 justify-center gap-1.5" asChild>
+              <Link
+                ref={lastFocusableRef}
+                href={siteConfig.auth.signUp}
+                onClick={() => setIsMenuOpen(false)}
+              >
                 Start Building
                 <svg
                   className="h-3.5 w-3.5"
@@ -237,24 +241,19 @@ function NavLink({
   )
 }
 
-function MobileNavLink({
-  href,
-  children,
-  onClick,
-  ...props
-}: React.ComponentProps<typeof Link> & {
-  onClick?: () => void
-  ref?: React.RefObject<HTMLAnchorElement>
-}) {
+const MobileNavLink = forwardRef<
+  HTMLAnchorElement,
+  ComponentPropsWithoutRef<typeof Link> & { onClick?: () => void }
+>(function MobileNavLink({ href, children, onClick, ...props }, ref) {
   return (
     <Link
       href={href}
       onClick={onClick}
-      ref={props.ref}
+      ref={ref}
       className="rounded-lg px-3 py-2 text-base font-medium text-muted-foreground transition-colors hover:bg-accent/50 hover:text-foreground focus-visible:ring-1 focus-visible:ring-ring focus-visible:outline-none"
       {...props}
     >
       {children}
     </Link>
   )
-}
+})
