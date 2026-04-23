@@ -5,6 +5,40 @@ import { requirePermission } from "@/lib/rbac/permissions"
 import { updatePermissionSchema } from "@/lib/validations/permission"
 import { NextResponse } from "next/server"
 
+export async function GET(
+  req: Request,
+  { params }: { params: Promise<{ id: string }> }
+) {
+  try {
+    const session = await auth()
+    if (!session?.user) {
+      return NextResponse.json({ error: "Unauthorized" }, { status: 401 })
+    }
+
+    await requirePermission(session.user.id, "PERMISSION_READ")
+
+    const { id } = await params
+    const permission = await permissionService.getPermissionById(id)
+
+    if (!permission) {
+      return NextResponse.json(
+        { error: "Permission not found" },
+        { status: 404 }
+      )
+    }
+
+    return NextResponse.json({ permission })
+  } catch (error) {
+    return NextResponse.json(
+      {
+        error:
+          error instanceof Error ? error.message : "Failed to fetch permission",
+      },
+      { status: 500 }
+    )
+  }
+}
+
 export async function PATCH(
   req: Request,
   { params }: { params: Promise<{ id: string }> }
@@ -15,7 +49,7 @@ export async function PATCH(
       return NextResponse.json({ error: "Unauthorized" }, { status: 401 })
     }
 
-    await requirePermission(session.user.id, "ADMIN_PERMISSIONS_MANAGE")
+    await requirePermission(session.user.id, "PERMISSION_ASSIGN")
 
     const { id } = await params
     const body = await req.json()
@@ -63,7 +97,7 @@ export async function DELETE(
       return NextResponse.json({ error: "Unauthorized" }, { status: 401 })
     }
 
-    await requirePermission(session.user.id, "ADMIN_PERMISSIONS_MANAGE")
+    await requirePermission(session.user.id, "PERMISSION_ASSIGN")
 
     const { id } = await params
     await permissionService.deletePermission(id)

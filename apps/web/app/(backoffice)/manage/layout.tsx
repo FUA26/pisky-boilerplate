@@ -1,4 +1,4 @@
-// apps/web/app/(backoffice)/manage/layout.tsx
+// Legacy redirect layout for /manage routes
 export default function ManageLayout({
   children,
 }: {

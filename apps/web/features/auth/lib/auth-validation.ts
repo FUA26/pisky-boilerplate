@@ -21,6 +21,11 @@ export const signUpSchema = z
     message: "Passwords do not match",
     path: ["confirmPassword"],
   })
+  // Transform for form with proper id format
+  .transform((data) => ({
+    ...data,
+    // Keep internal field name for validation
+  }))
 
 export type SignUpInput = z.infer<typeof signUpSchema>
 

@@ -23,8 +23,9 @@ export const createPermissionSchema = z.object({
     .string()
     .min(1, "Category is required")
     .max(50, "Category must not exceed 50 characters")
-    .regex(
-      /^[a-zA-Z0-9\s_-]+$/,
+    .transform((val) => val.trim().toUpperCase())
+    .refine(
+      (val) => /^[A-Z0-9\s_-]+$/.test(val),
       "Category can only contain letters, numbers, spaces, hyphens, and underscores"
     ),
   description: z

@@ -1,6 +1,10 @@
 import { auth } from "@/lib/auth/config"
 import { requirePermission } from "@/lib/rbac/permissions"
-import { roleService } from "@/lib/services/role-service"
+import {
+  InvalidRolePermissionsError,
+  roleService,
+} from "@/lib/services/role-service"
+import { createRoleSchema } from "@/lib/validations/role"
 import { NextResponse } from "next/server"
 
 export async function GET(
@@ -22,7 +26,7 @@ export async function GET(
       return NextResponse.json({ error: "Role not found" }, { status: 404 })
     }
 
-    return NextResponse.json(role)
+    return NextResponse.json({ role })
   } catch (error) {
     return NextResponse.json(
       {
@@ -47,10 +51,39 @@ export async function PATCH(
 
     const { id } = await params
     const body = await req.json()
+    const validatedData = createRoleSchema.parse(body)
 
-    const role = await roleService.updateRole(id, body)
-    return NextResponse.json(role)
+    const role = await roleService.updateRole(id, {
+      name: validatedData.name,
+      permissions: validatedData.permissions,
+    })
+    return NextResponse.json({
+      role,
+      message: "Role updated successfully",
+    })
   } catch (error) {
+    if ((error as any)?.name === "ZodError") {
+      return NextResponse.json(
+        {
+          error: "Validation Error",
+          details: (error as any).errors,
+        },
+        { status: 400 }
+      )
+    }
+
+    if (error instanceof InvalidRolePermissionsError) {
+      return NextResponse.json(
+        {
+          error: error.message,
+          details: {
+            missingPermissions: error.missingPermissions,
+          },
+        },
+        { status: 400 }
+      )
+    }
+
     return NextResponse.json(
       {
         error: error instanceof Error ? error.message : "Failed to update role",

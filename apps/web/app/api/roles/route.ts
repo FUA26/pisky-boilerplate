@@ -1,6 +1,10 @@
 import { auth } from "@/lib/auth/config"
 import { requirePermission } from "@/lib/rbac/permissions"
-import { roleService } from "@/lib/services/role-service"
+import {
+  InvalidRolePermissionsError,
+  roleService,
+} from "@/lib/services/role-service"
+import { createRoleSchema } from "@/lib/validations/role"
 import { NextResponse } from "next/server"
 
 export async function GET(req: Request) {
@@ -10,7 +14,7 @@ export async function GET(req: Request) {
       return NextResponse.json({ error: "Unauthorized" }, { status: 401 })
     }
 
-    await requirePermission(session.user.id, "ADMIN_ROLES_MANAGE")
+    await requirePermission(session.user.id, "ROLE_READ")
 
     const { searchParams } = new URL(req.url)
     const includeStats = searchParams.get("stats") === "true"
@@ -46,10 +50,42 @@ export async function POST(req: Request) {
     await requirePermission(session.user.id, "ROLE_CREATE")
 
     const body = await req.json()
-    const role = await roleService.createRole(body)
+    const validatedData = createRoleSchema.parse(body)
+    const role = await roleService.createRole({
+      name: validatedData.name,
+      permissions: validatedData.permissions,
+    })
 
-    return NextResponse.json(role, { status: 201 })
+    return NextResponse.json(
+      {
+        role,
+        message: "Role created successfully",
+      },
+      { status: 201 }
+    )
   } catch (error) {
+    if ((error as any)?.name === "ZodError") {
+      return NextResponse.json(
+        {
+          error: "Validation Error",
+          details: (error as any).errors,
+        },
+        { status: 400 }
+      )
+    }
+
+    if (error instanceof InvalidRolePermissionsError) {
+      return NextResponse.json(
+        {
+          error: error.message,
+          details: {
+            missingPermissions: error.missingPermissions,
+          },
+        },
+        { status: 400 }
+      )
+    }
+
     return NextResponse.json(
       {
         error: error instanceof Error ? error.message : "Failed to create role",

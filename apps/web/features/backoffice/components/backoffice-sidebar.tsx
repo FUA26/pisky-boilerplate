@@ -10,35 +10,32 @@ import {
   SidebarHeader,
   SidebarRail,
 } from "@workspace/ui/components/sidebar"
-import {
-  UsersIcon,
-  BarChartIcon,
-  ShieldCheckIcon,
-  SettingsIcon,
-  KeyIcon,
-} from "lucide-react"
+import { BarChartIcon, ShieldCheckIcon, SettingsIcon } from "lucide-react"
 
 const data = {
   navMain: [
     {
       title: "Dashboard",
-      url: "/",
+      url: "/dashboard",
       icon: <BarChartIcon />,
     },
     {
-      title: "Users",
-      url: "/manage/users",
-      icon: <UsersIcon />,
-    },
-    {
-      title: "Roles",
-      url: "/manage/roles",
+      title: "Access Management",
       icon: <ShieldCheckIcon />,
-    },
-    {
-      title: "Permissions",
-      url: "/manage/permissions",
-      icon: <KeyIcon />,
+      items: [
+        {
+          title: "Users",
+          url: "/access-management/users",
+        },
+        {
+          title: "Roles",
+          url: "/access-management/roles",
+        },
+        {
+          title: "Permissions",
+          url: "/access-management/permissions",
+        },
+      ],
     },
     {
       title: "Configuration",

@@ -15,6 +15,8 @@ import {
   Plus,
 } from "lucide-react"
 import { useState } from "react"
+import Link from "next/link"
+import { siteConfig } from "@/lib/site-config"
 
 interface Feature {
   title: string
@@ -165,6 +167,8 @@ export function FeatureGrid() {
                       onClick={() =>
                         setExpandedIndex(isExpanded ? null : index)
                       }
+                      aria-expanded={isExpanded}
+                      aria-controls={`code-block-${index}`}
                     >
                       {isExpanded ? (
                         <>
@@ -182,6 +186,7 @@ export function FeatureGrid() {
 
                   {/* Code block - sharper edges for code */}
                   <div
+                    id={`code-block-${index}`}
                     className={`relative overflow-hidden rounded-lg bg-muted/90 font-mono text-xs transition-all duration-300 ${
                       isExpanded
                         ? "max-h-96 opacity-100"
@@ -247,10 +252,10 @@ export function FeatureGrid() {
             className="group gap-2"
             asChild
           >
-            <a href="#docs">
+            <Link href={siteConfig.nav.docs}>
               View Documentation
               <ArrowRight className="h-4 w-4 transition-transform group-hover:translate-x-1" />
-            </a>
+            </Link>
           </Button>
         </div>
       </div>

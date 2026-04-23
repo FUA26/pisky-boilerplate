@@ -1,6 +1,6 @@
 "use client"
 
-import { useCan } from "@workspace/hooks"
+import { useCan } from "@workspace/hooks/rbac"
 import type { Permission } from "@workspace/types"
 
 interface CanProps {

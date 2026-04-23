@@ -1,0 +1,79 @@
+# docker-compose.admin.yml
+version: "3.8"
+
+networks:
+  naiera-backend-network:
+    name: docker-compose_naiera-backend-network
+    external: true
+  naiera-admin-network:
+    driver: bridge
+
+services:
+  pgadmin:
+    image: dpage/pgadmin4:8
+    container_name: naiera-pgadmin
+    restart: unless-stopped
+    networks:
+      - naiera-admin-network
+      - naiera-backend-network
+    ports:
+      - "8450:80"
+    environment:
+      PGADMIN_DEFAULT_EMAIL: ${PGADMIN_DEFAULT_EMAIL}
+      PGADMIN_DEFAULT_PASSWORD: ${PGADMIN_DEFAULT_PASSWORD}
+      PGADMIN_CONFIG_SERVER_MODE: "False"
+    volumes:
+      - pgadmin_data:/var/lib/pgadmin
+    healthcheck:
+      test:
+        [
+          "CMD",
+          "wget",
+          "--quiet",
+          "--tries=1",
+          "--spider",
+          "http://localhost:5050",
+        ]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+    deploy:
+      resources:
+        limits:
+          cpus: "0.25"
+          memory: 256M
+    stop_grace_period: 10s
+
+  redis-commander:
+    image: rediscommander/redis-commander:latest
+    container_name: naiera-redis-commander
+    restart: unless-stopped
+    networks:
+      - naiera-admin-network
+      - naiera-backend-network
+    ports:
+      - "8481:8081"
+    environment:
+      REDIS_HOSTS: local:redis:6379:0:${REDIS_PASSWORD}
+    healthcheck:
+      test:
+        [
+          "CMD",
+          "wget",
+          "--quiet",
+          "--tries=1",
+          "--spider",
+          "http://localhost:8081",
+        ]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+    deploy:
+      resources:
+        limits:
+          cpus: "0.1"
+          memory: 128M
+    stop_grace_period: 10s
+
+volumes:
+  pgadmin_data:

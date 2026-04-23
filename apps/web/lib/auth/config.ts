@@ -71,22 +71,69 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
     }),
   ],
   callbacks: {
-    async jwt({ token, user }) {
+    async jwt({ token, user, trigger, session }) {
       if (user) {
-        token.role = user.role
-        token.id = user.id
+        const authUser = user as typeof user & {
+          role: {
+            id: string
+            name: string
+            permissions: Permission[]
+          }
+        }
+
+        token.role = authUser.role
+        token.id = authUser.id
+        token.name = authUser.name
+        token.email = authUser.email
+        token.picture = authUser.image
       }
+
+      if (trigger === "update" && session) {
+        const updatedUser =
+          (
+            session as {
+              user?: {
+                name?: string | null
+                email?: string | null
+                image?: string | null
+              }
+            }
+          )?.user ??
+          (session as {
+            name?: string | null
+            email?: string | null
+            image?: string | null
+          })
+
+        token.name = updatedUser?.name ?? token.name
+        token.email = updatedUser?.email ?? token.email
+        token.picture = updatedUser?.image ?? token.picture
+      }
+
       return token
     },
     async session({ session, token }) {
       if (session.user) {
         session.user.id = token.id as string
-        session.user.role = token.role as {
+        session.user.name = token.name ?? session.user.name
+        session.user.email = token.email ?? session.user.email
+        session.user.image = token.picture ?? session.user.image
+        session.user.role = (
+          token as {
+            role?: {
+              id: string
+              name: string
+              permissions: Permission[]
+            }
+          }
+        ).role as {
           id: string
           name: string
           permissions: Permission[]
         }
-        session.user.permissions = token.role?.permissions as Permission[]
+        session.user.permissions = ((
+          token as { role?: { permissions?: Permission[] } }
+        ).role?.permissions ?? []) as Permission[]
       }
       return session
     },

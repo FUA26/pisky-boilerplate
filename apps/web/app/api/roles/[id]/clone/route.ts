@@ -15,7 +15,7 @@ export async function POST(
       return NextResponse.json({ error: "Unauthorized" }, { status: 401 })
     }
 
-    await requirePermission(session.user.id, "ADMIN_ROLES_MANAGE")
+    await requirePermission(session.user.id, "ROLE_CREATE")
 
     const { id } = await params
     const body = await req.json()

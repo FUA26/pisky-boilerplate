@@ -69,10 +69,8 @@ export function NavMain({
               ? matchesPath(pathname, item.url)
               : false
             const isSubItemActive = hasActiveSubItem(pathname, item.items)
-            // Parent is only active if we're exactly on its URL, not when on sub-item pages
-            // The submenu will expand when on sub-item pages via defaultOpen, but parent won't highlight
             const isItemActive = Boolean(
-              item.isActive || (isLeafActive && !isSubItemActive)
+              item.isActive || isLeafActive || isSubItemActive
             )
 
             if (!hasSubItems) {
@@ -97,7 +95,7 @@ export function NavMain({
                         "relative flex h-9 items-center gap-3 rounded-lg text-sm font-medium transition-all duration-200 ease-out",
                         "focus-visible:ring-2 focus-visible:ring-sidebar-ring/70 focus-visible:outline-none",
                         isItemActive
-                          ? "bg-teal-600 text-white shadow-sm"
+                          ? "!bg-primary !text-primary-foreground shadow-sm"
                           : "text-sidebar-foreground/80 hover:bg-sidebar-accent hover:text-sidebar-foreground"
                       )}
                     >
@@ -105,8 +103,8 @@ export function NavMain({
                         className={cn(
                           "inline-flex size-4 shrink-0 items-center justify-center transition-all duration-200 ease-out [&_svg]:size-4",
                           isItemActive
-                            ? "text-white"
-                            : "text-sidebar-primary group-hover/link:scale-110 group-hover/link:text-teal-600 dark:group-hover/link:text-teal-400"
+                            ? "!text-primary-foreground"
+                            : "text-sidebar-primary group-hover/link:scale-110 group-hover/link:text-primary"
                         )}
                       >
                         {item.icon}
@@ -115,8 +113,8 @@ export function NavMain({
                         className={cn(
                           "flex h-full min-w-0 flex-1 items-center truncate text-left text-sm leading-none",
                           isItemActive
-                            ? "text-white"
-                            : "group-hover/link:text-teal-700 dark:group-hover/link:text-teal-300"
+                            ? "!text-primary-foreground"
+                            : "group-hover/link:text-primary"
                         )}
                       >
                         {item.title}
@@ -146,13 +144,16 @@ export function NavMain({
                     <SidebarMenuButton
                       tooltip={item.title}
                       isActive={isItemActive}
+                      className={cn(
+                        isItemActive && "!bg-primary/5 !bg-sidebar-accent"
+                      )}
                     >
                       <span
                         className={cn(
                           "inline-flex size-4 shrink-0 items-center justify-center transition-all duration-200 ease-out [&_svg]:size-4",
                           isItemActive
-                            ? "text-white"
-                            : "text-sidebar-primary group-hover/menu-button:scale-110 group-hover/menu-button:text-teal-600 dark:group-hover/menu-button:text-teal-400"
+                            ? "!text-primary"
+                            : "text-sidebar-primary group-hover/menu-button:scale-110 group-hover/menu-button:text-primary"
                         )}
                       >
                         {item.icon}
@@ -161,8 +162,8 @@ export function NavMain({
                         className={cn(
                           "flex h-full min-w-0 flex-1 items-center truncate text-left text-sm leading-none",
                           isItemActive
-                            ? "text-white"
-                            : "group-hover/menu-button:text-teal-700 dark:group-hover/menu-button:text-teal-300"
+                            ? "font-medium !text-primary"
+                            : "group-hover/menu-button:text-primary"
                         )}
                       >
                         {item.title}
@@ -172,8 +173,8 @@ export function NavMain({
                           "inline-flex size-4 shrink-0 items-center justify-center transition-all duration-300 ease-out [&_svg]:size-4",
                           "text-muted-foreground",
                           isItemActive
-                            ? "text-white/80"
-                            : "group-hover/menu-button:text-teal-600 dark:group-hover/menu-button:text-teal-400",
+                            ? "!text-primary/80"
+                            : "group-hover/menu-button:text-primary",
                           "group-data-[state=open]/collapsible:rotate-90"
                         )}
                       >
@@ -210,7 +211,7 @@ export function NavMain({
                                   "relative flex h-9 items-center rounded-lg px-3 text-sm font-medium transition-all duration-200 ease-out",
                                   "focus-visible:ring-2 focus-visible:ring-sidebar-ring/70 focus-visible:outline-none",
                                   subItemActive
-                                    ? "bg-teal-600 text-white shadow-sm"
+                                    ? "!bg-primary/15 !text-primary shadow-sm before:absolute before:top-1/2 before:-left-3 before:h-8 before:w-0.5 before:-translate-y-1/2 before:rounded-r-full before:!bg-primary"
                                     : "text-sidebar-foreground/70 hover:bg-sidebar-accent hover:text-sidebar-foreground"
                                 )}
                               >
@@ -218,8 +219,8 @@ export function NavMain({
                                   className={cn(
                                     "transition-transform duration-200",
                                     subItemActive
-                                      ? "text-white"
-                                      : "group-hover/sublink:scale-105 group-hover/sublink:text-teal-700 dark:group-hover/sublink:text-teal-300"
+                                      ? "font-medium !text-primary"
+                                      : "group-hover/sublink:scale-105 group-hover/sublink:text-primary"
                                   )}
                                 >
                                   {subItem.title}

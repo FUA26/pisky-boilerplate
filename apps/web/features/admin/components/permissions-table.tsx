@@ -1,6 +1,12 @@
-// apps/web/features/admin/components/permissions-table.tsx
 "use client"
 
+import * as React from "react"
+import type { ColumnDef } from "@tanstack/react-table"
+import { DataTable } from "@workspace/ui/components/data-table/data-table"
+import { DataTableActionBar } from "@workspace/ui/components/data-table/data-table-action-bar"
+import { DataTableColumnHeader } from "@workspace/ui/components/data-table/data-table-column-header"
+import { DataTableFacetedFilter } from "@workspace/ui/components/data-table/data-table-faceted-filter"
+import { DataTableViewOptions } from "@workspace/ui/components/data-table/data-table-view-options"
 import {
   AlertDialog,
   AlertDialogAction,
@@ -17,43 +23,24 @@ import {
   DropdownMenu,
   DropdownMenuContent,
   DropdownMenuItem,
+  DropdownMenuLabel,
+  DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from "@workspace/ui/components/dropdown-menu"
 import { Input } from "@workspace/ui/components/input"
+import { Checkbox } from "@workspace/ui/components/checkbox"
 import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from "@workspace/ui/components/select"
-import {
-  Table,
-  TableBody,
-  TableCell,
-  TableHead,
-  TableHeader,
-  TableRow,
-} from "@workspace/ui/components/table"
-import {
-  ArrowUpDown,
-  Edit,
-  MoreVertical,
-  Plus,
-  Search,
-  Trash2,
+  EditIcon,
+  Loader2,
+  MoreVerticalIcon,
+  PlusIcon,
+  SearchIcon,
+  TrashIcon,
 } from "lucide-react"
-import type { ColumnDef, SortingState } from "@tanstack/react-table"
-import {
-  getCoreRowModel,
-  getSortedRowModel,
-  flexRender,
-  useReactTable,
-} from "@tanstack/react-table"
-import { useMemo, useState } from "react"
 import { toast } from "sonner"
+import { useState } from "react"
+
 import { PermissionDialog } from "./permission-dialog"
-import { Loader2 } from "lucide-react"
 
 interface PermissionRecord {
   id: string
@@ -71,6 +58,10 @@ interface PermissionsTableProps {
   onRefresh: () => void
 }
 
+interface PermissionRow extends PermissionRecord {
+  search: string
+}
+
 export function PermissionsTable({
   data,
   categories,
@@ -83,24 +74,21 @@ export function PermissionsTable({
   const [deleteDialogOpen, setDeleteDialogOpen] = useState(false)
   const [permissionToDelete, setPermissionToDelete] =
     useState<PermissionRecord | null>(null)
-  const [categoryFilter, setCategoryFilter] = useState<string>("all")
-  const [searchQuery, setSearchQuery] = useState("")
-  const [sorting, setSorting] = useState<SortingState>([])
   const [isDeleting, setIsDeleting] = useState(false)
-
-  const filteredData = useMemo(() => {
-    const query = searchQuery.toLowerCase()
-
-    return data.filter((permission) => {
-      const matchesCategory =
-        categoryFilter === "all" || permission.category === categoryFilter
-      const matchesSearch =
-        !query ||
-        permission.name.toLowerCase().includes(query) ||
-        permission.description?.toLowerCase().includes(query)
-      return matchesCategory && matchesSearch
-    })
-  }, [data, categoryFilter, searchQuery])
+  const permissions = React.useMemo<PermissionRow[]>(
+    () =>
+      data.map((permission) => ({
+        ...permission,
+        search: [
+          permission.name,
+          permission.category,
+          permission.description || "",
+        ]
+          .join(" ")
+          .toLowerCase(),
+      })),
+    [data]
+  )
 
   const handleSavePermission = async (data: {
     name: string
@@ -131,12 +119,12 @@ export function PermissionsTable({
     onRefresh()
   }
 
-  const handleDelete = async () => {
-    if (!permissionToDelete) return
+  const handleDelete = async (permission: PermissionRecord) => {
+    setPermissionToDelete(permission)
 
     setIsDeleting(true)
     try {
-      const res = await fetch(`/api/permissions/${permissionToDelete.id}`, {
+      const res = await fetch(`/api/permissions/${permission.id}`, {
         method: "DELETE",
       })
 
@@ -160,19 +148,69 @@ export function PermissionsTable({
     }
   }
 
-  const columns: ColumnDef<PermissionRecord>[] = useMemo(
+  const bulkDeletePermissions = async (
+    selectedPermissions: PermissionRow[]
+  ) => {
+    const blocked = selectedPermissions.filter(
+      (permission) => (permission._count?.rolePermissions ?? 0) > 0
+    )
+
+    if (blocked.length > 0) {
+      toast.error(
+        `Cannot delete ${blocked.length} permission${blocked.length > 1 ? "s" : ""} that are already assigned to roles.`
+      )
+      return false
+    }
+
+    try {
+      await Promise.all(
+        selectedPermissions.map((permission) =>
+          fetch(`/api/permissions/${permission.id}`, { method: "DELETE" })
+        )
+      )
+
+      toast.success(
+        `${selectedPermissions.length} permission${selectedPermissions.length > 1 ? "s" : ""} deleted successfully`
+      )
+      onRefresh()
+      return true
+    } catch (error) {
+      console.error("Failed to delete permissions:", error)
+      toast.error("Failed to delete permissions")
+      return false
+    }
+  }
+
+  const columns: ColumnDef<PermissionRow>[] = React.useMemo(
     () => [
+      {
+        id: "select",
+        size: 48,
+        minSize: 48,
+        maxSize: 48,
+        header: ({ table }) => (
+          <Checkbox
+            checked={table.getIsAllPageRowsSelected()}
+            onCheckedChange={(checked) =>
+              table.toggleAllPageRowsSelected(!!checked)
+            }
+            aria-label="Select all"
+          />
+        ),
+        cell: ({ row }) => (
+          <Checkbox
+            checked={row.getIsSelected()}
+            onCheckedChange={(checked) => row.toggleSelected(!!checked)}
+            aria-label={`Select ${row.original.name}`}
+          />
+        ),
+        enableSorting: false,
+        enableHiding: false,
+      },
       {
         accessorKey: "name",
         header: ({ column }) => (
-          <Button
-            variant="ghost"
-            onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
-            className="h-auto p-0 font-semibold"
-          >
-            Name
-            <ArrowUpDown className="ml-2 h-4 w-4" />
-          </Button>
+          <DataTableColumnHeader column={column} label="Name" />
         ),
         cell: ({ row }) => (
           <code className="rounded bg-muted px-2 py-1 font-mono text-sm">
@@ -183,22 +221,22 @@ export function PermissionsTable({
       {
         accessorKey: "category",
         header: ({ column }) => (
-          <Button
-            variant="ghost"
-            onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
-            className="h-auto p-0 font-semibold"
-          >
-            Category
-            <ArrowUpDown className="ml-2 h-4 w-4" />
-          </Button>
+          <DataTableColumnHeader column={column} label="Category" />
         ),
         cell: ({ row }) => (
           <Badge variant="outline">{row.getValue("category")}</Badge>
         ),
+        filterFn: (row, columnId, filterValue: string[]) => {
+          const category = row.getValue(columnId) as string
+          if (!filterValue.length) return true
+          return filterValue.includes(category)
+        },
       },
       {
         accessorKey: "description",
-        header: "Description",
+        header: ({ column }) => (
+          <DataTableColumnHeader column={column} label="Description" />
+        ),
         cell: ({ row }) => (
           <span className="text-sm text-muted-foreground">
             {row.getValue("description") || "-"}
@@ -208,26 +246,17 @@ export function PermissionsTable({
       {
         accessorKey: "usage",
         header: ({ column }) => (
-          <Button
-            variant="ghost"
-            onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
-            className="h-auto p-0 font-semibold"
-          >
-            Usage
-            <ArrowUpDown className="ml-2 h-4 w-4" />
-          </Button>
+          <DataTableColumnHeader column={column} label="Usage" />
         ),
         cell: ({ row }) => {
           const usageCount = row.original._count?.rolePermissions || 0
           return (
-            <div className="text-center">
-              <Badge
-                variant={usageCount > 0 ? "default" : "secondary"}
-                className="font-mono"
-              >
-                {usageCount}
-              </Badge>
-            </div>
+            <Badge
+              variant={usageCount > 0 ? "default" : "secondary"}
+              className="font-mono"
+            >
+              {usageCount}
+            </Badge>
           )
         },
       },
@@ -241,19 +270,23 @@ export function PermissionsTable({
           return (
             <DropdownMenu>
               <DropdownMenuTrigger asChild>
-                <Button variant="ghost" size="icon" aria-label="Actions">
-                  <MoreVertical className="h-4 w-4" />
+                <Button variant="ghost" size="icon-sm" className="h-8 w-8">
+                  <MoreVerticalIcon className="size-4" />
                 </Button>
               </DropdownMenuTrigger>
-              <DropdownMenuContent align="end">
+              <DropdownMenuContent align="end" className="w-48">
+                <DropdownMenuLabel className="text-xs text-muted-foreground">
+                  Actions for {permission.name}
+                </DropdownMenuLabel>
+                <DropdownMenuSeparator />
                 <DropdownMenuItem
                   onClick={() => {
                     setEditingPermission(permission)
                     setDialogOpen(true)
                   }}
                 >
-                  <Edit className="mr-2 h-4 w-4" />
-                  Edit
+                  <EditIcon className="mr-2 size-4" />
+                  Edit Permission
                 </DropdownMenuItem>
                 <DropdownMenuItem
                   variant="destructive"
@@ -263,112 +296,118 @@ export function PermissionsTable({
                   }}
                   disabled={usageCount > 0}
                 >
-                  <Trash2 className="mr-2 h-4 w-4" />
-                  Delete
+                  <TrashIcon className="mr-2 size-4" />
+                  Delete Permission
                 </DropdownMenuItem>
               </DropdownMenuContent>
             </DropdownMenu>
           )
+        },
+        enableSorting: false,
+      },
+      {
+        accessorKey: "search",
+        header: "Search",
+        cell: () => null,
+        enableHiding: false,
+        enableSorting: false,
+        filterFn: (row, columnId, filterValue: string) => {
+          const haystack = (row.getValue(columnId) as string) || ""
+          const needle = filterValue.trim().toLowerCase()
+          if (!needle) return true
+          return haystack.includes(needle)
         },
       },
     ],
     []
   )
 
-  const table = useReactTable(
-    useMemo(
-      () => ({
-        data: filteredData,
-        columns,
-        onSortingChange: setSorting,
-        getCoreRowModel: getCoreRowModel(),
-        getSortedRowModel: getSortedRowModel(),
-        state: {
-          sorting,
-        },
-      }),
-      [columns, filteredData, sorting]
-    )
-  )
-
   return (
     <>
-      <div className="space-y-4">
-        <div className="flex items-center justify-between gap-4">
-          <div className="relative max-w-sm flex-1">
-            <Search className="absolute top-1/2 left-3 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
-            <Input
-              placeholder="Search permissions..."
-              value={searchQuery}
-              onChange={(e) => setSearchQuery(e.target.value)}
-              className="pl-9"
-            />
+      <DataTable
+        data={permissions}
+        columns={columns}
+        initialState={{
+          sorting: [{ id: "name", desc: false }],
+          columnVisibility: {
+            search: false,
+          },
+        }}
+        toolbar={(table) => (
+          <div className="flex items-center justify-between gap-4">
+            <div className="flex items-center gap-2">
+              <div className="relative max-w-sm flex-1">
+                <SearchIcon className="absolute top-1/2 left-3 size-4 -translate-y-1/2 text-muted-foreground" />
+                <Input
+                  placeholder="Search permissions..."
+                  value={
+                    (table.getColumn("search")?.getFilterValue() as string) ??
+                    ""
+                  }
+                  onChange={(event) =>
+                    table
+                      .getColumn("search")
+                      ?.setFilterValue(event.target.value)
+                  }
+                  className="max-w-sm pl-9"
+                />
+              </div>
+              <DataTableFacetedFilter
+                title="Category"
+                options={categories.map((category) => ({
+                  label: category,
+                  value: category,
+                }))}
+                column={table.getColumn("category")}
+                multiple
+              />
+            </div>
+            <div className="flex items-center gap-2">
+              <DataTableViewOptions table={table} />
+              <Button
+                size="sm"
+                className="h-8"
+                onClick={() => {
+                  setDialogOpen(false)
+                  setEditingPermission(null)
+                  setCreateDialogOpen(true)
+                }}
+              >
+                <PlusIcon className="size-4" />
+                Add Permission
+              </Button>
+            </div>
           </div>
-          <Select value={categoryFilter} onValueChange={setCategoryFilter}>
-            <SelectTrigger className="w-[180px]">
-              <SelectValue placeholder="Filter by category" />
-            </SelectTrigger>
-            <SelectContent>
-              <SelectItem value="all">All Categories</SelectItem>
-              {categories.map((cat) => (
-                <SelectItem key={cat} value={cat}>
-                  {cat}
-                </SelectItem>
-              ))}
-            </SelectContent>
-          </Select>
-          <Button onClick={() => setCreateDialogOpen(true)}>
-            <Plus className="mr-2 h-4 w-4" />
-            Add Permission
-          </Button>
-        </div>
+        )}
+        actionBar={(table) => (
+          <DataTableActionBar table={table}>
+            {(selectedPermissions, resetSelection) => {
+              const onBulkDelete = async () => {
+                const success = await bulkDeletePermissions(
+                  selectedPermissions as PermissionRow[]
+                )
+                if (success) {
+                  resetSelection()
+                }
+              }
 
-        <div className="rounded-md border">
-          <Table>
-            <TableHeader>
-              {table.getHeaderGroups().map((headerGroup) => (
-                <TableRow key={headerGroup.id}>
-                  {headerGroup.headers.map((header) => (
-                    <TableHead key={header.id}>
-                      {header.isPlaceholder
-                        ? null
-                        : flexRender(
-                            header.column.columnDef.header,
-                            header.getContext()
-                          )}
-                    </TableHead>
-                  ))}
-                </TableRow>
-              ))}
-            </TableHeader>
-            <TableBody>
-              {table.getRowModel().rows?.length ? (
-                table.getRowModel().rows.map((row) => (
-                  <TableRow key={row.id}>
-                    {row.getVisibleCells().map((cell) => (
-                      <TableCell key={cell.id}>
-                        {flexRender(
-                          cell.column.columnDef.cell,
-                          cell.getContext()
-                        )}
-                      </TableCell>
-                    ))}
-                  </TableRow>
-                ))
-              ) : (
-                <TableRow>
-                  <TableCell
-                    colSpan={columns.length}
-                    className="h-24 text-center"
-                  >
-                    No permissions found.
-                  </TableCell>
-                </TableRow>
-              )}
-            </TableBody>
-          </Table>
-        </div>
-      </div>
+              return (
+                <Button
+                  size="sm"
+                  className="h-8"
+                  variant="destructive"
+                  onClick={() => {
+                    void onBulkDelete()
+                  }}
+                >
+                  <TrashIcon className="mr-2 size-4" />
+                  Delete ({selectedPermissions.length})
+                </Button>
+              )
+            }}
+          </DataTableActionBar>
+        )}
+      />
 
       <PermissionDialog
         open={createDialogOpen}
@@ -400,7 +439,11 @@ export function PermissionsTable({
           <AlertDialogFooter>
             <AlertDialogCancel disabled={isDeleting}>Cancel</AlertDialogCancel>
             <AlertDialogAction
-              onClick={handleDelete}
+              onClick={() => {
+                if (permissionToDelete) {
+                  void handleDelete(permissionToDelete)
+                }
+              }}
               disabled={
                 isDeleting ||
                 (permissionToDelete?._count?.rolePermissions ?? 0) > 0

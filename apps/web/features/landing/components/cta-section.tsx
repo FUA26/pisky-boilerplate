@@ -1,11 +1,13 @@
 "use client"
 
+import Link from "next/link"
 import { Button } from "@workspace/ui/components/button"
 import { TerminalBlock } from "./terminal-block"
 import { ArrowRight, Copy, Check } from "lucide-react"
 import { useState } from "react"
+import { siteConfig } from "@/lib/site-config"
 
-const gitCommands = `$ git clone https://github.com/yourorg/zilpo.git
+const gitCommands = `$ git clone ${siteConfig.github.url}.git
 $ cd zilpo && pnpm install
 $ pnpm dev
 
@@ -44,17 +46,21 @@ export function CTASection() {
             {/* Copy button floating on terminal */}
             <button
               onClick={handleCopy}
-              className="absolute top-3 right-3 flex items-center gap-1.5 rounded-lg bg-background px-2.5 py-1.5 text-xs font-medium shadow-md transition-all hover:bg-muted sm:top-4 sm:right-4 sm:gap-2 sm:px-3 sm:py-2 sm:text-sm"
+              className="absolute top-3 right-3 flex items-center gap-1.5 rounded-lg bg-background px-2.5 py-1.5 text-xs font-medium shadow-md transition-all hover:bg-muted focus-visible:ring-2 focus-visible:ring-ring focus-visible:outline-none sm:top-4 sm:right-4 sm:gap-2 sm:px-3 sm:py-2 sm:text-sm"
+              aria-live="polite"
+              aria-atomic="true"
             >
               {copied ? (
                 <>
                   <Check className="h-3.5 w-3.5 text-green-500 sm:h-4 sm:w-4" />
-                  Copied!
+                  <span>Copied!</span>
+                  <span className="sr-only">Commands copied to clipboard</span>
                 </>
               ) : (
                 <>
                   <Copy className="h-3.5 w-3.5 sm:h-4 sm:w-4" />
-                  Copy
+                  <span>Copy</span>
+                  <span className="sr-only">Copy commands to clipboard</span>
                 </>
               )}
             </button>
@@ -63,68 +69,44 @@ export function CTASection() {
           {/* Primary action */}
           <div className="mt-8 flex animate-in justify-center delay-300 duration-700 fade-in slide-in-from-bottom-4 sm:mt-10">
             <Button size="lg" className="group" asChild>
-              <a href="#docs">
+              <Link href={siteConfig.nav.docs}>
                 Explore Documentation
                 <ArrowRight className="ml-2 h-4 w-4 transition-transform group-hover:translate-x-1" />
-              </a>
+              </Link>
             </Button>
           </div>
 
-          {/* Deploy options - secondary */}
-          <div className="mt-12 animate-in delay-500 duration-700 fade-in slide-in-from-bottom-4 sm:mt-16">
-            <p className="mb-4 text-center text-xs text-muted-foreground sm:mb-6 sm:text-sm">
-              Or deploy instantly to your favorite platform
+          {/* Deploy options - simplified as links */}
+          <div className="mt-8 animate-in delay-500 duration-700 fade-in slide-in-from-bottom-4 sm:mt-10">
+            <p className="text-center text-xs text-muted-foreground sm:text-sm">
+              One-click deploy to{" "}
+              <a
+                href="https://vercel.com/new"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="font-medium text-foreground underline-offset-4 transition-colors hover:text-primary hover:underline"
+              >
+                Vercel
+              </a>
+              ,{" "}
+              <a
+                href="https://railway.app/new"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="font-medium text-foreground underline-offset-4 transition-colors hover:text-primary hover:underline"
+              >
+                Railway
+              </a>
+              , or{" "}
+              <a
+                href="https://netlify.com/drop"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="font-medium text-foreground underline-offset-4 transition-colors hover:text-primary hover:underline"
+              >
+                Netlify
+              </a>
             </p>
-            <div className="flex flex-wrap justify-center gap-3 sm:gap-4">
-              <Button variant="outline" size="sm" asChild>
-                <a
-                  href="https://vercel.com/new"
-                  target="_blank"
-                  rel="noopener noreferrer"
-                >
-                  <svg
-                    className="mr-2 h-4 w-4"
-                    viewBox="0 0 24 24"
-                    fill="currentColor"
-                  >
-                    <path d="M12 2L2 19.5h5.5l2-3.5h5l2 3.5H22L12 2zm0 3.5L15.5 12h-7L12 5.5zM8.5 17.5l-2 3.5h11l-2-3.5H8.5z" />
-                  </svg>
-                  Vercel
-                </a>
-              </Button>
-              <Button variant="outline" size="sm" asChild>
-                <a
-                  href="https://railway.app/new"
-                  target="_blank"
-                  rel="noopener noreferrer"
-                >
-                  <svg
-                    className="mr-2 h-4 w-4"
-                    viewBox="0 0 24 24"
-                    fill="currentColor"
-                  >
-                    <path d="M4.5 2h15L22 8.5 12 22 2 8.5 4.5 2zm0 3L3 8.5 12 19l9-10.5L19.5 5h-15z" />
-                  </svg>
-                  Railway
-                </a>
-              </Button>
-              <Button variant="outline" size="sm" asChild>
-                <a
-                  href="https://netlify.com/drop"
-                  target="_blank"
-                  rel="noopener noreferrer"
-                >
-                  <svg
-                    className="mr-2 h-4 w-4"
-                    viewBox="0 0 24 24"
-                    fill="currentColor"
-                  >
-                    <path d="M12 2L2 7l10 5 10-5-10-5zM2 17l10 5 10-5M2 12l10 5 10-5" />
-                  </svg>
-                  Netlify
-                </a>
-              </Button>
-            </div>
           </div>
         </div>
       </div>

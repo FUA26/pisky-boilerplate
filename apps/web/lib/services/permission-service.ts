@@ -8,6 +8,10 @@ export interface PermissionStats {
 }
 
 export const permissionService = {
+  normalizeCategory(category: string) {
+    return category.trim().toUpperCase()
+  },
+
   async listPermissions(options?: { includeUsage?: boolean }) {
     const include = options?.includeUsage
       ? {
@@ -17,16 +21,28 @@ export const permissionService = {
         }
       : {}
 
-    return prisma.permission.findMany({
+    const permissions = await prisma.permission.findMany({
       include,
       orderBy: [{ category: "asc" }, { name: "asc" }],
     })
+
+    return permissions.map((permission) => ({
+      ...permission,
+      category: permissionService.normalizeCategory(permission.category),
+    }))
   },
 
   async getPermissionById(id: string) {
-    return prisma.permission.findUnique({
+    const permission = await prisma.permission.findUnique({
       where: { id },
     })
+
+    if (!permission) return null
+
+    return {
+      ...permission,
+      category: permissionService.normalizeCategory(permission.category),
+    }
   },
 
   async createPermission(data: {
@@ -46,7 +62,7 @@ export const permissionService = {
     return prisma.permission.create({
       data: {
         name: data.name,
-        category: data.category,
+        category: permissionService.normalizeCategory(data.category),
         description: data.description || null,
       },
     })
@@ -75,17 +91,24 @@ export const permissionService = {
       }
     }
 
-    return prisma.permission.update({
+    const updatedPermission = await prisma.permission.update({
       where: { id },
       data: {
         name: data.name,
-        category: data.category,
+        category: data.category
+          ? permissionService.normalizeCategory(data.category)
+          : existing.category,
         description:
           data.description !== undefined
             ? data.description
             : existing.description,
       },
     })
+
+    return {
+      ...updatedPermission,
+      category: permissionService.normalizeCategory(updatedPermission.category),
+    }
   },
 
   async deletePermission(id: string) {
@@ -132,7 +155,8 @@ export const permissionService = {
 
     const categoryMap: Record<string, number> = {}
     for (const cat of byCategory) {
-      categoryMap[cat.category] = cat._count
+      categoryMap[permissionService.normalizeCategory(cat.category)] =
+        cat._count
     }
 
     return {
@@ -149,6 +173,8 @@ export const permissionService = {
       orderBy: { category: "asc" },
     })
 
-    return permissions.map((p) => p.category)
+    return permissions.map((p) =>
+      permissionService.normalizeCategory(p.category)
+    )
   },
 }

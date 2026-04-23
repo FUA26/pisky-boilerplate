@@ -3,7 +3,7 @@
 import { cn } from "@workspace/ui/lib/utils"
 import { Button } from "@workspace/ui/components/button"
 import { Check, Copy } from "lucide-react"
-import { useState } from "react"
+import { useState, useId } from "react"
 
 interface TerminalBlockProps {
   children: string
@@ -17,6 +17,7 @@ export function TerminalBlock({
   showCopy = true,
 }: TerminalBlockProps) {
   const [copied, setCopied] = useState(false)
+  const statusId = useId()
 
   const handleCopy = async () => {
     await navigator.clipboard.writeText(children)
@@ -36,13 +37,21 @@ export function TerminalBlock({
           <Button
             variant="ghost"
             size="icon"
-            className="h-7 w-7"
+            className="h-7 w-7 focus-visible:ring-2 focus-visible:ring-ring"
             onClick={handleCopy}
+            aria-live="polite"
+            aria-atomic="true"
           >
             {copied ? (
-              <Check className="h-3.5 w-3.5" />
+              <>
+                <Check className="h-3.5 w-3.5" />
+                <span className="sr-only">Copied to clipboard</span>
+              </>
             ) : (
-              <Copy className="h-3.5 w-3.5" />
+              <>
+                <Copy className="h-3.5 w-3.5" />
+                <span className="sr-only">Copy to clipboard</span>
+              </>
             )}
           </Button>
         </div>

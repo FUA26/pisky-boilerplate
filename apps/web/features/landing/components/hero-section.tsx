@@ -3,6 +3,7 @@
 import { Button } from "@workspace/ui/components/button"
 import { TerminalBlock } from "./terminal-block"
 import { ArrowRight } from "lucide-react"
+import { siteConfig } from "@/lib/site-config"
 
 export function HeroSection() {
   return (
@@ -36,13 +37,13 @@ export function HeroSection() {
           {/* Action buttons */}
           <div className="mt-8 flex animate-in flex-col gap-3 delay-300 duration-700 fade-in slide-in-from-bottom-4 sm:mt-10 sm:flex-row sm:gap-4">
             <Button size="lg" className="group" asChild>
-              <a href="#docs">
+              <a href={siteConfig.nav.docs}>
                 Start Building
                 <ArrowRight className="ml-2 h-4 w-4 transition-transform group-hover:translate-x-1" />
               </a>
             </Button>
             <Button size="lg" variant="outline" asChild>
-              <a href="#docs">See the Code</a>
+              <a href={siteConfig.nav.docs}>See the Code</a>
             </Button>
           </div>
 
@@ -84,12 +85,16 @@ export function HeroSection() {
               }
             </TerminalBlock>
 
-            {/* Floating badge - better positioning */}
+            {/* Floating badge - tech stack indicator */}
             <div className="absolute -right-3 -bottom-3 animate-in rounded-lg bg-background p-2.5 shadow-md delay-500 duration-500 zoom-in-95 fade-in sm:-right-4 sm:-bottom-4 sm:p-3">
               <div className="flex items-center gap-1.5 sm:gap-2">
-                <div className="h-1.5 w-1.5 rounded-full bg-green-500 sm:h-2 sm:w-2" />
+                <div className="flex h-5 w-5 items-center justify-center rounded bg-primary/10 sm:h-6 sm:w-6">
+                  <span className="text-[10px] font-bold text-primary sm:text-xs">
+                    16
+                  </span>
+                </div>
                 <span className="text-xs font-medium sm:text-sm">
-                  Ready in 1.2s
+                  Next.js ready
                 </span>
               </div>
             </div>

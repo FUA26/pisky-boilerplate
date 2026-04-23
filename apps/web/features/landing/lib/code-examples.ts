@@ -5,6 +5,8 @@ export interface CodeExample {
   learnMoreHref?: string
 }
 
+import { siteConfig } from "@/lib/site-config"
+
 export const codeWalkthroughExamples: Record<string, CodeExample> = {
   "feature-structure": {
     title: "Feature-Based Architecture",
@@ -18,7 +20,7 @@ export const codeWalkthroughExamples: Record<string, CodeExample> = {
 │   └── page.tsx
 ├── dashboard/
 └── shared/`,
-    learnMoreHref: "/docs/architecture",
+    learnMoreHref: siteConfig.nav.docs,
   },
   auth: {
     title: "Authentication Flow",
@@ -42,7 +44,7 @@ export const codeWalkthroughExamples: Record<string, CodeExample> = {
     },
   },
 }`,
-    learnMoreHref: "/docs/authentication",
+    learnMoreHref: siteConfig.nav.docs,
   },
   "api-patterns": {
     title: "API Patterns",
@@ -65,7 +67,7 @@ export async function loginAction(formData: FormData) {
   // Auth logic here
   return { success: true }
 }`,
-    learnMoreHref: "/docs/api-patterns",
+    learnMoreHref: siteConfig.nav.docs,
   },
   "type-safety": {
     title: "Type Safety",
@@ -87,6 +89,6 @@ export interface User {
   email: string
   name: string
 }`,
-    learnMoreHref: "/docs/typescript",
+    learnMoreHref: siteConfig.nav.docs,
   },
 }

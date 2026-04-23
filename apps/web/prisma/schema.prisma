@@ -4,6 +4,7 @@ generator client {
 
 datasource db {
   provider = "postgresql"
+  url      = env("DATABASE_URL")
 }
 
 // ============================================================================
@@ -72,7 +73,7 @@ model Role {
   name        String           @unique
   createdAt   DateTime         @default(now())
   updatedAt   DateTime         @updatedAt
-  permissions RolePermission[]
+  permissions RolePermission[] @relation("RolePermission")
   users       User[]
 }
 
@@ -83,14 +84,14 @@ model Permission {
   description     String?
   createdAt       DateTime         @default(now())
   updatedAt       DateTime         @updatedAt
-  rolePermissions RolePermission[]
+  rolePermissions RolePermission[] @relation("RolePermission")
 }
 
 model RolePermission {
   roleId       String
   permissionId String
-  permission   Permission @relation(fields: [permissionId], references: [id], onDelete: Cascade)
-  role         Role       @relation(fields: [roleId], references: [id], onDelete: Cascade)
+  permission   Permission @relation("RolePermission", fields: [permissionId], references: [id], onDelete: Cascade)
+  role         Role       @relation("RolePermission", fields: [roleId], references: [id], onDelete: Cascade)
 
   @@id([roleId, permissionId])
 }
@@ -126,7 +127,7 @@ model File {
   category         FileCategory @default(OTHER)
 
   // Storage
-  bucketName  String  @default("zilpo-uploads")
+  bucketName  String  @default("pisky-uploads")
   storagePath String
   cdnUrl      String?
 

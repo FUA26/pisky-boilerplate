@@ -32,10 +32,19 @@ const breadcrumbConfig: Record<
   { label: string; parent?: string; isSection?: boolean }
 > = {
   "/": { label: "Dashboard", isSection: true },
-  "/manage": { label: "Manage", isSection: true },
-  "/manage/users": { label: "Users", parent: "/manage" },
-  "/manage/roles": { label: "Roles", parent: "/manage" },
-  "/manage/permissions": { label: "Permissions", parent: "/manage" },
+  "/access-management": { label: "Access Management", isSection: true },
+  "/access-management/users": {
+    label: "Users",
+    parent: "/access-management",
+  },
+  "/access-management/roles": {
+    label: "Roles",
+    parent: "/access-management",
+  },
+  "/access-management/permissions": {
+    label: "Permissions",
+    parent: "/access-management",
+  },
   "/settings": { label: "Settings", isSection: true },
 }
 

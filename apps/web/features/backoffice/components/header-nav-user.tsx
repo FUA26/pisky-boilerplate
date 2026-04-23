@@ -1,6 +1,7 @@
 "use client"
 
 import { useSession, signOut } from "next-auth/react"
+import { useRouter } from "next/navigation"
 import {
   Avatar,
   AvatarFallback,
@@ -35,6 +36,7 @@ const getInitials = (name?: string | null) => {
 
 export function HeaderNavUser() {
   const { data: session } = useSession()
+  const router = useRouter()
   const user = session?.user
 
   const handleLogout = async () => {
@@ -91,11 +93,11 @@ export function HeaderNavUser() {
           </DropdownMenuLabel>
           <DropdownMenuSeparator />
           <DropdownMenuGroup>
-            <DropdownMenuItem>
+            <DropdownMenuItem onClick={() => router.push("/dashboard")}>
               <ShieldIcon className="mr-2 size-4" />
               Admin Panel
             </DropdownMenuItem>
-            <DropdownMenuItem>
+            <DropdownMenuItem onClick={() => router.push("/settings")}>
               <SettingsIcon className="mr-2 size-4" />
               Settings
             </DropdownMenuItem>

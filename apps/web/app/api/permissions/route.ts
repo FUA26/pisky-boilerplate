@@ -12,7 +12,7 @@ export async function GET(req: Request) {
       return NextResponse.json({ error: "Unauthorized" }, { status: 401 })
     }
 
-    await requirePermission(session.user.id, "ADMIN_PERMISSIONS_MANAGE")
+    await requirePermission(session.user.id, "PERMISSION_READ")
 
     const { searchParams } = new URL(req.url)
     const includeUsage = searchParams.get("includeUsage") === "true"
@@ -51,7 +51,7 @@ export async function POST(req: Request) {
       return NextResponse.json({ error: "Unauthorized" }, { status: 401 })
     }
 
-    await requirePermission(session.user.id, "ADMIN_PERMISSIONS_MANAGE")
+    await requirePermission(session.user.id, "PERMISSION_ASSIGN")
 
     const body = await req.json()
     const validatedData = createPermissionSchema.parse(body)

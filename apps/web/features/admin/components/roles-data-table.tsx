@@ -311,7 +311,17 @@ export function RolesDataTable({ roles, onRefresh }: RolesDataTableProps) {
                 column={table.getColumn("users")}
               />
             </div>
-            <DataTableViewOptions table={table} />
+            <div className="flex items-center gap-2">
+              <DataTableViewOptions table={table} />
+              <Button
+                size="sm"
+                className="h-8"
+                onClick={() => setCreateDialogOpen(true)}
+              >
+                <PlusIcon className="mr-2 size-4" />
+                Add Role
+              </Button>
+            </div>
           </div>
         )}
         actionBar={(table) => (
@@ -319,6 +329,7 @@ export function RolesDataTable({ roles, onRefresh }: RolesDataTableProps) {
             {(selectedRoles, resetSelection) => (
               <Button
                 size="sm"
+                className="h-8"
                 variant="destructive"
                 onClick={() => {
                   const selectedIds = selectedRoles.map((r) => r.id)

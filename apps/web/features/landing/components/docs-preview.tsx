@@ -1,6 +1,10 @@
+"use client"
+
 import { Button } from "@workspace/ui/components/button"
 import { Input } from "@workspace/ui/components/input"
 import { Search, FileText, BookOpen, Layers, ArrowRight } from "lucide-react"
+import Link from "next/link"
+import { siteConfig } from "@/lib/site-config"
 
 const docSections = [
   {
@@ -56,10 +60,10 @@ export function DocsPreview() {
 
             <div className="mt-10">
               <Button size="lg" variant="outline" className="group" asChild>
-                <a href="#docs">
+                <Link href={siteConfig.nav.docs}>
                   Explore the Docs
                   <ArrowRight className="ml-2 h-4 w-4 transition-transform group-hover:translate-x-1" />
-                </a>
+                </Link>
               </Button>
             </div>
           </div>
@@ -115,8 +119,8 @@ export function DocsPreview() {
                   </span>
                 </div>
                 <p className="text-sm leading-relaxed text-muted-foreground">
-                  Learn how NextAuth.js v5 is configured in Zilpo, including
-                  session management and security best practices.
+                  Learn how NextAuth.js v5 is configured in Pisky Admin,
+                  including session management and security best practices.
                 </p>
               </div>
             </div>

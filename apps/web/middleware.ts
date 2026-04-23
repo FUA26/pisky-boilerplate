@@ -6,7 +6,9 @@ export default auth((req) => {
   const isAuthPage = req.nextUrl.pathname.startsWith("/sign-")
   const isBackoffice =
     req.nextUrl.pathname.startsWith("/dashboard") ||
-    req.nextUrl.pathname.startsWith("/manage")
+    req.nextUrl.pathname.startsWith("/access-management") ||
+    req.nextUrl.pathname.startsWith("/manage") ||
+    req.nextUrl.pathname.startsWith("/settings")
 
   // Redirect to dashboard if already logged in and trying to access auth pages
   if (isLoggedIn && isAuthPage) {

@@ -6,6 +6,7 @@ import { signIn } from "next-auth/react"
 import { useForm } from "react-hook-form"
 import { zodResolver } from "@hookform/resolvers/zod"
 import { toast } from "sonner"
+import * as React from "react"
 
 import { Button } from "@workspace/ui/components/button"
 import {
@@ -15,6 +16,7 @@ import {
   FieldLabel,
 } from "@workspace/ui/components/field"
 import { Input } from "@workspace/ui/components/input"
+import { PasswordInput } from "@/features/auth/components/password-input"
 import {
   signInSchema,
   type SignInInput,
@@ -22,6 +24,7 @@ import {
 
 export function SignInForm() {
   const router = useRouter()
+  const [errorId, setErrorId] = React.useState(`email-error-${React.useId()}`)
 
   const form = useForm<SignInInput>({
     resolver: zodResolver(signInSchema),
@@ -30,6 +33,9 @@ export function SignInForm() {
       password: "",
     },
   })
+
+  const emailError = form.formState.errors.email
+  const passwordError = form.formState.errors.password
 
   const onSubmit = async (data: SignInInput) => {
     try {
@@ -43,6 +49,7 @@ export function SignInForm() {
         toast.error("Invalid email or password")
       } else {
         toast.success("Signed in successfully")
+        await new Promise((resolve) => setTimeout(resolve, 100))
         router.push("/dashboard")
         router.refresh()
       }
@@ -55,12 +62,17 @@ export function SignInForm() {
     <form
       className="flex flex-col gap-6"
       onSubmit={form.handleSubmit(onSubmit)}
+      noValidate
+      aria-live="polite"
+      aria-atomic="false"
     >
       <FieldGroup>
-        <div className="flex flex-col items-center gap-1 text-center">
-          <h1 className="text-2xl font-bold">Welcome back</h1>
-          <p className="text-sm text-balance text-muted-foreground">
-            Enter your email below to sign in to your account
+        <div className="flex flex-col gap-3">
+          <h1 className="font-heading text-2xl font-bold tracking-tight text-foreground">
+            Let&apos;s get you building
+          </h1>
+          <p className="text-base text-muted-foreground">
+            Sign in to pick up where you left off
           </p>
         </div>
         <Field>
@@ -68,37 +80,46 @@ export function SignInForm() {
           <Input
             id="email"
             type="email"
-            placeholder="m@example.com"
+            placeholder="you@example.com"
+            autoComplete="email"
+            aria-invalid={!!emailError}
+            aria-describedby={emailError ? errorId : undefined}
             {...form.register("email")}
-            className="bg-background"
             disabled={form.formState.isSubmitting}
           />
-          {form.formState.errors.email && (
-            <FieldDescription className="text-destructive">
-              {form.formState.errors.email.message}
+          {emailError && (
+            <FieldDescription id={errorId} className="text-destructive">
+              {emailError.message}
             </FieldDescription>
           )}
         </Field>
         <Field>
-          <div className="flex items-center">
+          <div className="flex items-center justify-between">
             <FieldLabel htmlFor="password">Password</FieldLabel>
             <Link
-              href="/auth/forgot-password"
-              className="ml-auto text-sm underline-offset-4 hover:underline"
+              href="/forgot-password"
+              className="text-sm text-muted-foreground underline-offset-4 transition-colors hover:text-foreground hover:underline"
             >
-              Forgot your password?
+              Forgot it?
             </Link>
           </div>
-          <Input
+          <PasswordInput
             id="password"
-            type="password"
+            placeholder="••••••••"
+            autoComplete="current-password"
+            aria-invalid={!!passwordError}
+            aria-describedby={
+              passwordError ? `password-error-${errorId}` : undefined
+            }
             {...form.register("password")}
-            className="bg-background"
             disabled={form.formState.isSubmitting}
           />
-          {form.formState.errors.password && (
-            <FieldDescription className="text-destructive">
-              {form.formState.errors.password.message}
+          {passwordError && (
+            <FieldDescription
+              id={`password-error-${errorId}`}
+              className="text-destructive"
+            >
+              {passwordError.message}
             </FieldDescription>
           )}
         </Field>
@@ -111,10 +132,13 @@ export function SignInForm() {
             {form.formState.isSubmitting ? "Signing in..." : "Sign in"}
           </Button>
         </Field>
-        <FieldDescription className="text-center">
-          Don&apos;t have an account?{" "}
-          <Link href="/auth/sign-up" className="underline underline-offset-4">
-            Sign up
+        <FieldDescription className="text-center text-muted-foreground">
+          New here?{" "}
+          <Link
+            href="/sign-up"
+            className="font-medium text-primary underline underline-offset-4 transition-opacity hover:opacity-70"
+          >
+            Create an account
           </Link>
         </FieldDescription>
       </FieldGroup>

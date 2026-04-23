@@ -44,14 +44,16 @@ interface PermissionDialogProps {
 }
 
 const DEFAULT_CATEGORIES = [
-  "Admin",
-  "User",
-  "Role",
-  "Permission",
-  "Content",
-  "Settings",
-  "System",
+  "ADMIN",
+  "USER",
+  "ROLE",
+  "PERMISSION",
+  "CONTENT",
+  "SETTINGS",
+  "SYSTEM",
 ]
+
+const normalizeCategory = (value: string) => value.trim().toUpperCase()
 
 export function PermissionDialog({
   open,
@@ -70,12 +72,13 @@ export function PermissionDialog({
   useEffect(() => {
     if (permission) {
       setName(permission.name)
-      setCategory(permission.category)
+      setCategory(normalizeCategory(permission.category))
       setDescription(permission.description || "")
-      setIsCustomCategory(!DEFAULT_CATEGORIES.includes(permission.category))
+      const normalizedCategory = normalizeCategory(permission.category)
+      setIsCustomCategory(!DEFAULT_CATEGORIES.includes(normalizedCategory))
       setCustomCategory(
-        !DEFAULT_CATEGORIES.includes(permission.category)
-          ? permission.category
+        !DEFAULT_CATEGORIES.includes(normalizedCategory)
+          ? normalizedCategory
           : ""
       )
     } else {
@@ -88,7 +91,10 @@ export function PermissionDialog({
   }, [permission])
 
   const allCategories = Array.from(
-    new Set([...DEFAULT_CATEGORIES, ...categories])
+    new Set([
+      ...DEFAULT_CATEGORIES,
+      ...categories.map((category) => normalizeCategory(category)),
+    ])
   ).sort()
 
   const handleSubmit = async (e: React.FormEvent) => {
@@ -105,8 +111,8 @@ export function PermissionDialog({
     }
 
     const finalCategory = isCustomCategory
-      ? customCategory.trim()
-      : category.trim()
+      ? normalizeCategory(customCategory)
+      : normalizeCategory(category)
 
     if (!finalCategory) {
       toast.error("Category is required")
@@ -187,7 +193,16 @@ export function PermissionDialog({
               {!isCustomCategory ? (
                 <Select
                   value={category}
-                  onValueChange={setCategory}
+                  onValueChange={(value) => {
+                    if (value === "__custom__") {
+                      setIsCustomCategory(true)
+                      setCategory("")
+                      setCustomCategory("")
+                      return
+                    }
+
+                    setCategory(normalizeCategory(value))
+                  }}
                   disabled={saving}
                 >
                   <SelectTrigger>
@@ -209,8 +224,11 @@ export function PermissionDialog({
                   <Input
                     placeholder="Enter custom category"
                     value={customCategory}
-                    onChange={(e) => setCustomCategory(e.target.value)}
+                    onChange={(e) =>
+                      setCustomCategory(normalizeCategory(e.target.value))
+                    }
                     disabled={saving}
+                    className="uppercase"
                   />
                   <Button
                     type="button"

@@ -5,22 +5,73 @@ import { useTheme } from "next-themes"
 import { Button } from "@workspace/ui/components/button"
 import { Menu, Moon, Sun, X } from "lucide-react"
 import { useState, useEffect } from "react"
+import { siteConfig } from "@/lib/site-config"
 
 export function SiteHeader() {
   const { theme, setTheme } = useTheme()
   const [isMenuOpen, setIsMenuOpen] = useState(false)
   const [mounted, setMounted] = useState(false)
+  const menuToggleRef = useState<HTMLButtonElement | null>(null)[0]
+  const firstFocusableRef = useState<HTMLAnchorElement | null>(null)[0]
+  const lastFocusableRef = useState<HTMLAnchorElement | null>(null)[0]
 
   useEffect(() => {
     setMounted(true)
   }, [])
+
+  // Focus trap for mobile menu
+  useEffect(() => {
+    if (!isMenuOpen) return
+
+    const handleTab = (e: KeyboardEvent) => {
+      if (e.key !== "Tab") return
+
+      if (e.shiftKey) {
+        // Shift+Tab
+        if (document.activeElement === firstFocusableRef.current) {
+          e.preventDefault()
+          lastFocusableRef.current?.focus()
+        }
+      } else {
+        // Tab
+        if (document.activeElement === lastFocusableRef.current) {
+          e.preventDefault()
+          firstFocusableRef.current?.focus()
+        }
+      }
+    }
+
+    const handleEscape = (e: KeyboardEvent) => {
+      if (e.key === "Escape") {
+        setIsMenuOpen(false)
+        menuToggleRef?.focus()
+      }
+    }
+
+    document.addEventListener("keydown", handleTab)
+    document.addEventListener("keydown", handleEscape)
+
+    // Focus first element when menu opens
+    setTimeout(() => {
+      firstFocusableRef.current?.focus()
+    }, 0)
+
+    // Return focus to toggle when menu closes
+    return () => {
+      document.removeEventListener("keydown", handleTab)
+      document.removeEventListener("keydown", handleEscape)
+    }
+  }, [isMenuOpen, menuToggleRef])
 
   return (
     <header className="sticky top-0 z-50 w-full border-b border-border/40 bg-background/80 backdrop-blur-xl supports-[backdrop-filter]:bg-background/60">
       <div className="container flex h-16 items-center justify-between">
         {/* Logo */}
         <Link href="/" className="group flex items-center gap-2">
-          <div className="relative flex h-8 w-8 items-center justify-center rounded-lg bg-primary text-primary-foreground transition-transform group-hover:scale-105">
+          <div
+            className="relative flex h-8 w-8 items-center justify-center rounded-lg bg-primary text-primary-foreground transition-transform group-hover:scale-105"
+            aria-hidden="true"
+          >
             <svg
               viewBox="0 0 24 24"
               fill="none"
@@ -29,6 +80,7 @@ export function SiteHeader() {
               strokeLinecap="round"
               strokeLinejoin="round"
               className="h-4 w-4"
+              aria-hidden="true"
             >
               <path d="m12 19-7-7 7-7" />
               <path d="m19 19-7-7 7-7" />
@@ -41,9 +93,13 @@ export function SiteHeader() {
 
         {/* Desktop Navigation */}
         <nav className="hidden md:flex md:items-center md:gap-1">
-          <NavLink href="#features">Features</NavLink>
-          <NavLink href="#docs">Docs</NavLink>
-          <NavLink href="https://github.com" target="_blank" rel="noreferrer">
+          <NavLink href={siteConfig.nav.features}>Features</NavLink>
+          <NavLink href={siteConfig.nav.docs}>Docs</NavLink>
+          <NavLink
+            href={siteConfig.github.url}
+            target="_blank"
+            rel="noreferrer"
+          >
             GitHub
           </NavLink>
         </nav>
@@ -65,10 +121,10 @@ export function SiteHeader() {
           {/* CTA Button - Desktop */}
           <div className="hidden md:flex md:items-center md:gap-2">
             <Button variant="ghost" size="sm" asChild>
-              <Link href="/auth/sign-in">Sign in</Link>
+              <Link href={siteConfig.auth.signIn}>Sign in</Link>
             </Button>
             <Button size="sm" className="gap-1.5" asChild>
-              <Link href="/auth/sign-up">
+              <Link href={siteConfig.auth.signUp}>
                 Start Building
                 <svg
                   className="h-3.5 w-3.5 transition-transform group-hover:translate-x-0.5"
@@ -88,9 +144,11 @@ export function SiteHeader() {
 
           {/* Mobile Menu Toggle */}
           <button
+            ref={menuToggleRef}
             onClick={() => setIsMenuOpen(!isMenuOpen)}
             className="group relative inline-flex h-9 w-9 items-center justify-center rounded-lg transition-colors hover:bg-accent focus-visible:ring-1 focus-visible:ring-ring focus-visible:outline-none md:hidden"
             aria-label="Toggle menu"
+            aria-expanded={isMenuOpen}
           >
             {isMenuOpen ? (
               <X className="h-5 w-5 transition-all" />
@@ -106,16 +164,20 @@ export function SiteHeader() {
         <div className="border-t border-border/40 bg-background/95 backdrop-blur-xl md:hidden">
           <nav className="container flex flex-col gap-1 py-4">
             <MobileNavLink
-              href="#features"
+              ref={firstFocusableRef}
+              href={siteConfig.nav.features}
               onClick={() => setIsMenuOpen(false)}
             >
               Features
             </MobileNavLink>
-            <MobileNavLink href="#docs" onClick={() => setIsMenuOpen(false)}>
+            <MobileNavLink
+              href={siteConfig.nav.docs}
+              onClick={() => setIsMenuOpen(false)}
+            >
               Docs
             </MobileNavLink>
             <MobileNavLink
-              href="https://github.com"
+              href={siteConfig.github.url}
               target="_blank"
               rel="noreferrer"
               onClick={() => setIsMenuOpen(false)}
@@ -124,18 +186,19 @@ export function SiteHeader() {
             </MobileNavLink>
             <div className="my-2 h-px bg-border/40" />
             <MobileNavLink
-              href="/auth/sign-in"
+              href={siteConfig.auth.signIn}
               onClick={() => setIsMenuOpen(false)}
             >
               Sign in
             </MobileNavLink>
             <Button
+              ref={lastFocusableRef as React.RefObject<HTMLButtonElement>}
               size="sm"
               className="mt-2 justify-center gap-1.5"
               asChild
               onClick={() => setIsMenuOpen(false)}
             >
-              <Link href="/auth/sign-up">
+              <Link href={siteConfig.auth.signUp}>
                 Start Building
                 <svg
                   className="h-3.5 w-3.5"
@@ -179,11 +242,15 @@ function MobileNavLink({
   children,
   onClick,
   ...props
-}: React.ComponentProps<typeof Link> & { onClick?: () => void }) {
+}: React.ComponentProps<typeof Link> & {
+  onClick?: () => void
+  ref?: React.RefObject<HTMLAnchorElement>
+}) {
   return (
     <Link
       href={href}
       onClick={onClick}
+      ref={props.ref}
       className="rounded-lg px-3 py-2 text-base font-medium text-muted-foreground transition-colors hover:bg-accent/50 hover:text-foreground focus-visible:ring-1 focus-visible:ring-ring focus-visible:outline-none"
       {...props}
     >

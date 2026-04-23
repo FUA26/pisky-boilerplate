@@ -5,6 +5,7 @@ import { useRouter, useSearchParams } from "next/navigation"
 import { useForm } from "react-hook-form"
 import { zodResolver } from "@hookform/resolvers/zod"
 import { toast } from "sonner"
+import * as React from "react"
 
 import { Button } from "@workspace/ui/components/button"
 import {
@@ -24,6 +25,9 @@ export function ResetPasswordForm() {
   const router = useRouter()
   const searchParams = useSearchParams()
   const token = searchParams.get("token")
+  const [baseId] = React.useState(
+    () => `reset-${Math.random().toString(36).substring(2, 9)}`
+  )
 
   const form = useForm<ResetPasswordInput>({
     resolver: zodResolver(resetPasswordSchema),
@@ -32,6 +36,17 @@ export function ResetPasswordForm() {
       confirmPassword: "",
     },
   })
+
+  const errors = form.formState.errors
+
+  const getFieldError = (fieldName: keyof ResetPasswordInput) => {
+    const error = errors[fieldName]
+    return {
+      hasError: !!error,
+      errorId: error ? `${baseId}-${fieldName}-error` : undefined,
+      errorMessage: error?.message,
+    }
+  }
 
   const onSubmit = async (data: ResetPasswordInput) => {
     if (!token) {
@@ -48,6 +63,7 @@ export function ResetPasswordForm() {
 
       if (result.ok) {
         toast.success("Password reset successfully")
+        await new Promise((resolve) => setTimeout(resolve, 100))
         router.push("/sign-in")
       } else {
         const error = await result.json()
@@ -63,10 +79,10 @@ export function ResetPasswordForm() {
       <form className="flex flex-col gap-6">
         <FieldGroup>
           <div className="flex flex-col gap-3">
-            <h1 className="font-heading text-2xl font-bold tracking-tight text-[oklch(0.205_0.006_165)] dark:text-[oklch(0.985_0.002_165)]">
+            <h1 className="font-heading text-2xl font-bold tracking-tight text-foreground">
               Invalid reset link
             </h1>
-            <p className="text-base text-[oklch(0.55_0.008_165)] dark:text-[oklch(0.70_0.005_165)]">
+            <p className="text-base text-muted-foreground">
               This link has expired or doesn&apos;t work.
             </p>
           </div>
@@ -85,13 +101,15 @@ export function ResetPasswordForm() {
       className="flex flex-col gap-6"
       onSubmit={form.handleSubmit(onSubmit)}
       noValidate
+      aria-live="polite"
+      aria-atomic="false"
     >
       <FieldGroup>
         <div className="flex flex-col gap-3">
-          <h1 className="font-heading text-2xl font-bold tracking-tight text-[oklch(0.205_0.006_165)] dark:text-[oklch(0.985_0.002_165)]">
+          <h1 className="font-heading text-2xl font-bold tracking-tight text-foreground">
             Set a new password
           </h1>
-          <p className="text-base text-[oklch(0.55_0.008_165)] dark:text-[oklch(0.70_0.005_165)]">
+          <p className="text-base text-muted-foreground">
             Choose something secure you&apos;ll remember
           </p>
         </div>
@@ -101,27 +119,37 @@ export function ResetPasswordForm() {
             id="password"
             placeholder="••••••••"
             autoComplete="new-password"
+            aria-invalid={getFieldError("password").hasError}
+            aria-describedby={getFieldError("password").errorId}
             {...form.register("password")}
             disabled={form.formState.isSubmitting}
           />
-          {form.formState.errors.password && (
-            <FieldDescription className="text-destructive">
-              {form.formState.errors.password.message}
+          {getFieldError("password").hasError && (
+            <FieldDescription
+              id={getFieldError("password").errorId}
+              className="text-destructive"
+            >
+              {getFieldError("password").errorMessage}
             </FieldDescription>
           )}
         </Field>
         <Field>
-          <FieldLabel htmlFor="confirmPassword">Confirm Password</FieldLabel>
+          <FieldLabel htmlFor="confirm-password">Confirm Password</FieldLabel>
           <PasswordInput
-            id="confirmPassword"
+            id="confirm-password"
             placeholder="••••••••"
             autoComplete="new-password"
+            aria-invalid={getFieldError("confirmPassword").hasError}
+            aria-describedby={getFieldError("confirmPassword").errorId}
             {...form.register("confirmPassword")}
             disabled={form.formState.isSubmitting}
           />
-          {form.formState.errors.confirmPassword && (
-            <FieldDescription className="text-destructive">
-              {form.formState.errors.confirmPassword.message}
+          {getFieldError("confirmPassword").hasError && (
+            <FieldDescription
+              id={getFieldError("confirmPassword").errorId}
+              className="text-destructive"
+            >
+              {getFieldError("confirmPassword").errorMessage}
             </FieldDescription>
           )}
         </Field>
@@ -134,10 +162,10 @@ export function ResetPasswordForm() {
             {form.formState.isSubmitting ? "Resetting..." : "Reset password"}
           </Button>
         </Field>
-        <FieldDescription className="text-center text-[oklch(0.55_0.008_165)] dark:text-[oklch(0.70_0.005_165)]">
+        <FieldDescription className="text-center text-muted-foreground">
           <Link
             href="/sign-in"
-            className="font-medium text-[oklch(0.508_0.118_165.612)] underline-offset-4 transition-opacity hover:opacity-70"
+            className="font-medium text-primary underline-offset-4 transition-opacity hover:opacity-70"
           >
             Back to sign in
           </Link>
