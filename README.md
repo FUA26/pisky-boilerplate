@@ -50,6 +50,8 @@ zilpo-admin/
 
 ## Getting Started
 
+For detailed setup instructions including Docker, troubleshooting, and development workflow, see [docs/SETUP.md](docs/SETUP.md).
+
 ### Prerequisites
 
 - Node.js >= 20
