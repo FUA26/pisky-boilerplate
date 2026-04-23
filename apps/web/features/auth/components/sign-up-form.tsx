@@ -14,6 +14,7 @@ import {
   FieldLabel,
 } from "@workspace/ui/components/field"
 import { Input } from "@workspace/ui/components/input"
+import { PasswordInput } from "@/features/auth/components/password-input"
 import {
   signUpSchema,
   type SignUpInput,
@@ -42,7 +43,7 @@ export function SignUpForm() {
 
       if (result.ok) {
         toast.success("Account created successfully")
-        router.push("/auth/sign-in")
+        router.push("/sign-in")
       } else {
         const error = await result.json()
         toast.error(error.message || "Failed to create account")
@@ -56,21 +57,25 @@ export function SignUpForm() {
     <form
       className="flex flex-col gap-6"
       onSubmit={form.handleSubmit(onSubmit)}
+      noValidate
     >
       <FieldGroup>
-        <div className="flex flex-col items-center gap-1 text-center">
-          <h1 className="text-2xl font-bold">Create an account</h1>
-          <p className="text-sm text-balance text-muted-foreground">
-            Enter your information to create a new account
+        <div className="flex flex-col gap-3">
+          <h1 className="font-heading text-2xl font-bold tracking-tight text-[oklch(0.205_0.006_165)] dark:text-[oklch(0.985_0.002_165)]">
+            Start building
+          </h1>
+          <p className="text-base text-[oklch(0.55_0.008_165)] dark:text-[oklch(0.70_0.005_165)]">
+            Create an account and skip the boilerplate
           </p>
         </div>
         <Field>
           <FieldLabel htmlFor="name">Name</FieldLabel>
           <Input
             id="name"
-            placeholder="John Doe"
+            placeholder="Your name"
+            autoComplete="name"
             {...form.register("name")}
-            className="bg-background"
+            disabled={form.formState.isSubmitting}
           />
           {form.formState.errors.name && (
             <FieldDescription className="text-destructive">
@@ -83,9 +88,10 @@ export function SignUpForm() {
           <Input
             id="email"
             type="email"
-            placeholder="m@example.com"
+            placeholder="you@example.com"
+            autoComplete="email"
             {...form.register("email")}
-            className="bg-background"
+            disabled={form.formState.isSubmitting}
           />
           {form.formState.errors.email && (
             <FieldDescription className="text-destructive">
@@ -95,11 +101,12 @@ export function SignUpForm() {
         </Field>
         <Field>
           <FieldLabel htmlFor="password">Password</FieldLabel>
-          <Input
+          <PasswordInput
             id="password"
-            type="password"
+            placeholder="••••••••"
+            autoComplete="new-password"
             {...form.register("password")}
-            className="bg-background"
+            disabled={form.formState.isSubmitting}
           />
           {form.formState.errors.password && (
             <FieldDescription className="text-destructive">
@@ -109,11 +116,12 @@ export function SignUpForm() {
         </Field>
         <Field>
           <FieldLabel htmlFor="confirmPassword">Confirm Password</FieldLabel>
-          <Input
+          <PasswordInput
             id="confirmPassword"
-            type="password"
+            placeholder="••••••••"
+            autoComplete="new-password"
             {...form.register("confirmPassword")}
-            className="bg-background"
+            disabled={form.formState.isSubmitting}
           />
           {form.formState.errors.confirmPassword && (
             <FieldDescription className="text-destructive">
@@ -127,12 +135,17 @@ export function SignUpForm() {
             className="w-full"
             disabled={form.formState.isSubmitting}
           >
-            {form.formState.isSubmitting ? "Creating account..." : "Sign up"}
+            {form.formState.isSubmitting
+              ? "Creating account..."
+              : "Create account"}
           </Button>
         </Field>
-        <FieldDescription className="text-center">
+        <FieldDescription className="text-center text-[oklch(0.55_0.008_165)] dark:text-[oklch(0.70_0.005_165)]">
           Already have an account?{" "}
-          <Link href="/auth/sign-in" className="underline underline-offset-4">
+          <Link
+            href="/sign-in"
+            className="font-medium text-[oklch(0.508_0.118_165.612)] underline-offset-4 transition-opacity hover:opacity-70"
+          >
             Sign in
           </Link>
         </FieldDescription>

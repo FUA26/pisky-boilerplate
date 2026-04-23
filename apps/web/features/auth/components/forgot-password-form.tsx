@@ -50,13 +50,15 @@ export function ForgotPasswordForm() {
     <form
       className="flex flex-col gap-6"
       onSubmit={form.handleSubmit(onSubmit)}
+      noValidate
     >
       <FieldGroup>
-        <div className="flex flex-col items-center gap-1 text-center">
-          <h1 className="text-2xl font-bold">Forgot password?</h1>
-          <p className="text-sm text-balance text-muted-foreground">
-            Enter your email address and we&apos;ll send you a link to reset
-            your password
+        <div className="flex flex-col gap-3">
+          <h1 className="font-heading text-2xl font-bold tracking-tight text-[oklch(0.205_0.006_165)] dark:text-[oklch(0.985_0.002_165)]">
+            Reset your password
+          </h1>
+          <p className="text-base text-[oklch(0.55_0.008_165)] dark:text-[oklch(0.70_0.005_165)]">
+            Enter your email and we&apos;ll send you a reset link
           </p>
         </div>
         <Field>
@@ -64,9 +66,10 @@ export function ForgotPasswordForm() {
           <Input
             id="email"
             type="email"
-            placeholder="m@example.com"
+            placeholder="you@example.com"
+            autoComplete="email"
             {...form.register("email")}
-            className="bg-background"
+            disabled={form.formState.isSubmitting}
           />
           {form.formState.errors.email && (
             <FieldDescription className="text-destructive">
@@ -80,13 +83,14 @@ export function ForgotPasswordForm() {
             className="w-full"
             disabled={form.formState.isSubmitting}
           >
-            {form.formState.isSubmitting
-              ? "Sending email..."
-              : "Send reset link"}
+            {form.formState.isSubmitting ? "Sending..." : "Send reset link"}
           </Button>
         </Field>
-        <FieldDescription className="text-center">
-          <Link href="/auth/sign-in" className="underline underline-offset-4">
+        <FieldDescription className="text-center text-[oklch(0.55_0.008_165)] dark:text-[oklch(0.70_0.005_165)]">
+          <Link
+            href="/sign-in"
+            className="font-medium text-[oklch(0.508_0.118_165.612)] underline-offset-4 transition-opacity hover:opacity-70"
+          >
             Back to sign in
           </Link>
         </FieldDescription>
