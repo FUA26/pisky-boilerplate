@@ -1,21 +1,183 @@
-# shadcn/ui monorepo template
+# Zilpo Admin
 
-This is a Next.js monorepo template with shadcn/ui.
+A modern Next.js 16 + React 19 SaaS starter template built as a Turborepo monorepo. Designed for developers who want to skip boilerplate and ship features quickly with production-ready patterns.
 
-## Adding components
+## Features
 
-To add components to your app, run the following command at the root of your `web` app:
+- **Next.js 16** with App Router and React Server Components
+- **React 19** with latest features
+- **Authentication** - NextAuth v5 (beta) with credential provider
+- **Database** - Prisma ORM with PostgreSQL support
+- **Styling** - Tailwind CSS v4 with shadcn/ui components
+- **Forms** - React Hook Form + Zod validation
+- **Data Tables** - TanStack Table integration
+- **Storage** - AWS S3 / MinIO support for file uploads
+- **Type Safety** - TypeScript strict mode
+- **Code Quality** - ESLint, Prettier, lint-staged, lefthook
+- **Monorepo** - Turborepo for efficient builds
+
+## Project Structure
+
+```
+zilpo-admin/
+├── apps/
+│   └── web/                    # Main Next.js application
+│       ├── app/                # App Router routes
+│       │   ├── (auth)/         # Auth routes (sign-in, sign-up, etc.)
+│       │   ├── (landing)/      # Landing page
+│       │   ├── (backoffice)/   # Protected backoffice routes
+│       │   │   ├── access-management/
+│       │   │   ├── dashboard/
+│       │   │   ├── manage/
+│       │   │   └── settings/
+│       │   └── api/            # API routes
+│       ├── components/         # App-specific components
+│       ├── features/           # Feature-based modules
+│       ├── hooks/              # Custom React hooks
+│       ├── lib/                # Utilities
+│       └── prisma/             # Database schema and migrations
+├── packages/
+│   ├── ui/                     # Shared UI component library
+│   │   └── src/
+│   │       ├── components/     # shadcn/ui components
+│   │       ├── styles/         # Global styles with theme
+│   │       ├── lib/            # Utilities (cn, etc.)
+│   │       └── hooks/          # Shared hooks
+│   ├── eslint-config/          # Shared ESLint configuration
+│   └── typescript-config/      # Shared TypeScript configuration
+└── docs/                       # Additional documentation
+```
+
+## Getting Started
+
+### Prerequisites
+
+- Node.js >= 20
+- pnpm >= 9.15.9
+- PostgreSQL database (or use the provided docker-compose)
+
+### Installation
 
 ```bash
-pnpm dlx shadcn@latest add button -c apps/web
+# Install dependencies
+pnpm install
+
+# Set up environment variables
+cp .env.example .env
+# Edit .env with your configuration
+
+# Set up database
+pnpm --filter web db:push
+
+# (Optional) Seed database
+pnpm --filter web db:seed
+
+# Start development server
+pnpm dev
 ```
 
-This will place the ui components in the `packages/ui/src/components` directory.
+The app will be available at `http://localhost:3000`.
 
-## Using components
+### Docker Setup
 
-To use the components in your app, import them from the `ui` package.
+```bash
+# Start PostgreSQL and MinIO
+docker-compose -f docker-compose.admin.yml up -d
+```
+
+## Development Commands
+
+### Root-level commands
+
+```bash
+pnpm dev              # Start all dev servers in parallel
+pnpm build            # Build all packages
+pnpm lint             # Lint all packages
+pnpm lint:fix         # Lint and fix all packages
+pnpm format           # Format all code with Prettier
+pnpm format:check     # Check formatting
+pnpm typecheck        # Type check all packages
+pnpm validate         # Run lint, typecheck, and format:check
+```
+
+### Web app commands
+
+```bash
+pnpm --filter web dev              # Start Next.js dev server with Turbopack
+pnpm --filter web build            # Production build
+pnpm --filter web start            # Start production server
+pnpm --filter web lint             # Run ESLint
+pnpm --filter web typecheck        # TypeScript type checking
+pnpm --filter web db:push          # Push schema to database
+pnpm --filter web db:migrate       # Run migrations
+pnpm --filter web db:seed          # Seed database
+pnpm --filter web db:studio        # Open Prisma Studio
+```
+
+## Adding Components
+
+Components are managed via shadcn CLI and stored in the shared UI package:
+
+```bash
+pnpm dlx shadcn@latest add <component-name> -c apps/web
+```
+
+Components are installed to `packages/ui/src/components/` and can be imported:
 
 ```tsx
-import { Button } from "@workspace/ui/components/button";
+import { Button } from "@workspace/ui/components/button"
 ```
+
+## Styling
+
+### Theme
+
+The app uses a custom teal/cyan brand color (`oklch(0.508 0.118 165.612)`) with:
+
+- Light mode default
+- Dark mode support via `next-themes`
+- Generous border radius (10px)
+- Warm, approachable neutrals
+
+### CSS Variables
+
+Design tokens are defined in `packages/ui/src/styles/globals.css` using CSS variables for runtime theme switching.
+
+## Authentication
+
+NextAuth v5 is configured with:
+
+- Credential provider (email/password)
+- Prisma adapter
+- Protected routes via middleware
+- Custom sign-in, sign-up, forgot-password, and reset-password pages
+
+## Database
+
+### Schema
+
+Define your schema in `apps/web/prisma/schema.prisma`.
+
+### Migrations
+
+```bash
+pnpm --filter web db:migrate
+```
+
+### Studio
+
+```bash
+pnpm --filter web db:studio
+```
+
+## Code Quality
+
+- **ESLint** - Shared workspace configuration with TypeScript rules
+- **Prettier** - Code formatting with Tailwind class sorting
+- **lint-staged** - Run checks on staged files
+- **lefthook** - Git hooks for pre-commit validation
+- **commitlint** - Conventional commit messages
+
+## License
+
+MIT
