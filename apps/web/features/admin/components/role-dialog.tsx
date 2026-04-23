@@ -38,54 +38,60 @@ export function RoleDialog({
   }>()
 
   useEffect(() => {
-    if (open && mode === "clone") {
-      fetchRoles()
+    if (!open) return
+
+    let cancelled = false
+
+    const load = async () => {
+      try {
+        if (mode === "create") {
+          if (!cancelled) {
+            setInitialData(undefined)
+          }
+          return
+        }
+
+        if (mode === "clone") {
+          const res = await fetch("/api/roles")
+          if (!res.ok) throw new Error("Failed to fetch roles")
+          const data = await res.json()
+
+          if (!cancelled) {
+            setRoles(data.roles || [])
+          }
+        }
+
+        if (roleId) {
+          const res = await fetch(`/api/roles/${roleId}`)
+          if (!res.ok) throw new Error("Failed to fetch role")
+          const data = await res.json()
+
+          const permissions =
+            data.role.permissions?.map(normalizePermission) || []
+
+          if (!cancelled) {
+            setInitialData({
+              name: data.role.name,
+              description: data.role.description || "",
+              permissions,
+              sourceRoleId: roleId,
+            })
+          }
+        }
+      } catch (error) {
+        console.error("Failed to fetch role:", error)
+        toast.error(
+          error instanceof Error ? error.message : "Failed to load role data"
+        )
+      }
     }
-    if (open && mode !== "create" && roleId) {
-      fetchRole()
-    } else if (mode === "create") {
-      setInitialData(undefined)
+
+    void load()
+
+    return () => {
+      cancelled = true
     }
   }, [open, mode, roleId])
-
-  async function fetchRoles() {
-    try {
-      const res = await fetch("/api/roles")
-      if (!res.ok) throw new Error("Failed to fetch roles")
-      const data = await res.json()
-      setRoles(data.roles || [])
-    } catch (error) {
-      console.error("Failed to fetch roles:", error)
-      toast.error("Failed to load roles")
-    }
-  }
-
-  async function fetchRole() {
-    try {
-      const res = await fetch(`/api/roles/${roleId}`)
-      if (!res.ok) throw new Error("Failed to fetch role")
-      const data = await res.json()
-
-      // Transform permissions to array of strings
-      const permissions =
-        data.role.permissions?.map((p: any) => {
-          if (typeof p === "string") return p
-          if (p.name) return p.name
-          if (p.permission?.name) return p.permission.name
-          return p
-        }) || []
-
-      setInitialData({
-        name: data.role.name,
-        description: data.role.description || "",
-        permissions,
-        sourceRoleId: roleId,
-      })
-    } catch (error) {
-      console.error("Failed to fetch role:", error)
-      toast.error("Failed to load role data")
-    }
-  }
 
   async function handleSubmit(
     data:
@@ -175,4 +181,13 @@ export function RoleDialog({
       </DialogContent>
     </Dialog>
   )
+}
+
+function normalizePermission(
+  permission: string | { name?: string; permission?: { name?: string } }
+): string {
+  if (typeof permission === "string") return permission
+  if (permission.name) return permission.name
+  if (permission.permission?.name) return permission.permission.name
+  return ""
 }

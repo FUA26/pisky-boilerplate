@@ -1,4 +1,5 @@
 import { auth } from "@/lib/auth/config"
+import { getErrorMessage, isZodError } from "@/lib/error-utils"
 import { userService } from "@/lib/services/user-service"
 import { updateProfileSchema } from "@/lib/validations/user"
 import { NextResponse } from "next/server"
@@ -11,9 +12,7 @@ export async function GET() {
       return NextResponse.json({ error: "Unauthorized" }, { status: 401 })
     }
 
-    const profile = await userService.getCurrentUserProfile(
-      session.user.id as string
-    )
+    const profile = await userService.getCurrentUserProfile(session.user.id)
 
     if (!profile) {
       return NextResponse.json({ error: "User not found" }, { status: 404 })
@@ -42,17 +41,17 @@ export async function PATCH(req: Request) {
     const body = await req.json()
     const validatedData = updateProfileSchema.parse(body)
     const profile = await userService.updateCurrentUserProfile(
-      session.user.id as string,
+      session.user.id,
       validatedData
     )
 
     return NextResponse.json({ profile })
   } catch (error) {
-    if ((error as { name?: string })?.name === "ZodError") {
+    if (isZodError(error)) {
       return NextResponse.json(
         {
           error: "Validation Error",
-          details: (error as { errors?: unknown }).errors,
+          details: error.issues,
         },
         { status: 400 }
       )
@@ -60,8 +59,7 @@ export async function PATCH(req: Request) {
 
     return NextResponse.json(
       {
-        error:
-          error instanceof Error ? error.message : "Failed to update profile",
+        error: getErrorMessage(error, "Failed to update profile"),
       },
       { status: 500 }
     )

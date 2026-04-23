@@ -20,14 +20,10 @@ import { useForm } from "react-hook-form"
 import { toast } from "sonner"
 
 interface ChangePasswordFormProps {
-  userId: string
   onSuccess?: () => void
 }
 
-export function ChangePasswordForm({
-  userId,
-  onSuccess,
-}: ChangePasswordFormProps) {
+export function ChangePasswordForm({ onSuccess }: ChangePasswordFormProps) {
   const [isLoading, setIsLoading] = useState(false)
   const [showCurrentPassword, setShowCurrentPassword] = useState(false)
   const [showNewPassword, setShowNewPassword] = useState(false)

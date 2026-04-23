@@ -18,7 +18,7 @@ import {
 } from "@/lib/validations/role"
 import { zodResolver } from "@hookform/resolvers/zod"
 import { useEffect } from "react"
-import { useForm, type Resolver } from "react-hook-form"
+import { useForm, useWatch, type Resolver } from "react-hook-form"
 import { PermissionMatrix } from "./permission-matrix"
 
 type RoleFormValues = {
@@ -79,7 +79,11 @@ export function RoleForm({
     }
   }, [initialData, form])
 
-  const selectedPermissions = form.watch("permissions") || []
+  const selectedPermissions =
+    useWatch({
+      control: form.control,
+      name: "permissions",
+    }) || []
 
   return (
     <form
@@ -140,7 +144,10 @@ export function RoleForm({
             <PermissionMatrix
               selectedPermissions={selectedPermissions}
               onChange={(permissions) =>
-                form.setValue("permissions", permissions)
+                form.setValue("permissions", permissions, {
+                  shouldDirty: true,
+                  shouldValidate: true,
+                })
               }
               disabled={isLoading}
             />

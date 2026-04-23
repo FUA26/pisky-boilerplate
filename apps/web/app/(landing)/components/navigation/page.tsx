@@ -1,6 +1,5 @@
 "use client"
 
-import { useState } from "react"
 import { PreviewCodeTabs } from "@/features/showcase/components/preview-code-tabs"
 import {
   Breadcrumb,
@@ -22,11 +21,9 @@ import {
   DropdownMenuTrigger,
 } from "@workspace/ui/components/dropdown-menu"
 import { Button } from "@workspace/ui/components/button"
-import { ChevronRight, MoreHorizontal } from "lucide-react"
+import { MoreHorizontal } from "lucide-react"
 
 export default function NavigationPage() {
-  const [tabValue, setTabValue] = useState("preview")
-
   return (
     <div className="container px-4 py-12 pt-20 lg:px-8 lg:pt-12">
       <div className="max-w-4xl space-y-16">

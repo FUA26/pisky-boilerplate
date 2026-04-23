@@ -18,7 +18,6 @@ import { Label } from "@workspace/ui/components/label"
 import { useEffect, useState } from "react"
 import { toast } from "sonner"
 import {
-  MailIcon,
   CalendarIcon,
   ClockIcon,
   FingerprintIcon,
@@ -65,27 +64,37 @@ export function UserDetailDialog({
   const [isLoading, setIsLoading] = useState(false)
 
   useEffect(() => {
-    if (open && userId) {
-      fetchUser()
+    if (!open || !userId) return
+
+    let cancelled = false
+
+    const load = async () => {
+      setIsLoading(true)
+      try {
+        const res = await fetch(`/api/users/${userId}`)
+        if (!res.ok) {
+          throw new Error("Failed to fetch user")
+        }
+        const data = await res.json()
+        if (!cancelled) {
+          setUser(data.user)
+        }
+      } catch (error) {
+        console.error("Failed to fetch user:", error)
+        toast.error("Failed to load user details")
+      } finally {
+        if (!cancelled) {
+          setIsLoading(false)
+        }
+      }
+    }
+
+    void load()
+
+    return () => {
+      cancelled = true
     }
   }, [open, userId])
-
-  async function fetchUser() {
-    setIsLoading(true)
-    try {
-      const res = await fetch(`/api/users/${userId}`)
-      if (!res.ok) {
-        throw new Error("Failed to fetch user")
-      }
-      const data = await res.json()
-      setUser(data.user)
-    } catch (error) {
-      console.error("Failed to fetch user:", error)
-      toast.error("Failed to load user details")
-    } finally {
-      setIsLoading(false)
-    }
-  }
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>

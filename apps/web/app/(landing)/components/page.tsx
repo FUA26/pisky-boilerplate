@@ -1,7 +1,6 @@
 import { categories } from "@/features/showcase/lib/component-data"
 import { Card } from "@workspace/ui/components/card"
 import { ArrowRight, Sparkles } from "lucide-react"
-import { cn } from "@workspace/ui/lib/utils"
 
 export default function ComponentsPage() {
   const [featuredCategory, ...remainingCategories] = categories
@@ -22,7 +21,7 @@ export default function ComponentsPage() {
             Building blocks for your SaaS. Production-ready components built
             with shadcn/ui.
             <span className="mt-2 block text-sm">
-              Start with forms. They're the foundation of every interface.
+              Start with forms. They&apos;re the foundation of every interface.
             </span>
           </p>
         </div>

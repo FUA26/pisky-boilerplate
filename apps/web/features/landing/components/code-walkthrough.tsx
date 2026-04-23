@@ -12,8 +12,6 @@ const tabs = [
   { value: "api-patterns", label: "API Patterns" },
 ] as const
 
-type TabValue = (typeof tabs)[number]["value"]
-
 export function CodeWalkthrough() {
   return (
     <section className="border-t bg-muted/20 py-16 sm:py-20 md:py-24 lg:py-28">

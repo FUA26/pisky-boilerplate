@@ -1,4 +1,5 @@
 import { auth } from "@/lib/auth/config"
+import { getErrorMessage, isZodError } from "@/lib/error-utils"
 import { requirePermission } from "@/lib/rbac/permissions"
 import {
   InvalidRolePermissionsError,
@@ -30,7 +31,7 @@ export async function GET(
   } catch (error) {
     return NextResponse.json(
       {
-        error: error instanceof Error ? error.message : "Failed to fetch role",
+        error: getErrorMessage(error, "Failed to fetch role"),
       },
       { status: 500 }
     )
@@ -62,11 +63,11 @@ export async function PATCH(
       message: "Role updated successfully",
     })
   } catch (error) {
-    if ((error as any)?.name === "ZodError") {
+    if (isZodError(error)) {
       return NextResponse.json(
         {
           error: "Validation Error",
-          details: (error as any).errors,
+          details: error.issues,
         },
         { status: 400 }
       )
@@ -86,7 +87,7 @@ export async function PATCH(
 
     return NextResponse.json(
       {
-        error: error instanceof Error ? error.message : "Failed to update role",
+        error: getErrorMessage(error, "Failed to update role"),
       },
       { status: 500 }
     )
@@ -112,7 +113,7 @@ export async function DELETE(
   } catch (error) {
     return NextResponse.json(
       {
-        error: error instanceof Error ? error.message : "Failed to delete role",
+        error: getErrorMessage(error, "Failed to delete role"),
       },
       { status: 500 }
     )

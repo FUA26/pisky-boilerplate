@@ -88,8 +88,6 @@ export function RolesDataTable({ roles, onRefresh }: RolesDataTableProps) {
     roleName: "",
     userCount: 0,
   })
-  const [selectedRoleIds, setSelectedRoleIds] = React.useState<string[]>([])
-
   // Handle bulk delete
   const handleBulkDelete = async (roleIds: string[]) => {
     try {
@@ -100,7 +98,6 @@ export function RolesDataTable({ roles, onRefresh }: RolesDataTableProps) {
       toast.success(
         `${roleIds.length} role${roleIds.length > 1 ? "s" : ""} deleted successfully`
       )
-      setSelectedRoleIds([])
       onRefresh?.()
     } catch {
       toast.error("Failed to delete roles")
@@ -333,7 +330,6 @@ export function RolesDataTable({ roles, onRefresh }: RolesDataTableProps) {
                 variant="destructive"
                 onClick={() => {
                   const selectedIds = selectedRoles.map((r) => r.id)
-                  setSelectedRoleIds(selectedIds)
                   handleBulkDelete(selectedIds)
                   resetSelection()
                 }}

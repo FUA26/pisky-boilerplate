@@ -1,5 +1,6 @@
 // apps/web/app/api/permissions/[id]/route.ts
 import { auth } from "@/lib/auth/config"
+import { getErrorMessage, isZodError } from "@/lib/error-utils"
 import { permissionService } from "@/lib/services/permission-service"
 import { requirePermission } from "@/lib/rbac/permissions"
 import { updatePermissionSchema } from "@/lib/validations/permission"
@@ -64,12 +65,12 @@ export async function PATCH(
       permission,
       message: "Permission updated successfully",
     })
-  } catch (error: any) {
-    if (error.name === "ZodError") {
+  } catch (error) {
+    if (isZodError(error)) {
       return NextResponse.json(
         {
           error: "Validation Error",
-          details: error.errors,
+          details: error.issues,
         },
         { status: 400 }
       )
@@ -77,10 +78,7 @@ export async function PATCH(
 
     return NextResponse.json(
       {
-        error:
-          error instanceof Error
-            ? error.message
-            : "Failed to update permission",
+        error: getErrorMessage(error, "Failed to update permission"),
       },
       { status: 500 }
     )
@@ -103,15 +101,13 @@ export async function DELETE(
     await permissionService.deletePermission(id)
 
     return NextResponse.json({ success: true })
-  } catch (error: any) {
+  } catch (error) {
+    const message = getErrorMessage(error, "Failed to delete permission")
     return NextResponse.json(
       {
-        error:
-          error instanceof Error
-            ? error.message
-            : "Failed to delete permission",
+        error: message,
       },
-      { status: error.message?.includes("assigned to") ? 400 : 500 }
+      { status: message.includes("assigned to") ? 400 : 500 }
     )
   }
 }

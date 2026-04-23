@@ -37,52 +37,54 @@ export function UserDialog({
   }>()
 
   useEffect(() => {
-    if (open) {
-      fetchRoles()
-      if (mode === "edit" && userId) {
-        fetchUser()
-      } else {
-        setInitialData(undefined)
-      }
-    }
-  }, [open, mode, userId])
+    if (!open) return
 
-  async function fetchRoles() {
-    try {
-      const res = await fetch("/api/roles")
-      if (!res.ok) throw new Error("Failed to fetch roles")
-      const data = await res.json()
-      setRoles(data.roles || [])
-    } catch (error) {
-      console.error("Failed to fetch roles:", error)
-      toast.error("Failed to load roles")
-    }
-  }
+    let cancelled = false
 
-  async function fetchUser() {
-    try {
-      const res = await fetch(`/api/users/${userId}`)
-      if (!res.ok) {
-        const errorData = await res
-          .json()
-          .catch(() => ({ error: "Unknown error" }))
-        throw new Error(
-          errorData.error || errorData.message || "Failed to fetch user"
+    const load = async () => {
+      try {
+        const rolesResponse = await fetch("/api/roles")
+        if (!rolesResponse.ok) throw new Error("Failed to fetch roles")
+        const rolesData = await rolesResponse.json()
+        if (!cancelled) {
+          setRoles(rolesData.roles || [])
+        }
+
+        if (mode === "edit" && userId) {
+          const userResponse = await fetch(`/api/users/${userId}`)
+          if (!userResponse.ok) {
+            const errorData = await userResponse
+              .json()
+              .catch(() => ({ error: "Unknown error" }))
+            throw new Error(
+              errorData.error || errorData.message || "Failed to fetch user"
+            )
+          }
+          const data = await userResponse.json()
+          if (!cancelled) {
+            setInitialData({
+              name: data.user.name || "",
+              email: data.user.email,
+              roleId: data.user.roleId,
+            })
+          }
+        } else if (!cancelled) {
+          setInitialData(undefined)
+        }
+      } catch (error) {
+        console.error("Failed to load dialog data:", error)
+        toast.error(
+          error instanceof Error ? error.message : "Failed to load user data"
         )
       }
-      const data = await res.json()
-      setInitialData({
-        name: data.user.name || "",
-        email: data.user.email,
-        roleId: data.user.roleId,
-      })
-    } catch (error) {
-      console.error("Failed to fetch user:", error)
-      toast.error(
-        error instanceof Error ? error.message : "Failed to load user data"
-      )
     }
-  }
+
+    void load()
+
+    return () => {
+      cancelled = true
+    }
+  }, [open, mode, userId])
 
   async function handleSubmit(
     data:

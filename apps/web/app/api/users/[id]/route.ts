@@ -1,4 +1,5 @@
 import { auth } from "@/lib/auth/config"
+import { getErrorMessage, isZodError } from "@/lib/error-utils"
 import { requirePermission } from "@/lib/rbac/permissions"
 import { userService } from "@/lib/services/user-service"
 import { updateUserSchema } from "@/lib/validations/user"
@@ -27,7 +28,7 @@ export async function GET(
   } catch (error) {
     return NextResponse.json(
       {
-        error: error instanceof Error ? error.message : "Failed to fetch user",
+        error: getErrorMessage(error, "Failed to fetch user"),
       },
       { status: 500 }
     )
@@ -54,11 +55,11 @@ export async function PATCH(
 
     return NextResponse.json({ user })
   } catch (error) {
-    if ((error as any)?.name === "ZodError") {
+    if (isZodError(error)) {
       return NextResponse.json(
         {
           error: "Validation Error",
-          details: (error as any).errors,
+          details: error.issues,
         },
         { status: 400 }
       )
@@ -66,7 +67,7 @@ export async function PATCH(
 
     return NextResponse.json(
       {
-        error: error instanceof Error ? error.message : "Failed to update user",
+        error: getErrorMessage(error, "Failed to update user"),
       },
       { status: 500 }
     )
@@ -92,7 +93,7 @@ export async function DELETE(
   } catch (error) {
     return NextResponse.json(
       {
-        error: error instanceof Error ? error.message : "Failed to delete user",
+        error: getErrorMessage(error, "Failed to delete user"),
       },
       { status: 500 }
     )

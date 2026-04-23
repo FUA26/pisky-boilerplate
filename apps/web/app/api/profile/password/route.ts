@@ -1,4 +1,5 @@
 import { auth } from "@/lib/auth/config"
+import { getErrorMessage, isZodError } from "@/lib/error-utils"
 import { userService } from "@/lib/services/user-service"
 import { changePasswordSchema } from "@/lib/validations/user"
 import { NextResponse } from "next/server"
@@ -14,18 +15,15 @@ export async function POST(req: Request) {
     const body = await req.json()
     const validatedData = changePasswordSchema.parse(body)
 
-    await userService.changeCurrentUserPassword(
-      session.user.id as string,
-      validatedData
-    )
+    await userService.changeCurrentUserPassword(session.user.id, validatedData)
 
     return NextResponse.json({ success: true })
   } catch (error) {
-    if ((error as { name?: string })?.name === "ZodError") {
+    if (isZodError(error)) {
       return NextResponse.json(
         {
           error: "Validation Error",
-          details: (error as { errors?: unknown }).errors,
+          details: error.issues,
         },
         { status: 400 }
       )
@@ -33,8 +31,7 @@ export async function POST(req: Request) {
 
     return NextResponse.json(
       {
-        error:
-          error instanceof Error ? error.message : "Failed to change password",
+        error: getErrorMessage(error, "Failed to change password"),
       },
       { status: 500 }
     )

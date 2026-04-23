@@ -94,10 +94,8 @@ function generateBreadcrumb(pathname: string) {
 
 export default function BackofficeLayout({
   children,
-  breadcrumb,
 }: {
   children: React.ReactNode
-  breadcrumb?: React.ReactNode
 }) {
   const pathname = usePathname()
 

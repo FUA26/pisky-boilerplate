@@ -3,7 +3,7 @@
 import { cn } from "@workspace/ui/lib/utils"
 import { Button } from "@workspace/ui/components/button"
 import { Check, Copy } from "lucide-react"
-import { useState, useId } from "react"
+import { useState } from "react"
 
 interface TerminalBlockProps {
   children: string
@@ -17,7 +17,6 @@ export function TerminalBlock({
   showCopy = true,
 }: TerminalBlockProps) {
   const [copied, setCopied] = useState(false)
-  const statusId = useId()
 
   const handleCopy = async () => {
     await navigator.clipboard.writeText(children)

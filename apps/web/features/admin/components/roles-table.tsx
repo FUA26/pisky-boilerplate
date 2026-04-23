@@ -43,7 +43,6 @@ interface Role {
 
 interface RolesTableProps {
   data: Role[]
-  onRefresh: () => void
   onEdit: (roleId: string) => void
   onClone: (roleId: string) => void
   onDelete: (roleId: string, roleName: string, userCount: number) => void
@@ -52,7 +51,6 @@ interface RolesTableProps {
 
 export function RolesTable({
   data,
-  onRefresh,
   onEdit,
   onClone,
   onDelete,
@@ -164,6 +162,8 @@ export function RolesTable({
     },
   ]
 
+  // TanStack Table exposes unstable functions here; React Compiler skips memoization safely.
+  // eslint-disable-next-line react-hooks/incompatible-library
   const table = useReactTable({
     data,
     columns,
@@ -195,9 +195,10 @@ export function RolesTable({
                     <TableHead key={header.id}>
                       {header.isPlaceholder
                         ? null
-                        : header.column.columnDef.header
-                          ? (header.column.columnDef.header as any)
-                          : header.column.columnDef.header}
+                        : flexRender(
+                            header.column.columnDef.header,
+                            header.getContext()
+                          )}
                     </TableHead>
                   )
                 })}

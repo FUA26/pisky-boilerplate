@@ -15,7 +15,7 @@ import type { CreateUserInput, UpdateUserInput } from "@/lib/validations/user"
 import { createUserSchema, updateUserSchema } from "@/lib/validations/user"
 import { zodResolver } from "@hookform/resolvers/zod"
 import { useEffect } from "react"
-import { useForm, type Resolver } from "react-hook-form"
+import { useForm, useWatch, type Resolver } from "react-hook-form"
 import {
   UserIcon,
   MailIcon,
@@ -75,6 +75,11 @@ export function UserForm({
       })
     }
   }, [initialData, form])
+
+  const selectedRoleId = useWatch({
+    control: form.control,
+    name: "roleId",
+  })
 
   return (
     <form
@@ -158,7 +163,7 @@ export function UserForm({
         </Label>
         <Select
           onValueChange={(value) => form.setValue("roleId", value)}
-          value={form.watch("roleId")}
+          value={selectedRoleId}
           disabled={isLoading}
         >
           <SelectTrigger className="transition-colors focus:border-primary/50">

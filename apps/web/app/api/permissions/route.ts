@@ -1,5 +1,6 @@
 // apps/web/app/api/permissions/route.ts
 import { auth } from "@/lib/auth/config"
+import { getErrorMessage, isZodError } from "@/lib/error-utils"
 import { permissionService } from "@/lib/services/permission-service"
 import { requirePermission } from "@/lib/rbac/permissions"
 import { createPermissionSchema } from "@/lib/validations/permission"
@@ -65,18 +66,23 @@ export async function POST(req: Request) {
       },
       { status: 201 }
     )
-  } catch (error: any) {
-    if (error.name === "ZodError") {
+  } catch (error) {
+    if (isZodError(error)) {
       return NextResponse.json(
         {
           error: "Validation Error",
-          details: error.errors,
+          details: error.issues,
         },
         { status: 400 }
       )
     }
 
-    if (error.code === "P2002") {
+    if (
+      typeof error === "object" &&
+      error !== null &&
+      "code" in error &&
+      (error as { code?: string }).code === "P2002"
+    ) {
       return NextResponse.json(
         {
           error: "Conflict",
@@ -88,10 +94,7 @@ export async function POST(req: Request) {
 
     return NextResponse.json(
       {
-        error:
-          error instanceof Error
-            ? error.message
-            : "Failed to create permission",
+        error: getErrorMessage(error, "Failed to create permission"),
       },
       { status: 500 }
     )

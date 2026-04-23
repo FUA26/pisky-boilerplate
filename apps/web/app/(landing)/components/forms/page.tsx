@@ -2,7 +2,6 @@ import { PreviewCodeTabs } from "@/features/showcase/components/preview-code-tab
 import { Button } from "@workspace/ui/components/button"
 import { Input } from "@workspace/ui/components/input"
 import { Label } from "@workspace/ui/components/label"
-import { Card } from "@workspace/ui/components/card"
 import { Separator } from "@workspace/ui/components/separator"
 
 export default function FormsPage() {
@@ -204,7 +203,7 @@ import { Input } from "@workspace/ui/components/input"
                       placeholder="your@email.com"
                     />
                     <p className="text-sm text-muted-foreground">
-                      We'll never share your email with anyone else.
+                      We&apos;ll never share your email with anyone else.
                     </p>
                   </div>
                 }

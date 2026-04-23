@@ -93,10 +93,7 @@ export function SettingsClient({ user }: SettingsClientProps) {
                 </CardDescription>
               </CardHeader>
               <CardContent>
-                <ChangePasswordForm
-                  userId={user.id}
-                  onSuccess={handleSuccess}
-                />
+                <ChangePasswordForm onSuccess={handleSuccess} />
               </CardContent>
             </Card>
           </TabsContent>

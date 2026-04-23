@@ -1,4 +1,5 @@
 import { auth } from "@/lib/auth/config"
+import { getErrorMessage, isZodError } from "@/lib/error-utils"
 import { requirePermission } from "@/lib/rbac/permissions"
 import {
   InvalidRolePermissionsError,
@@ -33,7 +34,7 @@ export async function GET(req: Request) {
   } catch (error) {
     return NextResponse.json(
       {
-        error: error instanceof Error ? error.message : "Failed to fetch roles",
+        error: getErrorMessage(error, "Failed to fetch roles"),
       },
       { status: 500 }
     )
@@ -64,11 +65,11 @@ export async function POST(req: Request) {
       { status: 201 }
     )
   } catch (error) {
-    if ((error as any)?.name === "ZodError") {
+    if (isZodError(error)) {
       return NextResponse.json(
         {
           error: "Validation Error",
-          details: (error as any).errors,
+          details: error.issues,
         },
         { status: 400 }
       )
@@ -88,7 +89,7 @@ export async function POST(req: Request) {
 
     return NextResponse.json(
       {
-        error: error instanceof Error ? error.message : "Failed to create role",
+        error: getErrorMessage(error, "Failed to create role"),
       },
       { status: 500 }
     )

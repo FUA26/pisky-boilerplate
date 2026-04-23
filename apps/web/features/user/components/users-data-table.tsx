@@ -83,8 +83,6 @@ export function UsersDataTable({
 }: UsersDataTableProps) {
   const [users, setUsers] = React.useState<User[]>([])
   const [isLoading, setIsLoading] = React.useState(true)
-  const [totalCount, setTotalCount] = React.useState(0)
-  const [totalPages, setTotalPages] = React.useState(0)
 
   const [editDialog, setEditDialog] = React.useState<{
     open: boolean
@@ -107,7 +105,6 @@ export function UsersDataTable({
     open: false,
     userId: "",
   })
-  const [selectedUserIds, setSelectedUserIds] = React.useState<string[]>([])
   const [createDialogOpen, setCreateDialogOpen] = React.useState(false)
 
   // Fetch users
@@ -126,8 +123,6 @@ export function UsersDataTable({
 
       const data: UsersResponse = await response.json()
       setUsers(data.users)
-      setTotalCount(data.pagination.totalCount)
-      setTotalPages(data.pagination.totalPages)
     } catch {
       toast.error("Failed to load users")
     } finally {
@@ -171,7 +166,6 @@ export function UsersDataTable({
       toast.success(
         `${userIds.length} user${userIds.length > 1 ? "s" : ""} deleted successfully`
       )
-      setSelectedUserIds([])
       fetchUsers()
     } catch {
       toast.error("Failed to delete users")
@@ -412,7 +406,6 @@ export function UsersDataTable({
                 variant="destructive"
                 onClick={() => {
                   const selectedIds = selectedUsers.map((u) => u.id)
-                  setSelectedUserIds(selectedIds)
                   handleBulkDelete(selectedIds)
                   resetSelection()
                 }}

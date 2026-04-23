@@ -24,7 +24,7 @@ import {
 
 export function SignInForm() {
   const router = useRouter()
-  const [errorId, setErrorId] = React.useState(`email-error-${React.useId()}`)
+  const errorId = React.useId()
 
   const form = useForm<SignInInput>({
     resolver: zodResolver(signInSchema),

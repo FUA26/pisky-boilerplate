@@ -1,5 +1,6 @@
 // apps/web/app/api/roles/[id]/clone/route.ts
 import { auth } from "@/lib/auth/config"
+import { getErrorMessage, isZodError } from "@/lib/error-utils"
 import { requirePermission } from "@/lib/rbac/permissions"
 import { roleService } from "@/lib/services/role-service"
 import { cloneRoleSchema } from "@/lib/validations/role"
@@ -31,22 +32,23 @@ export async function POST(
       },
       { status: 201 }
     )
-  } catch (error: any) {
-    if (error.name === "ZodError") {
+  } catch (error) {
+    if (isZodError(error)) {
       return NextResponse.json(
         {
           error: "Validation Error",
-          details: error.errors,
+          details: error.issues,
         },
         { status: 400 }
       )
     }
 
-    if (error.message === "Role with this name already exists") {
+    const message = getErrorMessage(error, "Failed to clone role")
+    if (message === "Role with this name already exists") {
       return NextResponse.json(
         {
           error: "Conflict",
-          message: error.message,
+          message,
         },
         { status: 409 }
       )
@@ -54,7 +56,7 @@ export async function POST(
 
     return NextResponse.json(
       {
-        error: error instanceof Error ? error.message : "Failed to clone role",
+        error: message,
       },
       { status: 500 }
     )

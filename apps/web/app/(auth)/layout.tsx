@@ -1,4 +1,5 @@
 import type { ReactNode } from "react"
+import Link from "next/link"
 import { FloatingPaths } from "@/components/floating-paths"
 
 export default function AuthLayout({ children }: { children: ReactNode }) {
@@ -13,7 +14,7 @@ export default function AuthLayout({ children }: { children: ReactNode }) {
 
         {/* Logo - positioned naturally at top */}
         <div className="relative z-10">
-          <a
+          <Link
             href="/"
             className="inline-flex items-center gap-2.5 font-heading font-semibold text-auth-heading transition-opacity hover:opacity-70"
           >
@@ -21,7 +22,7 @@ export default function AuthLayout({ children }: { children: ReactNode }) {
               <span className="text-sm font-bold">Z</span>
             </div>
             <span className="text-lg">Zilpo</span>
-          </a>
+          </Link>
         </div>
 
         {/* Brand message - the "why" */}
@@ -59,7 +60,7 @@ export default function AuthLayout({ children }: { children: ReactNode }) {
       <div className="relative flex flex-col justify-center bg-auth-form-bg p-6 before:pointer-events-none before:absolute before:inset-0 before:bg-[radial-gradient(ellipse_80%_60%_at_50%_-20%,auth-radial-gradient_0%,transparent_100%)] md:p-10 lg:p-12">
         {/* Mobile logo - only shows on small screens */}
         <div className="mb-8 lg:hidden">
-          <a
+          <Link
             href="/"
             className="inline-flex items-center gap-2.5 font-heading font-semibold"
           >
@@ -67,7 +68,7 @@ export default function AuthLayout({ children }: { children: ReactNode }) {
               <span className="text-xs font-bold">Z</span>
             </div>
             <span>Zilpo</span>
-          </a>
+          </Link>
         </div>
 
         {/* Form container - constrained width for readability */}

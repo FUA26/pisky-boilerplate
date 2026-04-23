@@ -14,16 +14,11 @@ import {
 import { siteConfig } from "@/lib/site-config"
 
 export function SiteHeader() {
-  const { theme, setTheme } = useTheme()
+  const { resolvedTheme, setTheme } = useTheme()
   const [isMenuOpen, setIsMenuOpen] = useState(false)
-  const [mounted, setMounted] = useState(false)
   const menuToggleRef = useRef<HTMLButtonElement | null>(null)
   const firstFocusableRef = useRef<HTMLAnchorElement | null>(null)
   const lastFocusableRef = useRef<HTMLAnchorElement | null>(null)
-
-  useEffect(() => {
-    setMounted(true)
-  }, [])
 
   // Focus trap for mobile menu
   useEffect(() => {
@@ -113,16 +108,16 @@ export function SiteHeader() {
         {/* Actions */}
         <div className="flex items-center gap-2">
           {/* Theme Toggle */}
-          {mounted && (
-            <button
-              onClick={() => setTheme(theme === "dark" ? "light" : "dark")}
-              className="group relative inline-flex h-9 w-9 items-center justify-center rounded-lg transition-colors hover:bg-accent focus-visible:ring-1 focus-visible:ring-ring focus-visible:outline-none"
-              aria-label="Toggle theme"
-            >
-              <Sun className="h-4 w-4 scale-100 rotate-0 transition-all dark:scale-0 dark:-rotate-90" />
-              <Moon className="absolute h-4 w-4 scale-0 rotate-90 transition-all dark:scale-100 dark:rotate-0" />
-            </button>
-          )}
+          <button
+            onClick={() =>
+              setTheme(resolvedTheme === "dark" ? "light" : "dark")
+            }
+            className="group relative inline-flex h-9 w-9 items-center justify-center rounded-lg transition-colors hover:bg-accent focus-visible:ring-1 focus-visible:ring-ring focus-visible:outline-none"
+            aria-label="Toggle theme"
+          >
+            <Sun className="h-4 w-4 scale-100 rotate-0 transition-all dark:scale-0 dark:-rotate-90" />
+            <Moon className="absolute h-4 w-4 scale-0 rotate-90 transition-all dark:scale-100 dark:rotate-0" />
+          </button>
 
           {/* CTA Button - Desktop */}
           <div className="hidden md:flex md:items-center md:gap-2">

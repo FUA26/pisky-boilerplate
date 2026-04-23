@@ -1,3 +1,4 @@
+/* global process */
 import prismaClientPkg from "@prisma/client"
 import bcryptPkg from "bcryptjs"
 
