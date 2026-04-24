@@ -7,14 +7,14 @@ version: "3.8"
 services:
   postgres:
     image: postgres:16-alpine
-    container_name: zilpo-postgres
+    container_name: pisky-postgres
     restart: unless-stopped
     ports:
-      - "5432:5432"
+      - "8438:5432"
     environment:
-      POSTGRES_USER: ${POSTGRES_USER:-zilpo}
-      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-zilpo123}
-      POSTGRES_DB: ${POSTGRES_DB:-zilpo_admin}
+      POSTGRES_USER: ${POSTGRES_USER:-pisky}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-pisky}
+      POSTGRES_DB: ${POSTGRES_DB:-pisky}
     volumes:
       - postgres_data:/var/lib/postgresql/data
     healthcheck:
@@ -25,26 +25,27 @@ services:
     networks:
       - zilpo-network
 
-  minio:
-    image: minio/minio:latest
-    container_name: zilpo-minio
-    restart: unless-stopped
-    ports:
-      - "9000:9000" # API
-      - "9001:9001" # Console
-    environment:
-      MINIO_ROOT_USER: ${MINIO_ROOT_USER:-minioadmin}
-      MINIO_ROOT_PASSWORD: ${MINIO_ROOT_PASSWORD:-minioadmin123}
-    command: server /data --console-address ":9001"
-    volumes:
-      - minio_data:/data
-    healthcheck:
-      test: ["CMD", "curl", "-f", "http://localhost:9000/minio/health/live"]
-      interval: 10s
-      timeout: 5s
-      retries: 5
-    networks:
-      - zilpo-network
+  # MinIO - commented out, using S3 instead
+  # minio:
+  #   image: minio/minio:latest
+  #   container_name: zilpo-minio
+  #   restart: unless-stopped
+  #   ports:
+  #     - "9000:9000" # API
+  #     - "9001:9001" # Console
+  #   environment:
+  #     MINIO_ROOT_USER: ${MINIO_ROOT_USER:-minioadmin}
+  #     MINIO_ROOT_PASSWORD: ${MINIO_ROOT_PASSWORD:-minioadmin123}
+  #   command: server /data --console-address ":9001"
+  #   volumes:
+  #     - minio_data:/data
+  #   healthcheck:
+  #     test: ["CMD", "curl", "-f", "http://localhost:9000/minio/health/live"]
+  #     interval: 10s
+  #     timeout: 5s
+  #     retries: 5
+  #   networks:
+  #     - zilpo-network
 
   # Optional: Redis for caching/sessions (uncomment if needed)
   # redis:
@@ -61,8 +62,8 @@ services:
 volumes:
   postgres_data:
     driver: local
-  minio_data:
-    driver: local
+  # minio_data:
+  #   driver: local
   # redis_data:
   #   driver: local
 
