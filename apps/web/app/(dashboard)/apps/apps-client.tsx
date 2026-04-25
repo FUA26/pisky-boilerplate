@@ -129,7 +129,7 @@ export function AppsClient() {
 
   // Memoized filtered apps
   const filteredApps = useMemo(() => {
-    const apps = data?.items ?? []
+    const apps = data?.apps ?? []
     if (!search) return apps
 
     const searchLower = search.toLowerCase()
@@ -142,7 +142,7 @@ export function AppsClient() {
 
   // Stats calculations
   const stats = useMemo(() => {
-    const apps = data?.items ?? []
+    const apps = data?.apps ?? []
     return {
       totalApps: apps.length,
       totalChannels: apps.reduce(

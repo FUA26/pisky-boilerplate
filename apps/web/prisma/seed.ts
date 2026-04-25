@@ -2,8 +2,7 @@ import { seedPermissions } from "./seed-permissions.js"
 import { seedRoles } from "./seed-roles.js"
 import { seedAdmin } from "./seed-admin.js"
 import { seedSystemSettings } from "./seed-system-settings.js"
-import { seedTicketing } from "./seed-ticketing.js"
-import { seedTickets } from "./seed-tickets.js"
+import { seedAppsAndTickets } from "./seed-apps-tickets.js"
 
 async function main() {
   console.log("🌱 Starting database seed...")
@@ -14,8 +13,7 @@ async function main() {
     await seedRoles()
     await seedAdmin()
     await seedSystemSettings()
-    await seedTicketing()
-    await seedTickets()
+    await seedAppsAndTickets()
 
     console.log("✅ Seed completed successfully!")
   } catch (error) {
