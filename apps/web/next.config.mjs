@@ -1,10 +1,12 @@
 /** @type {import('next').NextConfig} */
+const isProduction = globalThis.process?.env?.NODE_ENV === "production"
+
 const nextConfig = {
   transpilePackages: ["@workspace/ui"],
 
   // Enable standalone output for Docker builds
   // Comment out or remove for development builds
-  ...(process.env.NODE_ENV === "production" && {
+  ...(isProduction && {
     output: "standalone",
   }),
 }

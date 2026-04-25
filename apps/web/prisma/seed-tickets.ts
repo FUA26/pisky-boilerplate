@@ -2,7 +2,9 @@
  * Seed dummy ticket data for development
  */
 
-import { prisma } from "../lib/prisma"
+import { PrismaClient } from "@prisma/client"
+
+const prisma = new PrismaClient()
 
 const TICKET_STATUSES = ["OPEN", "IN_PROGRESS", "RESOLVED", "CLOSED"] as const
 const PRIORITIES = ["LOW", "NORMAL", "HIGH", "URGENT"] as const
@@ -108,8 +110,8 @@ async function seedTickets() {
 
   // Create tickets with different statuses
   for (let i = 0; i < 20; i++) {
-    const status = TICKET_STATUSES[i % TICKET_STATUSES.length] as any
-    const priority = PRIORITIES[i % PRIORITIES.length] as any
+    const status = TICKET_STATUSES[i % TICKET_STATUSES.length]
+    const priority = PRIORITIES[i % PRIORITIES.length]
     const subject = SUBJECTS[i % SUBJECTS.length]!
     const message = MESSAGES[i % MESSAGES.length]!
     const channel = channels[i % channels.length]
@@ -254,11 +256,16 @@ async function seedTickets() {
   }
 }
 
-seedTickets()
-  .catch((error) => {
-    console.error("Error seeding tickets:", error)
-    process.exit(1)
-  })
-  .finally(async () => {
-    await prisma.$disconnect()
-  })
+export { seedTickets }
+
+// Only run if called directly
+if (import.meta.url === `file://${process.argv[1]}`) {
+  seedTickets()
+    .catch((error) => {
+      console.error("Error seeding tickets:", error)
+      process.exit(1)
+    })
+    .finally(async () => {
+      await prisma.$disconnect()
+    })
+}

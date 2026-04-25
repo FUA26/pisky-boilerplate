@@ -1,12 +1,10 @@
 import NextAuth, { type NextAuthConfig, type NextAuthResult } from "next-auth"
 import Credentials from "next-auth/providers/credentials"
-import { PrismaAdapter } from "@auth/prisma-adapter"
 import { prisma } from "@/lib/prisma"
 import { verifyPassword } from "./password"
 import type { Permission } from "@workspace/types"
 
 const authConfig = {
-  adapter: PrismaAdapter(prisma),
   session: { strategy: "jwt" },
   pages: {
     signIn: "/sign-in",
@@ -20,52 +18,82 @@ const authConfig = {
         password: { label: "Password", type: "password" },
       },
       async authorize(credentials) {
-        if (!credentials?.email || !credentials?.password) {
-          return null
-        }
+        try {
+          const email =
+            typeof credentials?.email === "string"
+              ? credentials.email
+              : undefined
+          const password =
+            typeof credentials?.password === "string"
+              ? credentials.password
+              : undefined
 
-        const user = await prisma.user.findUnique({
-          where: { email: credentials.email as string },
-          include: {
-            role: {
-              include: {
-                permissions: {
-                  include: {
-                    permission: true,
+          if (!email || !password) {
+            console.log("[AUTH] Missing credentials", {
+              email,
+              hasPassword: !!password,
+            })
+            return null
+          }
+
+          console.log("[AUTH] Attempting login for:", email)
+
+          const user = await prisma.user.findUnique({
+            where: { email },
+            include: {
+              role: {
+                include: {
+                  permissions: {
+                    include: {
+                      permission: true,
+                    },
                   },
                 },
               },
             },
-          },
-        })
+          })
 
-        if (!user || !user.password) {
+          if (!user) {
+            console.log("[AUTH] User not found:", email)
+            return null
+          }
+
+          if (!user.password) {
+            console.log("[AUTH] User has no password set")
+            return null
+          }
+
+          console.log("[AUTH] User found, verifying password...")
+
+          const isValid = await verifyPassword(password, user.password)
+
+          if (!isValid) {
+            console.log("[AUTH] Invalid password for:", email)
+            return null
+          }
+
+          console.log("[AUTH] Login successful for:", email)
+
+          const permissions = user.role.permissions
+            .map((rp) => rp.permission?.name as Permission)
+            .filter((p): p is Permission => p !== undefined)
+
+          console.log("[AUTH] Permissions loaded:", permissions.length)
+
+          return {
+            id: user.id,
+            email: user.email,
+            name: user.name,
+            image: user.avatarUrl ?? user.image,
+            role: {
+              id: user.role.id,
+              name: user.role.name,
+              permissions,
+            },
+          }
+        } catch (error) {
+          console.error("[AUTH] Error in authorize:", error)
           return null
-        }
-
-        const isValid = await verifyPassword(
-          credentials.password as string,
-          user.password
-        )
-
-        if (!isValid) {
-          return null
-        }
-
-        const permissions = user.role.permissions
-          .map((rp) => rp.permission?.name as Permission)
-          .filter((p): p is Permission => p !== undefined)
-
-        return {
-          id: user.id,
-          email: user.email,
-          name: user.name,
-          image: user.image,
-          role: {
-            id: user.role.id,
-            name: user.role.name,
-            permissions,
-          },
         }
       },
     }),

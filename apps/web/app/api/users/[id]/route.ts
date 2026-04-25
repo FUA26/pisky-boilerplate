@@ -1,101 +1,170 @@
-import { auth } from "@/lib/auth/config"
-import { getErrorMessage, isZodError } from "@/lib/error-utils"
-import { requirePermission } from "@/lib/rbac/permissions"
-import { userService } from "@/lib/services/user-service"
+/**
+ * User Detail API Route
+ *
+ * GET /api/users/[id] - Get single user
+ * PUT /api/users/[id] - Update user
+ * DELETE /api/users/[id] - Delete user
+ */
+
+import { prisma } from "@/lib/db/prisma"
+import { protectApiRoute } from "@/lib/rbac-server/api-protect"
+import { invalidateUserPermissions } from "@/lib/rbac-server/loader"
+import { Permission } from "@/lib/rbac/types"
 import { updateUserSchema } from "@/lib/validations/user"
 import { NextResponse } from "next/server"
 
-export async function GET(
-  req: Request,
-  { params }: { params: Promise<{ id: string }> }
-) {
-  try {
-    const session = await auth()
-    if (!session?.user) {
-      return NextResponse.json({ error: "Unauthorized" }, { status: 401 })
-    }
+/**
+ * GET /api/users/[id]
+ * Get single user details
+ * Requires: USER_READ_ANY permission
+ */
+export const GET = protectApiRoute({
+  permissions: ["USER_READ_ANY"] as Permission[],
+  handler: async (req, ...args) => {
+    const params = await (args[0] as { params: Promise<{ id: string }> }).params
+    const userId = params.id
 
-    await requirePermission(session.user.id, "USER_READ")
+    const userDetail = await prisma.user.findUnique({
+      where: { id: userId },
+      select: {
+        id: true,
+        name: true,
+        email: true,
+        createdAt: true,
+        updatedAt: true,
+        role: {
+          select: {
+            id: true,
+            name: true,
+          },
+        },
+      },
+    })
 
-    const { id } = await params
-    const user = await userService.getUserById(id)
-
-    if (!user) {
+    if (!userDetail) {
       return NextResponse.json({ error: "User not found" }, { status: 404 })
     }
 
-    return NextResponse.json({ user })
-  } catch (error) {
-    return NextResponse.json(
-      {
-        error: getErrorMessage(error, "Failed to fetch user"),
-      },
-      { status: 500 }
-    )
-  }
-}
+    return NextResponse.json({ user: userDetail })
+  },
+})
 
-export async function PATCH(
-  req: Request,
-  { params }: { params: Promise<{ id: string }> }
-) {
-  try {
-    const session = await auth()
-    if (!session?.user) {
-      return NextResponse.json({ error: "Unauthorized" }, { status: 401 })
-    }
-
-    await requirePermission(session.user.id, "USER_UPDATE")
-
-    const { id } = await params
+/**
+ * PUT /api/users/[id]
+ * Update user details
+ * Requires: USER_UPDATE_ANY permission
+ */
+export const PUT = protectApiRoute({
+  permissions: ["USER_UPDATE_ANY"] as Permission[],
+  handler: async (req, ...args) => {
+    const params = await (args[0] as { params: Promise<{ id: string }> }).params
+    const userId = params.id
     const body = await req.json()
 
+    // Validate input
     const validatedData = updateUserSchema.parse(body)
-    const user = await userService.updateUser(id, validatedData)
 
-    return NextResponse.json({ user })
-  } catch (error) {
-    if (isZodError(error)) {
+    // Check if user exists
+    const existingUser = await prisma.user.findUnique({
+      where: { id: userId },
+    })
+
+    if (!existingUser) {
+      return NextResponse.json({ error: "User not found" }, { status: 404 })
+    }
+
+    // Check if email is already taken by another user
+    if (validatedData.email && validatedData.email !== existingUser.email) {
+      const emailTaken = await prisma.user.findUnique({
+        where: { email: validatedData.email },
+      })
+
+      if (emailTaken) {
+        return NextResponse.json(
+          {
+            error: "Conflict",
+            message: "Email already in use",
+          },
+          { status: 409 }
+        )
+      }
+    }
+
+    // Update user
+    const updatedUser = await prisma.user.update({
+      where: { id: userId },
+      data: {
+        ...(validatedData.name !== undefined && { name: validatedData.name }),
+        ...(validatedData.email !== undefined && {
+          email: validatedData.email,
+        }),
+        ...(validatedData.roleId !== undefined && {
+          roleId: validatedData.roleId,
+        }),
+      },
+      select: {
+        id: true,
+        name: true,
+        email: true,
+        createdAt: true,
+        updatedAt: true,
+        role: {
+          select: {
+            id: true,
+            name: true,
+          },
+        },
+      },
+    })
+
+    // Invalidate permission cache for this user if role changed
+    if (
+      validatedData.roleId !== undefined &&
+      validatedData.roleId !== existingUser.roleId
+    ) {
+      invalidateUserPermissions(userId)
+    }
+
+    return NextResponse.json({ user: updatedUser })
+  },
+})
+
+/**
+ * DELETE /api/users/[id]
+ * Delete user
+ * Requires: USER_DELETE_ANY permission
+ */
+export const DELETE = protectApiRoute({
+  permissions: ["USER_DELETE_ANY"] as Permission[],
+  handler: async (req, { user }, ...args) => {
+    const params = await (args[0] as { params: Promise<{ id: string }> }).params
+    const userId = params.id
+
+    // Prevent deleting yourself
+    if (userId === user.id) {
       return NextResponse.json(
         {
-          error: "Validation Error",
-          details: error.issues,
+          error: "Forbidden",
+          message: "You cannot delete your own account",
         },
-        { status: 400 }
+        { status: 403 }
       )
     }
 
-    return NextResponse.json(
-      {
-        error: getErrorMessage(error, "Failed to update user"),
-      },
-      { status: 500 }
-    )
-  }
-}
+    // Check if user exists
+    const existingUser = await prisma.user.findUnique({
+      where: { id: userId },
+    })
 
-export async function DELETE(
-  req: Request,
-  { params }: { params: Promise<{ id: string }> }
-) {
-  try {
-    const session = await auth()
-    if (!session?.user) {
-      return NextResponse.json({ error: "Unauthorized" }, { status: 401 })
+    if (!existingUser) {
+      return NextResponse.json({ error: "User not found" }, { status: 404 })
     }
 
-    await requirePermission(session.user.id, "USER_DELETE")
-
-    const { id } = await params
-    await userService.deleteUser(id)
+    // Delete user
+    await prisma.user.delete({
+      where: { id: userId },
+    })
 
     return NextResponse.json({ success: true })
-  } catch (error) {
-    return NextResponse.json(
-      {
-        error: getErrorMessage(error, "Failed to delete user"),
-      },
-      { status: 500 }
-    )
-  }
-}
+  },
+})

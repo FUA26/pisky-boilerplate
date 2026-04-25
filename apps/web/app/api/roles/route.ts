@@ -1,97 +1,104 @@
-import { auth } from "@/lib/auth/config"
-import { getErrorMessage, isZodError } from "@/lib/error-utils"
-import { requirePermission } from "@/lib/rbac/permissions"
-import {
-  InvalidRolePermissionsError,
-  roleService,
-} from "@/lib/services/role-service"
+/**
+ * Roles API Route
+ *
+ * GET /api/roles - List all roles
+ * POST /api/roles - Create new role
+ */
+
+import { prisma } from "@/lib/db/prisma"
+import { protectApiRoute } from "@/lib/rbac-server/api-protect"
+import { invalidateAllPermissions } from "@/lib/rbac-server/loader"
+import { Permission } from "@/lib/rbac/types"
 import { createRoleSchema } from "@/lib/validations/role"
 import { NextResponse } from "next/server"
 
-export async function GET(req: Request) {
-  try {
-    const session = await auth()
-    if (!session?.user) {
-      return NextResponse.json({ error: "Unauthorized" }, { status: 401 })
-    }
-
-    await requirePermission(session.user.id, "ROLE_READ")
-
-    const { searchParams } = new URL(req.url)
-    const includeStats = searchParams.get("stats") === "true"
-
-    const roles = await roleService.listRoles()
-
-    let stats = null
-    if (includeStats) {
-      stats = await roleService.getRoleStats()
-    }
-
-    return NextResponse.json({
-      roles,
-      stats,
-    })
-  } catch (error) {
-    return NextResponse.json(
-      {
-        error: getErrorMessage(error, "Failed to fetch roles"),
-      },
-      { status: 500 }
-    )
-  }
-}
-
-export async function POST(req: Request) {
-  try {
-    const session = await auth()
-    if (!session?.user) {
-      return NextResponse.json({ error: "Unauthorized" }, { status: 401 })
-    }
-
-    await requirePermission(session.user.id, "ROLE_CREATE")
-
-    const body = await req.json()
-    const validatedData = createRoleSchema.parse(body)
-    const role = await roleService.createRole({
-      name: validatedData.name,
-      permissions: validatedData.permissions,
-    })
-
-    return NextResponse.json(
-      {
-        role,
-        message: "Role created successfully",
-      },
-      { status: 201 }
-    )
-  } catch (error) {
-    if (isZodError(error)) {
-      return NextResponse.json(
-        {
-          error: "Validation Error",
-          details: error.issues,
+/**
+ * GET /api/roles
+ * Get all roles with user counts
+ * Requires: ADMIN_ROLES_MANAGE permission
+ */
+export const GET = protectApiRoute({
+  permissions: ["ADMIN_ROLES_MANAGE"] as Permission[],
+  handler: async () => {
+    const roles = await prisma.role.findMany({
+      include: {
+        _count: {
+          select: { users: true },
         },
-        { status: 400 }
-      )
-    }
-
-    if (error instanceof InvalidRolePermissionsError) {
-      return NextResponse.json(
-        {
-          error: error.message,
-          details: {
-            missingPermissions: error.missingPermissions,
+        permissions: {
+          include: {
+            permission: true,
           },
         },
-        { status: 400 }
+      },
+      orderBy: { name: "asc" },
+    })
+
+    // Transform permissions to array of permission names for each role
+    const transformedRoles = roles.map((role) => ({
+      ...role,
+      permissions: role.permissions.map((rp) => rp.permission.name),
+    }))
+
+    return NextResponse.json({ roles: transformedRoles })
+  },
+})
+
+/**
+ * POST /api/roles
+ * Create new role
+ * Requires: ADMIN_ROLES_MANAGE permission
+ */
+export const POST = protectApiRoute({
+  permissions: ["ADMIN_ROLES_MANAGE"] as Permission[],
+  handler: async (req) => {
+    const body = await req.json()
+
+    // Validate input
+    const { name, permissions } = createRoleSchema.parse(body)
+
+    // Check if role name already exists
+    const existingRole = await prisma.role.findUnique({
+      where: { name },
+    })
+
+    if (existingRole) {
+      return NextResponse.json(
+        {
+          error: "Conflict",
+          message: "Role with this name already exists",
+        },
+        { status: 409 }
       )
     }
 
-    return NextResponse.json(
-      {
-        error: getErrorMessage(error, "Failed to create role"),
+    // Get permission IDs for the given permission names
+    const permissionRecords = await prisma.permission.findMany({
+      where: {
+        name: {
+          in: permissions,
+        },
       },
-      { status: 500 }
-    )
-  }
-}
+      select: {
+        id: true,
+      },
+    })
+
+    // Create role with junction records
+    const role = await prisma.role.create({
+      data: {
+        name,
+        permissions: {
+          create: permissionRecords.map((p) => ({
+            permissionId: p.id,
+          })),
+        },
+      },
+    })
+
+    // Invalidate all permission caches since role definitions changed
+    invalidateAllPermissions()
+
+    return NextResponse.json({ role }, { status: 201 })
+  },
+})

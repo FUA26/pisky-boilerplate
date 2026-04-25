@@ -13,11 +13,7 @@
  *   }
  */
 
-import { config } from "dotenv"
 import { PrismaClient } from "@prisma/client"
-
-// Load environment variables
-config({ path: ".env.local" })
 
 const prisma = new PrismaClient()
 
@@ -376,11 +372,13 @@ async function seedPermissions() {
     console.log("\n🎉 RBAC permission seeding completed successfully!\n")
   } catch (error) {
     console.error("❌ Error seeding permissions:", error)
-    process.exit(1)
-  } finally {
-    await prisma.$disconnect()
+    throw error
   }
 }
 
-// Run the seed function
-seedPermissions()
+export { seedPermissions }
+
+// Only run if called directly
+if (import.meta.url === `file://${process.argv[1]}`) {
+  seedPermissions().catch(console.error)
+}

@@ -10,40 +10,108 @@ import {
   SidebarHeader,
   SidebarRail,
 } from "@workspace/ui/components/sidebar"
-import { BarChartIcon, ShieldCheckIcon, SettingsIcon } from "lucide-react"
+import {
+  ShieldCheck,
+  LayoutDashboard,
+  Ticket,
+  CheckSquare,
+  UserCog,
+  AppWindow,
+  ChartLine,
+} from "lucide-react"
 
 const data = {
   navMain: [
     {
-      title: "Dashboard",
+      title: "Main",
       url: "/dashboard",
-      icon: <BarChartIcon />,
+      icon: <LayoutDashboard />,
     },
     {
-      title: "Access Management",
-      icon: <ShieldCheckIcon />,
+      title: "Task Management",
+      icon: <CheckSquare />,
       items: [
         {
-          title: "Users",
-          url: "/access-management/users",
-        },
-        {
-          title: "Roles",
-          url: "/access-management/roles",
-        },
-        {
-          title: "Permissions",
-          url: "/access-management/permissions",
+          title: "Tasks",
+          url: "/tasks",
         },
       ],
     },
     {
-      title: "Configuration",
-      icon: <SettingsIcon />,
+      title: "Ticketing",
+      icon: <Ticket />,
       items: [
+        {
+          title: "Tickets",
+          url: "/tickets",
+        },
+        {
+          title: "Access Requests",
+          url: "/access-requests",
+        },
+      ],
+    },
+    {
+      title: "Apps & Analytics",
+      icon: <AppWindow />,
+      items: [
+        {
+          title: "Apps",
+          url: "/apps",
+        },
+        {
+          title: "Analytics",
+          url: "/analytics",
+        },
+      ],
+    },
+    {
+      title: "Access Management",
+      icon: <ShieldCheck />,
+      items: [
+        {
+          title: "Users",
+          url: "/backoffice/access-management/users",
+        },
+        {
+          title: "Roles",
+          url: "/backoffice/access-management/roles",
+        },
+        {
+          title: "Permissions",
+          url: "/backoffice/access-management/permissions",
+        },
+        {
+          title: "System Settings",
+          url: "/backoffice/settings",
+        },
+      ],
+    },
+    {
+      title: "Account",
+      icon: <UserCog />,
+      items: [
+        {
+          title: "Profile",
+          url: "/profile",
+        },
         {
           title: "Settings",
           url: "/settings",
+        },
+      ],
+    },
+    {
+      title: "Demo",
+      icon: <ChartLine />,
+      items: [
+        {
+          title: "Advanced Table",
+          url: "/demo/advanced-table",
+        },
+        {
+          title: "App Identity Demo",
+          url: "/app-identity-demo",
         },
       ],
     },

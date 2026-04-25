@@ -1,6 +1,6 @@
 # `@workspace/ui`
 
-Shared UI component library for the Zilpo Admin workspace. Built with shadcn/ui, Radix UI primitives, and Tailwind CSS v4.
+Shared UI component library for the Pisky Support workspace. Built with shadcn/ui, Radix UI primitives, and Tailwind CSS v4.
 
 ## Installation
 
@@ -95,7 +95,7 @@ The library uses CSS variables for theming with light/dark mode support via `nex
 
 ### Design Tokens
 
-- **Primary color**: Teal/cyan (`oklch(0.508 0.118 165.612)`)
+- **Primary color**: Sea-teal (`oklch(0.58 0.13 172)`)
 - **Border radius**: 10px
 - **Font**: Inter Variable (body), Geist Mono (code)
 - **Animation**: `cubic-bezier(0.16, 1, 0.3, 1)` for natural easing

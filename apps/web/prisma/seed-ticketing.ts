@@ -1,5 +1,5 @@
 import { PrismaClient } from "@prisma/client"
-import { randomBytes } from "crypto"
+import { randomBytes } from "node:crypto"
 
 const prisma = new PrismaClient()
 
@@ -8,18 +8,6 @@ const prisma = new PrismaClient()
  */
 function generateApiKey(): string {
   return randomBytes(32).toString("hex")
-}
-
-/**
- * Generate a URL-friendly slug from a name
- */
-function generateSlug(name: string): string {
-  return name
-    .toLowerCase()
-    .replace(/[^a-z0-9\s-]/g, "") // Remove special chars
-    .replace(/\s+/g, "-") // Replace spaces with hyphens
-    .replace(/-+/g, "-") // Replace multiple hyphens with single
-    .trim()
 }
 
 async function seedTicketing() {
@@ -63,8 +51,6 @@ async function seedTicketing() {
     },
   ]
 
-  let createdCount = 0
-
   for (const config of channelConfigs) {
     const exists = existingChannels.some(
       (c) => c.type === config.type && c.name === config.name
@@ -81,7 +67,6 @@ async function seedTicketing() {
       if (created.apiKey) {
         console.log(`      🔑 API Key: ${created.apiKey}`)
       }
-      createdCount++
     } else {
       console.log(
         `   ℹ️  Channel already exists: ${config.name} (${config.type})`
@@ -97,9 +82,14 @@ async function seedTicketing() {
   console.log("🎉 Ticketing seeding completed!\n")
 }
 
-seedTicketing()
-  .catch((e) => {
-    console.error("❌ Error seeding ticketing:", e)
-    process.exit(1)
-  })
-  .finally(() => prisma.$disconnect())
+export { seedTicketing }
+
+// Only run if called directly
+if (import.meta.url === `file://${process.argv[1]}`) {
+  seedTicketing()
+    .catch((e) => {
+      console.error("❌ Error seeding ticketing:", e)
+      process.exit(1)
+    })
+    .finally(() => prisma.$disconnect())
+}

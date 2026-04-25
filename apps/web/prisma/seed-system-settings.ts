@@ -50,7 +50,7 @@ async function seedSystemSettings() {
         requireEmailVerification: true,
         defaultUserRoleId: userRole.id,
         emailVerificationExpiryHours: 24,
-        siteName: "Naiera",
+        siteName: "Pisky Support",
         siteDescription: "A powerful platform for managing your content",
         minPasswordLength: 8,
         requireStrongPassword: false,
@@ -84,4 +84,14 @@ async function seedSystemSettings() {
 }
 
 // Run the seed function
-seedSystemSettings()
+
+export { seedSystemSettings }
+
+// Only run if called directly
+if (import.meta.url === `file://${process.argv[1]}`) {
+  const func = /seed-(\w+).ts/.exec(import.meta.url)?.[1]
+  if (func)
+    import(`./seed-${func}.ts`).then((m) =>
+      m[`seed${func[0].toUpperCase() + func.slice(1)}`]()
+    )
+}

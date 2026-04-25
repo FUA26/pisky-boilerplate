@@ -1,113 +1,193 @@
-// apps/web/app/api/permissions/[id]/route.ts
-import { auth } from "@/lib/auth/config"
-import { getErrorMessage, isZodError } from "@/lib/error-utils"
-import { permissionService } from "@/lib/services/permission-service"
-import { requirePermission } from "@/lib/rbac/permissions"
+/**
+ * Single Permission API Route
+ *
+ * GET /api/permissions/[id] - Get single permission
+ * PUT /api/permissions/[id] - Update permission
+ * DELETE /api/permissions/[id] - Delete permission
+ */
+
+import { protectApiRoute } from "@/lib/rbac-server/api-protect"
+import {
+  deletePermission,
+  getPermissionById,
+  getPermissionUsageCount,
+  updatePermission,
+} from "@/lib/rbac-server/permission-crud"
+import { Permission } from "@/lib/rbac/types"
 import { updatePermissionSchema } from "@/lib/validations/permission"
 import { NextResponse } from "next/server"
 
-export async function GET(
-  req: Request,
-  { params }: { params: Promise<{ id: string }> }
-) {
-  try {
-    const session = await auth()
-    if (!session?.user) {
-      return NextResponse.json({ error: "Unauthorized" }, { status: 401 })
-    }
+/**
+ * GET /api/permissions/[id]
+ * Get single permission details
+ * Requires: ADMIN_PERMISSIONS_MANAGE permission
+ */
+export const GET = protectApiRoute({
+  permissions: ["ADMIN_PERMISSIONS_MANAGE"] as Permission[],
+  handler: async (req, _user, ...args) => {
+    const paramsData = args[0] as { params: Promise<{ id: string }> }
+    const params = await paramsData.params
 
-    await requirePermission(session.user.id, "PERMISSION_READ")
-
-    const { id } = await params
-    const permission = await permissionService.getPermissionById(id)
+    const permission = await getPermissionById(params.id)
 
     if (!permission) {
       return NextResponse.json(
-        { error: "Permission not found" },
+        {
+          error: "Not Found",
+          message: "Permission not found",
+        },
         { status: 404 }
       )
     }
 
-    return NextResponse.json({ permission })
-  } catch (error) {
-    return NextResponse.json(
-      {
-        error:
-          error instanceof Error ? error.message : "Failed to fetch permission",
-      },
-      { status: 500 }
-    )
-  }
-}
-
-export async function PATCH(
-  req: Request,
-  { params }: { params: Promise<{ id: string }> }
-) {
-  try {
-    const session = await auth()
-    if (!session?.user) {
-      return NextResponse.json({ error: "Unauthorized" }, { status: 401 })
-    }
-
-    await requirePermission(session.user.id, "PERMISSION_ASSIGN")
-
-    const { id } = await params
-    const body = await req.json()
-    const validatedData = updatePermissionSchema.parse(body)
-
-    const permission = await permissionService.updatePermission(
-      id,
-      validatedData
-    )
+    // Get usage count
+    const usageCount = await getPermissionUsageCount(params.id)
 
     return NextResponse.json({
-      permission,
-      message: "Permission updated successfully",
+      permission: {
+        ...permission,
+        usageCount,
+      },
     })
-  } catch (error) {
-    if (isZodError(error)) {
+  },
+})
+
+/**
+ * PUT /api/permissions/[id]
+ * Update permission
+ * Requires: ADMIN_PERMISSIONS_MANAGE permission
+ */
+export const PUT = protectApiRoute({
+  permissions: ["ADMIN_PERMISSIONS_MANAGE"] as Permission[],
+  handler: async (req, _user, ...args) => {
+    try {
+      const paramsData = args[0] as { params: Promise<{ id: string }> }
+      const params = await paramsData.params
+      const body = await req.json()
+
+      // Validate input (include ID in validation)
+      const validatedData = updatePermissionSchema.parse({
+        id: params.id,
+        ...body,
+      })
+
+      // Update permission
+      const { id: permissionId, ...updateData } = validatedData
+      void permissionId
+      const permission = await updatePermission(params.id, updateData)
+
+      return NextResponse.json({
+        permission,
+        message: "Permission updated successfully",
+      })
+    } catch (error) {
+      // Handle validation errors
+      if (
+        error &&
+        typeof error === "object" &&
+        "name" in error &&
+        error.name === "ZodError"
+      ) {
+        return NextResponse.json(
+          {
+            error: "Validation Error",
+            details: "errors" in error ? error.errors : undefined,
+          },
+          { status: 400 }
+        )
+      }
+
+      const message = error instanceof Error ? error.message : ""
+      // Handle not found
+      if (message.includes("not found")) {
+        return NextResponse.json(
+          {
+            error: "Not Found",
+            message,
+          },
+          { status: 404 }
+        )
+      }
+
+      // Handle unique constraint violation
+      if (
+        error &&
+        typeof error === "object" &&
+        "code" in error &&
+        error.code === "P2002"
+      ) {
+        return NextResponse.json(
+          {
+            error: "Conflict",
+            message: "Permission with this name already exists",
+          },
+          { status: 409 }
+        )
+      }
+
+      // Handle other errors
       return NextResponse.json(
         {
-          error: "Validation Error",
-          details: error.issues,
+          error: "Server Error",
+          message: message || "Failed to update permission",
         },
-        { status: 400 }
+        { status: 500 }
       )
     }
+  },
+})
 
-    return NextResponse.json(
-      {
-        error: getErrorMessage(error, "Failed to update permission"),
-      },
-      { status: 500 }
-    )
-  }
-}
+/**
+ * DELETE /api/permissions/[id]
+ * Delete permission
+ * Requires: ADMIN_PERMISSIONS_MANAGE permission
+ */
+export const DELETE = protectApiRoute({
+  permissions: ["ADMIN_PERMISSIONS_MANAGE"] as Permission[],
+  handler: async (req, _user, ...args) => {
+    try {
+      const paramsData = args[0] as { params: Promise<{ id: string }> }
+      const params = await paramsData.params
 
-export async function DELETE(
-  req: Request,
-  { params }: { params: Promise<{ id: string }> }
-) {
-  try {
-    const session = await auth()
-    if (!session?.user) {
-      return NextResponse.json({ error: "Unauthorized" }, { status: 401 })
+      // Delete permission
+      const permission = await deletePermission(params.id)
+
+      return NextResponse.json({
+        permission,
+        message: "Permission deleted successfully",
+      })
+    } catch (error) {
+      const message = error instanceof Error ? error.message : ""
+      // Handle not found
+      if (message.includes("not found")) {
+        return NextResponse.json(
+          {
+            error: "Not Found",
+            message,
+          },
+          { status: 404 }
+        )
+      }
+
+      // Handle permission in use
+      if (message.includes("assigned to")) {
+        return NextResponse.json(
+          {
+            error: "Conflict",
+            message,
+          },
+          { status: 409 }
+        )
+      }
+
+      // Handle other errors
+      return NextResponse.json(
+        {
+          error: "Server Error",
+          message: message || "Failed to delete permission",
+        },
+        { status: 500 }
+      )
     }
-
-    await requirePermission(session.user.id, "PERMISSION_ASSIGN")
-
-    const { id } = await params
-    await permissionService.deletePermission(id)
-
-    return NextResponse.json({ success: true })
-  } catch (error) {
-    const message = getErrorMessage(error, "Failed to delete permission")
-    return NextResponse.json(
-      {
-        error: message,
-      },
-      { status: message.includes("assigned to") ? 400 : 500 }
-    )
-  }
-}
+  },
+})

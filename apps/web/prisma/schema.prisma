@@ -156,7 +156,7 @@ model SystemSettings {
   requireEmailVerification     Boolean  @default(true)
   defaultUserRoleId            String
   emailVerificationExpiryHours Int      @default(24)
-  siteName                     String   @default("Naiera")
+  siteName                     String   @default("Pisky Support")
   siteDescription              String?
   minPasswordLength            Int      @default(8)
   requireStrongPassword        Boolean  @default(false)

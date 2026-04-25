@@ -14,7 +14,7 @@ async function seedAdminUser() {
     console.log("🌱 Seeding admin user...\n")
 
     // Find or create ADMIN role
-    let adminRole = await prisma.role.findUnique({
+    const adminRole = await prisma.role.findUnique({
       where: { name: "ADMIN" },
     })
 
@@ -72,4 +72,13 @@ async function seedAdminUser() {
   }
 }
 
-seedAdminUser()
+export { seedAdminUser as seedAdmin }
+
+// Only run if called directly
+if (import.meta.url === `file://${process.argv[1]}`) {
+  const func = /seed-(\w+).ts/.exec(import.meta.url)?.[1]
+  if (func)
+    import(`./seed-${func}.ts`).then((m) =>
+      m[`seed${func[0].toUpperCase() + func.slice(1)}`]()
+    )
+}

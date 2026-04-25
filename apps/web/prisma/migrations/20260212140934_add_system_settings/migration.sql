@@ -5,7 +5,7 @@ CREATE TABLE "SystemSettings" (
     "requireEmailVerification" BOOLEAN NOT NULL DEFAULT true,
     "defaultUserRoleId" TEXT NOT NULL,
     "emailVerificationExpiryHours" INTEGER NOT NULL DEFAULT 24,
-    "siteName" TEXT NOT NULL DEFAULT 'Naiera',
+    "siteName" TEXT NOT NULL DEFAULT 'Pisky Support',
     "siteDescription" TEXT,
     "minPasswordLength" INTEGER NOT NULL DEFAULT 8,
     "requireStrongPassword" BOOLEAN NOT NULL DEFAULT false,

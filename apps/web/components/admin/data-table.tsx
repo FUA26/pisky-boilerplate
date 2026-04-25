@@ -1,0 +1,5 @@
+export { DataTable } from "@workspace/ui/components/data-table/data-table"
+export { DataTableActionBar } from "@workspace/ui/components/data-table/data-table-action-bar"
+export { DataTableColumnHeader } from "@workspace/ui/components/data-table/data-table-column-header"
+export { DataTableFacetedFilter } from "@workspace/ui/components/data-table/data-table-faceted-filter"
+export { DataTableViewOptions } from "@workspace/ui/components/data-table/data-table-view-options"

@@ -13,11 +13,7 @@
  *   }
  */
 
-import { config } from "dotenv"
 import { PrismaClient } from "@prisma/client"
-
-// Load environment variables
-config({ path: ".env.local" })
 
 const prisma = new PrismaClient()
 
@@ -253,4 +249,14 @@ async function seedRoles() {
 }
 
 // Run the seed function
-seedRoles()
+
+export { seedRoles }
+
+// Only run if called directly
+if (import.meta.url === `file://${process.argv[1]}`) {
+  const func = /seed-(\w+).ts/.exec(import.meta.url)?.[1]
+  if (func)
+    import(`./seed-${func}.ts`).then((m) =>
+      m[`seed${func[0].toUpperCase() + func.slice(1)}`]()
+    )
+}

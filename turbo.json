@@ -9,7 +9,8 @@
     "AWS_SECRET_ACCESS_KEY",
     "MINIO_ENDPOINT",
     "S3_BUCKET",
-    "CDN_URL"
+    "CDN_URL",
+    "REVALIDATE_SECRET"
   ],
   "tasks": {
     "build": {
