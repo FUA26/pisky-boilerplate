@@ -237,7 +237,7 @@ test.describe("Tickets", () => {
       const hasStatusFilter = (await statusFilter.count()) > 0
 
       if (hasStatusFilter) {
-        await statusFilter.first().selectOption({ label: /open/i })
+        await statusFilter.first().selectOption("Open")
         await page.waitForTimeout(1000)
 
         // Verify filter was applied (URL or page content changed)
@@ -254,7 +254,7 @@ test.describe("Tickets", () => {
       const hasPriorityFilter = (await priorityFilter.count()) > 0
 
       if (hasPriorityFilter) {
-        await priorityFilter.first().selectOption({ label: /high/i })
+        await priorityFilter.first().selectOption("High")
         await page.waitForTimeout(1000)
       }
     })

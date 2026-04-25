@@ -230,7 +230,7 @@ test.describe("Tasks", () => {
         await statusFilter.first().click()
         await page.waitForTimeout(500)
       } else if (hasStatusDropdown) {
-        await statusDropdown.first().selectOption({ label: /in progress/i })
+        await statusDropdown.first().selectOption("In Progress")
         await page.waitForTimeout(500)
       }
     })
@@ -250,7 +250,7 @@ test.describe("Tasks", () => {
         await priorityFilter.first().click()
         await page.waitForTimeout(500)
       } else if (hasPriorityDropdown) {
-        await priorityDropdown.first().selectOption({ label: /high/i })
+        await priorityDropdown.first().selectOption("High")
         await page.waitForTimeout(500)
       }
     })

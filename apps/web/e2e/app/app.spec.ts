@@ -198,11 +198,13 @@ test.describe("Application-Wide Tests", () => {
   })
 
   test.describe("Session Management", () => {
-    test("should persist session across tabs", async ({ context, signIn }) => {
+    test("should persist session across tabs", async ({ page, context }) => {
       // Sign in in first tab
-      const page1 = await context.newPage()
-      await signIn({})(page1)
-      await page1.waitForURL(/\/dashboard/, { timeout: 5000 })
+      await page.goto("/sign-in")
+      await page.fill('input[name="email"]', testUsers.admin.email)
+      await page.fill('input[name="password"]', testUsers.admin.password)
+      await page.click('button[type="submit"]')
+      await page.waitForURL(/\/dashboard/, { timeout: 5000 })
 
       // Open new tab and navigate to dashboard
       const page2 = await context.newPage()
@@ -213,16 +215,15 @@ test.describe("Application-Wide Tests", () => {
       const url = page2.url()
       expect(url).not.toContain("/sign-in")
 
-      await page1.close()
       await page2.close()
     })
 
-    test("should handle session timeout gracefully", async ({
-      page,
-      signIn,
-    }) => {
+    test("should handle session timeout gracefully", async ({ page }) => {
       // Sign in
-      await signIn({})(page)
+      await page.goto("/sign-in")
+      await page.fill('input[name="email"]', testUsers.admin.email)
+      await page.fill('input[name="password"]', testUsers.admin.password)
+      await page.click('button[type="submit"]')
       await page.waitForURL(/\/dashboard/, { timeout: 5000 })
 
       // Clear cookies to simulate session expiry

@@ -16,6 +16,14 @@ export const updateUserSchema = z
   })
   .partial()
 
+export const bulkUpdateUsersSchema = z.object({
+  ids: z.array(z.string()).min(1, "At least one user ID is required"),
+  updates: z.object({
+    roleId: z.string().optional(),
+    active: z.boolean().optional(),
+  }),
+})
+
 export const updateProfileSchema = z.object({
   name: z
     .string()
