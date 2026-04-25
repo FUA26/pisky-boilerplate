@@ -1,4 +1,4 @@
-# Dockerfile for Zilpo Admin Web App
+# Dockerfile for Pisky Support Web App
 # Multi-stage build for optimal image size
 
 FROM node:20-alpine AS base

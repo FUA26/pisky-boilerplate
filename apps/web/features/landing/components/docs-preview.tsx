@@ -119,7 +119,7 @@ export function DocsPreview() {
                   </span>
                 </div>
                 <p className="text-sm leading-relaxed text-muted-foreground">
-                  Learn how NextAuth.js v5 is configured in Pisky Admin,
+                  Learn how NextAuth.js v5 is configured in Pisky Support,
                   including session management and security best practices.
                 </p>
               </div>

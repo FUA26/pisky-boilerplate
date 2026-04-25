@@ -1,5 +1,5 @@
 # docker-compose.yml
-# Development services for Zilpo Admin
+# Development services for Pisky Support
 # Runs PostgreSQL and MinIO - App runs on host machine for development
 
 version: "3.8"
@@ -18,17 +18,17 @@ services:
     volumes:
       - postgres_data:/var/lib/postgresql/data
     healthcheck:
-      test: ["CMD-SHELL", "pg_isready -U ${POSTGRES_USER:-zilpo}"]
+      test: ["CMD-SHELL", "pg_isready -U ${POSTGRES_USER:-pisky}"]
       interval: 5s
       timeout: 5s
       retries: 5
     networks:
-      - zilpo-network
+      - pisky-network
 
   # MinIO - commented out, using S3 instead
   # minio:
   #   image: minio/minio:latest
-  #   container_name: zilpo-minio
+  #   container_name: pisky-minio
   #   restart: unless-stopped
   #   ports:
   #     - "9000:9000" # API
@@ -45,19 +45,19 @@ services:
   #     timeout: 5s
   #     retries: 5
   #   networks:
-  #     - zilpo-network
+  #     - pisky-network
 
   # Optional: Redis for caching/sessions (uncomment if needed)
   # redis:
   #   image: redis:7-alpine
-  #   container_name: zilpo-redis
+  #   container_name: pisky-redis
   #   restart: unless-stopped
   #   ports:
   #     - "6379:6379"
   #   volumes:
   #     - redis_data:/data
   #   networks:
-  #     - zilpo-network
+  #     - pisky-network
 
 volumes:
   postgres_data:
@@ -68,5 +68,5 @@ volumes:
   #   driver: local
 
 networks:
-  zilpo-network:
+  pisky-network:
     driver: bridge

@@ -21,7 +21,7 @@ export default function NotFound() {
             <div className="flex size-8 items-center justify-center rounded-xl bg-auth-brand-light text-auth-brand-dark shadow-lg shadow-primary/20">
               <span className="text-sm font-bold">Z</span>
             </div>
-            <span className="text-lg">Zilpo</span>
+            <span className="text-lg">Pisky Support</span>
           </Link>
         </div>
 
@@ -34,8 +34,8 @@ export default function NotFound() {
             Page not found
           </h1>
           <p className="mt-6 max-w-md text-lg leading-relaxed text-auth-subtle md:text-auth-muted">
-            The page you're looking for doesn't exist or has been moved. Let's
-            get you back on track.
+            The page is unavailable or has been moved. We will get you back on
+            track.
           </p>
         </div>
 
@@ -63,7 +63,7 @@ export default function NotFound() {
             <div className="flex size-8 items-center justify-center rounded-lg bg-auth-brand-light text-auth-brand-dark">
               <span className="text-xs font-bold">Z</span>
             </div>
-            <span>Zilpo</span>
+            <span>Pisky Support</span>
           </Link>
         </div>
 
@@ -108,7 +108,10 @@ export default function NotFound() {
               size="lg"
               className="w-full gap-2 text-muted-foreground"
             >
-              <Link href="https://github.com/zilpo/zilpo" target="_blank">
+              <Link
+                href="https://github.com/yourorg/pisky-support"
+                target="_blank"
+              >
                 <Search className="h-4 w-4" />
                 Browse Documentation
               </Link>
@@ -119,7 +122,7 @@ export default function NotFound() {
           <p className="mt-8 text-center text-sm text-muted-foreground">
             Need help?{" "}
             <Link
-              href="https://github.com/zilpo/zilpo/issues"
+              href="https://github.com/yourorg/pisky-support/issues"
               className="underline underline-offset-4 hover:text-foreground"
             >
               Report an issue

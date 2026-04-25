@@ -6,20 +6,20 @@
 export const siteConfig = {
   // Project URLs
   github: {
-    url: "https://github.com/yourorg/zilpo",
-    repository: "yourorg/zilpo",
+    url: "https://github.com/yourorg/pisky-support",
+    repository: "yourorg/pisky-support",
   },
   twitter: {
-    url: "https://twitter.com/zilpo",
-    handle: "@zilpo",
+    url: "https://twitter.com/piskysupport",
+    handle: "@piskysupport",
   },
   docs: {
     url: "/docs",
   },
   // Project metadata
-  name: "zilpo",
+  name: "Pisky Support",
   description:
-    "Skip the boilerplate. Ship features faster with production-ready patterns.",
+    "Support teams with opinionated, production-ready patterns that help them ship faster.",
   // Navigation
   nav: {
     features: "#features",

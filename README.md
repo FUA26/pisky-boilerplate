@@ -1,4 +1,4 @@
-# Zilpo Admin
+# Pisky Support
 
 A modern Next.js 16 + React 19 SaaS starter template built as a Turborepo monorepo. Designed for developers who want to skip boilerplate and ship features quickly with production-ready patterns.
 
@@ -19,7 +19,7 @@ A modern Next.js 16 + React 19 SaaS starter template built as a Turborepo monore
 ## Project Structure
 
 ```
-zilpo-admin/
+pisky-support/
 ├── apps/
 │   └── web/                    # Main Next.js application
 │       ├── app/                # App Router routes
@@ -84,7 +84,7 @@ The app will be available at `http://localhost:3000`.
 
 ```bash
 # Start PostgreSQL and MinIO
-docker-compose -f docker-compose.admin.yml up -d
+docker-compose -f docker-compose.dev.yml up -d
 ```
 
 ## Development Commands

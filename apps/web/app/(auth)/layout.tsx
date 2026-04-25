@@ -19,9 +19,9 @@ export default function AuthLayout({ children }: { children: ReactNode }) {
             className="inline-flex items-center gap-2.5 font-heading font-semibold text-auth-heading transition-opacity hover:opacity-70"
           >
             <div className="flex size-8 items-center justify-center rounded-xl bg-auth-brand-light text-auth-brand-dark shadow-lg shadow-primary/20">
-              <span className="text-sm font-bold">Z</span>
+              <span className="text-sm font-bold">P</span>
             </div>
-            <span className="text-lg">Zilpo</span>
+            <span className="text-lg">Pisky Support</span>
           </Link>
         </div>
 
@@ -65,9 +65,9 @@ export default function AuthLayout({ children }: { children: ReactNode }) {
             className="inline-flex items-center gap-2.5 font-heading font-semibold"
           >
             <div className="flex size-8 items-center justify-center rounded-lg bg-auth-brand-light text-auth-brand-dark">
-              <span className="text-xs font-bold">Z</span>
+              <span className="text-xs font-bold">P</span>
             </div>
-            <span>Zilpo</span>
+            <span>Pisky Support</span>
           </Link>
         </div>
 

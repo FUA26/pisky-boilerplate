@@ -21,10 +21,10 @@ export function LoginForm({
     >
       <FieldGroup>
         <div className="flex flex-col gap-3">
-          <h1 className="font-heading text-2xl font-bold tracking-tight text-[oklch(0.205_0.006_165)] dark:text-[oklch(0.985_0.002_165)]">
+          <h1 className="font-heading text-2xl font-bold tracking-tight text-[oklch(0.205_0.006_250)] dark:text-[oklch(0.985_0.002_250)]">
             Welcome back
           </h1>
-          <p className="text-base text-[oklch(0.55_0.008_165)] dark:text-[oklch(0.70_0.005_165)]">
+          <p className="text-base text-[oklch(0.55_0.008_250)] dark:text-[oklch(0.70_0.005_250)]">
             Ready to pick up where you left off?
           </p>
         </div>
@@ -43,7 +43,7 @@ export function LoginForm({
             <FieldLabel htmlFor="password">Password</FieldLabel>
             <a
               href="/forgot-password"
-              className="text-sm font-medium text-[oklch(0.508_0.118_165.612)] underline-offset-4 transition-opacity hover:opacity-70"
+              className="text-sm font-medium text-[oklch(0.58_0.13_250)] underline-offset-4 transition-opacity hover:opacity-70"
             >
               Forgot password?
             </a>
@@ -60,11 +60,11 @@ export function LoginForm({
             Sign in
           </Button>
         </Field>
-        <FieldDescription className="text-center text-[oklch(0.55_0.008_165)] dark:text-[oklch(0.70_0.005_165)]">
+        <FieldDescription className="text-center text-[oklch(0.55_0.008_250)] dark:text-[oklch(0.70_0.005_250)]">
           Don&apos;t have an account?{" "}
           <a
             href="/sign-up"
-            className="font-medium text-[oklch(0.508_0.118_165.612)] underline-offset-4 transition-opacity hover:opacity-70"
+            className="font-medium text-[oklch(0.58_0.13_250)] underline-offset-4 transition-opacity hover:opacity-70"
           >
             Sign up
           </a>

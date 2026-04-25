@@ -1,6 +1,6 @@
 import { Geist_Mono, Inter, Manrope } from "next/font/google"
 
-import "@workspace/ui/styles/globals.css"
+import "@workspace/ui/globals.css"
 import { Container } from "@workspace/ui/components/container"
 import { ThemeProvider } from "@/components/theme-provider"
 import { Toaster } from "@workspace/ui/components/sonner"
@@ -26,17 +26,17 @@ const fontMono = Geist_Mono({
 })
 
 export const metadata = {
-  title: "Zilpo - Next.js SaaS Starter Template",
+  title: "Pisky Support - Support Workspace",
   description:
     "Ship faster with opinionated patterns. A modern Next.js 16 + React 16 SaaS starter template built with shadcn/ui.",
   keywords: ["Next.js", "SaaS", "starter", "template", "shadcn/ui"],
-  authors: [{ name: "Zilpo" }],
+  authors: [{ name: "Pisky Support" }],
   openGraph: {
-    title: "Zilpo - Next.js SaaS Starter Template",
+    title: "Pisky Support - Support Workspace",
     description:
       "Ship faster with opinionated patterns. A modern Next.js 16 + React 16 SaaS starter template built with shadcn/ui.",
     type: "website",
-    url: "https://zilpo.dev",
+    url: "https://pisky.dev",
   },
 }
 

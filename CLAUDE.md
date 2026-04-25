@@ -4,7 +4,7 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 ## Project Overview
 
-Zilpo Admin is a modern Next.js 16 + React 19 SaaS starter template built as a Turborepo monorepo with shadcn/ui components. The project is designed for developers who want to skip boilerplate and ship features quickly with patterns that scale.
+Pisky Support is a modern Next.js 16 + React 19 SaaS starter template built as a Turborepo monorepo with shadcn/ui components. The project is designed for developers who want to skip boilerplate and ship features quickly with patterns that scale.
 
 **Tech Stack:**
 
@@ -56,7 +56,7 @@ pnpm db:studio        # Open Prisma Studio
 ### Workspace Structure
 
 ```
-zilpo-admin/
+pisky-support/
 ├── apps/
 │   └── web/                    # Main Next.js application
 ├── packages/

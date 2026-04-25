@@ -23,19 +23,19 @@ import {
 
 const teams = [
   {
-    name: "Pisky Dev",
+    name: "Pisky Support Dev",
     logo: <Building2Icon className="size-4" />,
     plan: "Development",
     color: "text-amber-500 dark:text-amber-400",
   },
   {
-    name: "Pisky Staging",
+    name: "Pisky Support Staging",
     logo: <StoreIcon className="size-4" />,
     plan: "Staging",
     color: "text-indigo-500 dark:text-indigo-400",
   },
   {
-    name: "Pisky Production",
+    name: "Pisky Support Production",
     logo: <LayoutDashboardIcon className="size-4" />,
     plan: "Production",
     color: "text-emerald-500 dark:text-emerald-400",

@@ -1,6 +1,6 @@
 # `@workspace/eslint-config`
 
-Shared ESLint configuration for the Zilpo Admin workspace.
+Shared ESLint configuration for the Pisky Support workspace.
 
 ## Usage
 

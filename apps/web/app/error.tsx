@@ -47,7 +47,7 @@ export default function Error({
             <div className="text-destructive-foreground flex size-8 items-center justify-center rounded-xl bg-destructive shadow-lg shadow-destructive/20">
               <AlertTriangle className="h-4 w-4" />
             </div>
-            <span className="text-lg">Zilpo</span>
+            <span className="text-lg">Pisky Support</span>
           </Link>
         </div>
 
@@ -61,7 +61,7 @@ export default function Error({
             Something went wrong
           </h1>
           <p className="mt-6 max-w-md text-lg leading-relaxed text-auth-subtle md:text-auth-muted">
-            {errorMessage}. This shouldn't happen, and we're sorry for the
+            {errorMessage}. This should not happen. We are sorry for the
             interruption.
           </p>
         </div>
@@ -90,7 +90,7 @@ export default function Error({
             <div className="text-destructive-foreground flex size-8 items-center justify-center rounded-lg bg-destructive">
               <AlertTriangle className="h-3 w-3" />
             </div>
-            <span>Zilpo</span>
+            <span>Pisky Support</span>
           </Link>
         </div>
 
@@ -162,7 +162,7 @@ export default function Error({
           <p className="mt-6 text-center text-sm text-muted-foreground">
             Problem persists?{" "}
             <Link
-              href="https://github.com/zilpo/zilpo/issues"
+              href="https://github.com/yourorg/pisky-support/issues"
               className="underline underline-offset-4 hover:text-foreground"
             >
               Report this issue
